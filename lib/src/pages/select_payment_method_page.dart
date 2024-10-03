@@ -10,15 +10,29 @@ class SelectPaymentMethodPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Select a payment method"),
+        automaticallyImplyLeading: false,
+        centerTitle: false,
+        actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.close))
+        ],
       ),
       body: ListView(
         children: [
           paymentMethodTile(
-              paymentMethod: PaymentMethod(
-                  name: "Credit Card",
-                  leadingIcon: Image.asset('assets/credit.png'),
-                  trailingIcon: Icons.arrow_forward,
-                  onTap: () {}))
+            paymentMethod: PaymentMethod(
+              name: "Credit Card",
+              leadingIcon: Image.asset(
+                'assets/credit.png',
+                package: "omise_flutter",
+              ),
+              trailingIcon: Icons.arrow_outward,
+              onTap: () {},
+            ),
+          )
         ],
       ),
     );
