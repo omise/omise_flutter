@@ -29,7 +29,7 @@ class SelectPaymentMethodPage extends StatelessWidget {
                 'assets/credit.png',
                 package: "omise_flutter",
               ),
-              trailingIcon: Icons.arrow_outward,
+              trailingIcon: Icons.arrow_forward_ios,
               onTap: () {},
             ),
           )
