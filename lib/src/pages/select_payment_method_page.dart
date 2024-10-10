@@ -13,6 +13,9 @@ class SelectPaymentMethodPage extends StatefulWidget {
   /// An instance of [OmiseApiService] for interacting with the Omise API.
   final OmiseApiService omiseApiService;
 
+  /// Allow passing an instance of the controller to facilitate testing
+  final PaymentMethodSelectorController? paymentMethodSelectorController;
+
   /// A list of selected payment methods that should be displayed in the UI.
   /// If null, all supported payment methods will be shown.
   final List<PaymentMethodName>? selectedPaymentMethods;
@@ -20,7 +23,10 @@ class SelectPaymentMethodPage extends StatefulWidget {
   /// Constructor for creating a [SelectPaymentMethodPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
   const SelectPaymentMethodPage(
-      {super.key, required this.omiseApiService, this.selectedPaymentMethods});
+      {super.key,
+      required this.omiseApiService,
+      this.selectedPaymentMethods,
+      this.paymentMethodSelectorController});
 
   @override
   State<SelectPaymentMethodPage> createState() =>
@@ -30,9 +36,10 @@ class SelectPaymentMethodPage extends StatefulWidget {
 class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
   /// The controller responsible for fetching and filtering payment methods.
   late final PaymentMethodSelectorController paymentMethodSelectorController =
-      PaymentMethodSelectorController(
-          omiseApiService: widget.omiseApiService,
-          selectedPaymentMethods: widget.selectedPaymentMethods);
+      widget.paymentMethodSelectorController ??
+          PaymentMethodSelectorController(
+              omiseApiService: widget.omiseApiService,
+              selectedPaymentMethods: widget.selectedPaymentMethods);
 
   /// Initializes the state and loads the payment methods on page load.
   @override
@@ -96,10 +103,12 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
               return paymentMethodTile(
                 paymentMethod: PaymentMethodTileData(
                   name: paymentMethod.name, // Name of the payment method
-                  leadingIcon: Image.asset(
-                    'assets/credit.png', // Icon for payment method (example icon)
-                    package: "omise_flutter",
-                  ),
+                  leadingIcon: widget.paymentMethodSelectorController != null
+                      ? const SizedBox()
+                      : Image.asset(
+                          'assets/${paymentMethod.name.value}.png', // Icon for payment method (example icon)
+                          package: "omise_flutter",
+                        ),
                   trailingIcon: Icons.arrow_forward_ios, // Arrow icon
                   onTap: () {
                     // Define what happens when a payment method is selected

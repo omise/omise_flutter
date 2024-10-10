@@ -3,7 +3,7 @@ import 'package:omise_dart/omise_dart.dart';
 
 class PaymentMethodTileData {
   final PaymentMethodName name;
-  final Image leadingIcon;
+  final Widget leadingIcon;
   final IconData trailingIcon;
   final VoidCallback onTap;
 
