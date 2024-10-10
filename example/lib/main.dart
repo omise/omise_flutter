@@ -32,10 +32,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final omisePayment = OmisePayment(publicKey: "pkey", enableDebug: false);
   void _openPaymentMethodsPage() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const SelectPaymentMethodPage()),
+      MaterialPageRoute(
+          builder: (context) =>
+              omisePayment.selectPaymentMethod(selectedPaymentMethods: [
+                PaymentMethodName.card,
+              ])),
     );
   }
 
