@@ -3,6 +3,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
 import 'package:omise_flutter/src/enums/status.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
@@ -111,7 +112,13 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                         ),
                   trailingIcon: Icons.arrow_forward_ios, // Arrow icon
                   onTap: () {
-                    // Define what happens when a payment method is selected
+                    // open the credit card screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const CreditCardPaymentMethodPage()),
+                    );
                   },
                 ),
               );
