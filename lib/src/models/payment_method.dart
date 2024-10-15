@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:omise_dart/omise_dart.dart';
 
-class PaymentMethod {
-  final String name;
-  final Image leadingIcon;
+class PaymentMethodTileData {
+  final PaymentMethodName name;
+  final Widget leadingIcon;
   final IconData trailingIcon;
   final VoidCallback onTap;
 
-  PaymentMethod({
+  PaymentMethodTileData({
     required this.name,
     required this.leadingIcon,
     required this.trailingIcon,
