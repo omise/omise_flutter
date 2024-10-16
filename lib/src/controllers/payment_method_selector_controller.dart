@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/foundation.dart'; // Import this for ValueNotifier
 import 'package:omise_dart/omise_dart.dart';
-import 'package:omise_flutter/src/enums/status.dart';
+import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_dart/src/exceptions/omise_api_exception.dart';
 
@@ -105,7 +105,7 @@ class PaymentMethodSelectorState {
       this.viewablePaymentMethods});
 
   /// Creates a copy of the current state while allowing overriding of
-  /// specific fields.
+  /// specific fields. This is needed since in order to trigger a rebuild on the value notifier level, we need a new instance to be created for non primitive types.
   PaymentMethodSelectorState copyWith({
     Status? status,
     String? errorMessage,

@@ -1,11 +1,6 @@
 import 'package:flutter/material.dart';
-
-enum ValidationType {
-  cardNumber,
-  name,
-  expiryDate,
-  cvv,
-}
+import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/utils/validationUtils.dart';
 
 class RoundedTextField extends StatefulWidget {
   final TextEditingController? controller;
@@ -13,6 +8,8 @@ class RoundedTextField extends StatefulWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final ValidationType validationType;
+  final String? hintText;
+  final Function(String)? onChange; // Passes the text as an argument
 
   const RoundedTextField({
     super.key,
@@ -21,6 +18,8 @@ class RoundedTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.obscureText = false,
     required this.validationType,
+    this.hintText,
+    this.onChange,
   });
 
   @override
@@ -29,62 +28,6 @@ class RoundedTextField extends StatefulWidget {
 
 class _RoundedTextFieldState extends State<RoundedTextField> {
   String? _errorMessage;
-
-  // Validation functions
-  String? _validateInput(String? value) {
-    switch (widget.validationType) {
-      case ValidationType.cardNumber:
-        return _validateCardNumber(value);
-      case ValidationType.name:
-        return _validateName(value);
-      case ValidationType.expiryDate:
-        return _validateExpiryDate(value);
-      case ValidationType.cvv:
-        return _validateCVV(value);
-      default:
-        return null;
-    }
-  }
-
-  String? _validateCardNumber(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Card number is required';
-    } else if (value.length != 16) {
-      return 'Card number must be 16 digits';
-    }
-    return null;
-  }
-
-  String? _validateName(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Name is required';
-    } else if (value.length < 3) {
-      return 'Name must be at least 3 characters';
-    }
-    return null;
-  }
-
-  String? _validateExpiryDate(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'Expiry date is required';
-    } else {
-      // Expiry date validation logic, e.g., MM/YY format
-      RegExp regExp = RegExp(r'^(0[1-9]|1[0-2])\/?([0-9]{2})$');
-      if (!regExp.hasMatch(value)) {
-        return 'Expiry date must be in MM/YY format';
-      }
-    }
-    return null;
-  }
-
-  String? _validateCVV(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'CVV is required';
-    } else if (value.length != 3) {
-      return 'CVV must be 3 digits';
-    }
-    return null;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,6 +49,7 @@ class _RoundedTextFieldState extends State<RoundedTextField> {
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
           decoration: InputDecoration(
+            hintText: widget.hintText,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: const BorderSide(
@@ -129,8 +73,12 @@ class _RoundedTextFieldState extends State<RoundedTextField> {
           ),
           onChanged: (value) {
             setState(() {
-              _errorMessage = _validateInput(value);
+              _errorMessage =
+                  ValidationUtils.validateInput(widget.validationType, value);
             });
+            if (widget.onChange != null) {
+              widget.onChange!(value);
+            }
           },
         ),
       ],

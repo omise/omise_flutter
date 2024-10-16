@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
-import 'package:omise_flutter/src/enums/status.dart';
+import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
@@ -68,23 +68,23 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
       ),
       body: ValueListenableBuilder(
         valueListenable: paymentMethodSelectorController,
-        builder: (context, controller, _) {
+        builder: (context, state, _) {
           // Display a loading spinner if the controller status is idle or loading
-          if ([Status.loading, Status.idle].contains(controller.status)) {
+          if ([Status.loading, Status.idle].contains(state.status)) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
           // Show the error message if the controller status is error
-          if (controller.status == Status.error) {
+          if (state.status == Status.error) {
             return Center(
-              child: Text(controller.errorMessage!),
+              child: Text(state.errorMessage!),
             );
           }
 
           // Get the list of filtered payment methods
-          final paymentMethods = controller.viewablePaymentMethods!;
+          final paymentMethods = state.viewablePaymentMethods!;
 
           // Show a message if no payment methods are available
           if (paymentMethods.isEmpty) {
@@ -116,8 +116,9 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) =>
-                              const CreditCardPaymentMethodPage()),
+                          builder: (context) => CreditCardPaymentMethodPage(
+                                omiseApiService: widget.omiseApiService,
+                              )),
                     );
                   },
                 ),
