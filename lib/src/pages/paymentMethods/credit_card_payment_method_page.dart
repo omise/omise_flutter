@@ -1,5 +1,6 @@
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
@@ -12,11 +13,13 @@ class CreditCardPaymentMethodPage extends StatefulWidget {
   /// Allow passing an instance of the controller to facilitate testing
   final CreditCardPaymentMethodController? creditCardPaymentMethodController;
   final bool automaticallyImplyLeading;
+  final Capability? capability;
   const CreditCardPaymentMethodPage(
       {super.key,
       this.automaticallyImplyLeading = true,
       required this.omiseApiService,
-      this.creditCardPaymentMethodController});
+      this.creditCardPaymentMethodController,
+      this.capability});
 
   @override
   State<CreditCardPaymentMethodPage> createState() =>
@@ -37,7 +40,8 @@ class _CreditCardPaymentMethodPageState
   @override
   void initState() {
     super.initState();
-    creditCardPaymentMethodController.loadCapabilities();
+
+    creditCardPaymentMethodController.loadCapabilities(widget.capability);
   }
 
   @override
@@ -51,17 +55,19 @@ class _CreditCardPaymentMethodPageState
         body: ValueListenableBuilder(
             valueListenable: creditCardPaymentMethodController,
             builder: (context, state, widget) {
-              if ([Status.loading, Status.idle].contains(state.status)) {
+              if ([Status.loading, Status.idle]
+                  .contains(state.capabilityLoadingStatus)) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
               }
 
-              if (state.status == Status.error) {
+              if (state.capabilityLoadingStatus == Status.error) {
                 return Center(
-                  child: Text(state.errorMessage!),
+                  child: Text(state.capabilityErrorMessage!),
                 );
               }
+              bool isFormEnabled = state.tokenLoadingStatus != Status.loading;
               return ListView(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 children: [
@@ -70,6 +76,7 @@ class _CreditCardPaymentMethodPageState
                     child: RoundedTextField(
                       title: "Card Number",
                       validationType: ValidationType.cardNumber,
+                      enabled: isFormEnabled,
                       onChange: (cardNumber) {
                         var newState = state.copyWith();
                         newState.createTokenRequest.number = cardNumber;
@@ -82,6 +89,7 @@ class _CreditCardPaymentMethodPageState
                     child: RoundedTextField(
                       title: "Name on card",
                       validationType: ValidationType.name,
+                      enabled: isFormEnabled,
                       onChange: (name) {
                         var newState = state.copyWith();
                         newState.createTokenRequest.name = name;
@@ -102,6 +110,7 @@ class _CreditCardPaymentMethodPageState
                             child: RoundedTextField(
                               title: "Expiry date",
                               validationType: ValidationType.expiryDate,
+                              enabled: isFormEnabled,
                               onChange: (expiryDate) {
                                 creditCardPaymentMethodController
                                     .setExpiryDate(expiryDate);
@@ -117,6 +126,7 @@ class _CreditCardPaymentMethodPageState
                             child: RoundedTextField(
                               title: "Security code",
                               validationType: ValidationType.cvv,
+                              enabled: isFormEnabled,
                               onChange: (securityCode) {
                                 var newState = state.copyWith();
                                 newState.createTokenRequest.securityCode =
@@ -154,7 +164,11 @@ class _CreditCardPaymentMethodPageState
                           ),
                         ),
                         child: Text(
-                          state.createTokenRequest.country ?? '',
+                          state.createTokenRequest.country != null
+                              ? CountryCode.fromCode(
+                                      state.createTokenRequest.country!)!
+                                  .name
+                              : '',
                           style: const TextStyle(
                             fontSize: 16.0,
                             color: Colors.black,
@@ -165,7 +179,6 @@ class _CreditCardPaymentMethodPageState
                         // Show the country code picker when tapped.
                         final picked =
                             await countryPicker.showPicker(context: context);
-                        // Null check
                         if (picked != null) {
                           var newState = state.copyWith();
                           newState.createTokenRequest.country = picked.code;
@@ -183,6 +196,7 @@ class _CreditCardPaymentMethodPageState
                           child: RoundedTextField(
                             title: "Address",
                             validationType: ValidationType.name,
+                            enabled: isFormEnabled,
                             onChange: (address) {
                               var newState = state.copyWith();
                               newState.createTokenRequest.street1 = address;
@@ -191,17 +205,26 @@ class _CreditCardPaymentMethodPageState
                             },
                           ),
                         ),
-                        const Padding(
+                        Padding(
                           padding: EdgeInsets.only(bottom: 20.0),
                           child: RoundedTextField(
-                              title: "City",
-                              validationType: ValidationType.name),
+                            title: "City",
+                            validationType: ValidationType.name,
+                            enabled: isFormEnabled,
+                            onChange: (city) {
+                              var newState = state.copyWith();
+                              newState.createTokenRequest.city = city;
+                              creditCardPaymentMethodController
+                                  .updateState(newState);
+                            },
+                          ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20.0),
                           child: RoundedTextField(
                             title: "State",
                             validationType: ValidationType.name,
+                            enabled: isFormEnabled,
                             onChange: (addressState) {
                               var newState = state.copyWith();
                               newState.createTokenRequest.state = addressState;
@@ -215,6 +238,7 @@ class _CreditCardPaymentMethodPageState
                           child: RoundedTextField(
                             title: "Postal code",
                             validationType: ValidationType.name,
+                            enabled: isFormEnabled,
                             onChange: (postalCode) {
                               var newState = state.copyWith();
                               newState.createTokenRequest.postalCode =
@@ -234,6 +258,11 @@ class _CreditCardPaymentMethodPageState
                             8.0), // Matching rounded corners
                       ),
                     ),
+                    onPressed: !isFormEnabled
+                        ? null
+                        : () {
+                            creditCardPaymentMethodController.createToken();
+                          },
                     child: const Text(
                       'Pay',
                       style: TextStyle(
@@ -241,7 +270,6 @@ class _CreditCardPaymentMethodPageState
                         color: Colors.white, // White text for contrast
                       ),
                     ),
-                    onPressed: () {},
                   ),
                 ],
               );

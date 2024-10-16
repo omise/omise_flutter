@@ -9,6 +9,7 @@ class RoundedTextField extends StatefulWidget {
   final bool obscureText;
   final ValidationType validationType;
   final String? hintText;
+  final bool? enabled;
   final Function(String)? onChange; // Passes the text as an argument
 
   const RoundedTextField({
@@ -20,6 +21,7 @@ class RoundedTextField extends StatefulWidget {
     required this.validationType,
     this.hintText,
     this.onChange,
+    this.enabled = true,
   });
 
   @override
@@ -45,6 +47,7 @@ class _RoundedTextFieldState extends State<RoundedTextField> {
             ),
           ),
         TextField(
+          enabled: widget.enabled,
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,

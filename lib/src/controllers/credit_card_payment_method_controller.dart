@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart'; // Import this for ValueNotifier
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
-import 'package:omise_dart/src/exceptions/omise_api_exception.dart';
 import 'package:omise_flutter/src/utils/validationUtils.dart';
 
 class CreditCardPaymentMethodController
@@ -17,7 +16,8 @@ class CreditCardPaymentMethodController
   /// Takes in a required [omiseApiService].
   CreditCardPaymentMethodController({required this.omiseApiService})
       : super(CreditCardPaymentMethodState(
-            status: Status.idle,
+            capabilityLoadingStatus: Status.idle,
+            tokenLoadingStatus: Status.idle,
             createTokenRequest: CreateTokenRequest(
                 name: "",
                 number: "",
@@ -25,17 +25,18 @@ class CreditCardPaymentMethodController
                 expirationYear: "")));
 
   /// Loads the capabilities from Omise API to get the country.
-  Future<void> loadCapabilities() async {
+  Future<void> loadCapabilities(Capability? capability) async {
     try {
       // Set the status to loading while fetching capabilities
-      _setValue(value.copyWith(status: Status.loading));
+      _setValue(value.copyWith(capabilityLoadingStatus: Status.loading));
 
       // Fetch capabilities from Omise API
-      final capabilities = await omiseApiService.getCapabilities();
+      final capabilities =
+          capability ?? await omiseApiService.getCapabilities();
       value.createTokenRequest.country = capabilities.country;
       _setValue(value.copyWith(
         capability: capabilities,
-        status: Status.success,
+        capabilityLoadingStatus: Status.success,
       ));
     } catch (e) {
       // Handle errors and update the state with an error message
@@ -46,7 +47,34 @@ class CreditCardPaymentMethodController
       } else {
         error = e.toString();
       }
-      _setValue(value.copyWith(status: Status.error, errorMessage: error));
+      _setValue(value.copyWith(
+          capabilityLoadingStatus: Status.error,
+          capabilityErrorMessage: error));
+    }
+  }
+
+  /// Creates a token based on the collected data from the user.
+  Future<void> createToken() async {
+    try {
+      // Set the status to loading while fetching capabilities
+      _setValue(value.copyWith(tokenLoadingStatus: Status.loading));
+      // Create the token using Omise API
+      final token = await omiseApiService.createToken(value.createTokenRequest);
+      _setValue(value.copyWith(
+        token: token,
+        tokenLoadingStatus: Status.success,
+      ));
+    } catch (e) {
+      // Handle errors and update the state with an error message
+      var error = "";
+      log(e.toString());
+      if (e is OmiseApiException) {
+        error = e.message;
+      } else {
+        error = e.toString();
+      }
+      _setValue(value.copyWith(
+          tokenLoadingStatus: Status.error, tokenErrorMessage: error));
     }
   }
 
@@ -78,14 +106,23 @@ class CreditCardPaymentMethodController
 /// State class that holds the values for [CreditCardPaymentMethodController].
 /// Contains the current status, error messages, capabilities...
 class CreditCardPaymentMethodState {
-  /// The current status of the controller, such as idle, loading, success, or error.
-  final Status status;
+  /// The current status of the capability api  call, such as idle, loading, success, or error.
+  final Status capabilityLoadingStatus;
 
   /// Optional error message in case of failure.
-  final String? errorMessage;
+  final String? capabilityErrorMessage;
+
+  /// The current status of the token api call, such as idle, loading, success, or error.
+  final Status tokenLoadingStatus;
+
+  /// Optional error message in case of failure.
+  final String? tokenErrorMessage;
 
   /// The capability object fetched from the API, containing available payment methods.
   final Capability? capability;
+
+  /// The token object fetched from the API.
+  final Token? token;
 
   CreateTokenRequest createTokenRequest;
 
@@ -100,24 +137,35 @@ class CreditCardPaymentMethodState {
 
   /// Constructor for creating a [CreditCardPaymentMethodState].
   CreditCardPaymentMethodState({
-    required this.status,
-    this.errorMessage,
-    this.capability,
+    required this.capabilityLoadingStatus,
+    required this.tokenLoadingStatus,
     required this.createTokenRequest,
+    this.capabilityErrorMessage,
+    this.tokenErrorMessage,
+    this.capability,
+    this.token,
   });
 
   /// Creates a copy of the current state while allowing overriding of
   /// specific fields.
   CreditCardPaymentMethodState copyWith({
-    Status? status,
-    String? errorMessage,
+    Status? capabilityLoadingStatus,
+    String? capabilityErrorMessage,
+    Status? tokenLoadingStatus,
+    String? tokenErrorMessage,
     Capability? capability,
     CreateTokenRequest? createTokenRequest,
+    Token? token,
   }) {
     return CreditCardPaymentMethodState(
-        status: status ?? this.status,
-        errorMessage: errorMessage ?? this.errorMessage,
+        capabilityLoadingStatus:
+            capabilityLoadingStatus ?? this.capabilityLoadingStatus,
+        tokenLoadingStatus: tokenLoadingStatus ?? this.tokenLoadingStatus,
+        tokenErrorMessage: tokenErrorMessage ?? this.tokenErrorMessage,
+        capabilityErrorMessage:
+            capabilityErrorMessage ?? this.capabilityErrorMessage,
         capability: capability ?? this.capability,
-        createTokenRequest: createTokenRequest ?? this.createTokenRequest);
+        createTokenRequest: createTokenRequest ?? this.createTokenRequest,
+        token: token ?? this.token);
   }
 }

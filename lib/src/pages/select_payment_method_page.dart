@@ -118,6 +118,7 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                       MaterialPageRoute(
                           builder: (context) => CreditCardPaymentMethodPage(
                                 omiseApiService: widget.omiseApiService,
+                                capability: state.capability,
                               )),
                     );
                   },

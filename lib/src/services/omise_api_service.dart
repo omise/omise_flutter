@@ -36,4 +36,8 @@ class OmiseApiService {
   Future<Capability> getCapabilities() {
     return omiseApi.capability.get();
   }
+
+  Future<Token> createToken(CreateTokenRequest createTokenRequest) {
+    return omiseApi.tokens.create(createTokenRequest);
+  }
 }
