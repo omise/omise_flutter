@@ -4,6 +4,8 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
+import 'package:omise_flutter/src/utils/expiry_date_formatter.dart';
+import 'package:omise_flutter/src/utils/messgae_display_utils.dart';
 import 'package:omise_flutter/src/widgets/rounded_text_feild.dart';
 
 class CreditCardPaymentMethodPage extends StatefulWidget {
@@ -42,6 +44,16 @@ class _CreditCardPaymentMethodPageState
     super.initState();
 
     creditCardPaymentMethodController.loadCapabilities(widget.capability);
+    creditCardPaymentMethodController.addListener(() {
+      if (creditCardPaymentMethodController.value.tokenLoadingStatus ==
+          Status.error) {
+        MessageDisplayUtils.showSnackBar(context,
+            creditCardPaymentMethodController.value.tokenErrorMessage!);
+      } else if (creditCardPaymentMethodController.value.tokenLoadingStatus ==
+          Status.success) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    });
   }
 
   @override
@@ -77,10 +89,16 @@ class _CreditCardPaymentMethodPageState
                       title: "Card Number",
                       validationType: ValidationType.cardNumber,
                       enabled: isFormEnabled,
+                      keyboardType: TextInputType.number,
+                      useValidationTypeAsKey: true,
                       onChange: (cardNumber) {
                         var newState = state.copyWith();
                         newState.createTokenRequest.number = cardNumber;
                         creditCardPaymentMethodController.updateState(newState);
+                      },
+                      updateValidationList: (fieldKey, isValid) {
+                        creditCardPaymentMethodController
+                            .setTextFieldValidityStatuses(fieldKey, isValid);
                       },
                     ),
                   ),
@@ -90,10 +108,15 @@ class _CreditCardPaymentMethodPageState
                       title: "Name on card",
                       validationType: ValidationType.name,
                       enabled: isFormEnabled,
+                      useValidationTypeAsKey: true,
                       onChange: (name) {
                         var newState = state.copyWith();
                         newState.createTokenRequest.name = name;
                         creditCardPaymentMethodController.updateState(newState);
+                      },
+                      updateValidationList: (fieldKey, isValid) {
+                        creditCardPaymentMethodController
+                            .setTextFieldValidityStatuses(fieldKey, isValid);
                       },
                     ),
                   ),
@@ -101,6 +124,7 @@ class _CreditCardPaymentMethodPageState
                     padding: const EdgeInsets.only(bottom: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
                           child: Padding(
@@ -111,9 +135,16 @@ class _CreditCardPaymentMethodPageState
                               title: "Expiry date",
                               validationType: ValidationType.expiryDate,
                               enabled: isFormEnabled,
+                              inputFormatters: [ExpiryDateFormatter()],
+                              useValidationTypeAsKey: true,
                               onChange: (expiryDate) {
                                 creditCardPaymentMethodController
                                     .setExpiryDate(expiryDate);
+                              },
+                              updateValidationList: (fieldKey, isValid) {
+                                creditCardPaymentMethodController
+                                    .setTextFieldValidityStatuses(
+                                        fieldKey, isValid);
                               },
                             ),
                           ),
@@ -127,12 +158,20 @@ class _CreditCardPaymentMethodPageState
                               title: "Security code",
                               validationType: ValidationType.cvv,
                               enabled: isFormEnabled,
+                              keyboardType: TextInputType.number,
+                              obscureText: true,
+                              useValidationTypeAsKey: true,
                               onChange: (securityCode) {
                                 var newState = state.copyWith();
                                 newState.createTokenRequest.securityCode =
                                     securityCode;
                                 creditCardPaymentMethodController
                                     .updateState(newState);
+                              },
+                              updateValidationList: (fieldKey, isValid) {
+                                creditCardPaymentMethodController
+                                    .setTextFieldValidityStatuses(
+                                        fieldKey, isValid);
                               },
                             ),
                           ),
@@ -149,43 +188,49 @@ class _CreditCardPaymentMethodPageState
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 20),
-                    child: GestureDetector(
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 12.0, horizontal: 16.0),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.0),
-                          border: Border.all(
-                            color: Colors
-                                .grey, // Same as the TextField border color
-                            width: 1.0,
+                  Opacity(
+                    opacity: isFormEnabled ? 1 : 0.5,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: GestureDetector(
+                        onTap: !isFormEnabled
+                            ? null
+                            : () async {
+                                // Show the country code picker when tapped.
+                                final picked = await countryPicker.showPicker(
+                                    context: context);
+                                if (picked != null) {
+                                  var newState = state.copyWith();
+                                  newState.createTokenRequest.country =
+                                      picked.code;
+                                  creditCardPaymentMethodController
+                                      .updateState(newState);
+                                }
+                              },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 12.0, horizontal: 16.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8.0),
+                            border: Border.all(
+                              color: Colors
+                                  .grey, // Same as the TextField border color
+                              width: 1.0,
+                            ),
                           ),
-                        ),
-                        child: Text(
-                          state.createTokenRequest.country != null
-                              ? CountryCode.fromCode(
-                                      state.createTokenRequest.country!)!
-                                  .name
-                              : '',
-                          style: const TextStyle(
-                            fontSize: 16.0,
-                            color: Colors.black,
+                          child: Text(
+                            state.createTokenRequest.country != null
+                                ? CountryCode.fromCode(
+                                        state.createTokenRequest.country!)!
+                                    .name
+                                : '',
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
-                      onTap: () async {
-                        // Show the country code picker when tapped.
-                        final picked =
-                            await countryPicker.showPicker(context: context);
-                        if (picked != null) {
-                          var newState = state.copyWith();
-                          newState.createTokenRequest.country = picked.code;
-                          creditCardPaymentMethodController
-                              .updateState(newState);
-                        }
-                      },
                     ),
                   ),
                   if (state.shouldShowAddressFields)
@@ -195,27 +240,39 @@ class _CreditCardPaymentMethodPageState
                           padding: const EdgeInsets.only(bottom: 20.0),
                           child: RoundedTextField(
                             title: "Address",
-                            validationType: ValidationType.name,
+                            validationType: ValidationType.address,
                             enabled: isFormEnabled,
+                            useValidationTypeAsKey: true,
                             onChange: (address) {
                               var newState = state.copyWith();
                               newState.createTokenRequest.street1 = address;
                               creditCardPaymentMethodController
                                   .updateState(newState);
                             },
+                            updateValidationList: (fieldKey, isValid) {
+                              creditCardPaymentMethodController
+                                  .setTextFieldValidityStatuses(
+                                      fieldKey, isValid);
+                            },
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.only(bottom: 20.0),
+                          padding: const EdgeInsets.only(bottom: 20.0),
                           child: RoundedTextField(
                             title: "City",
-                            validationType: ValidationType.name,
+                            validationType: ValidationType.city,
                             enabled: isFormEnabled,
+                            useValidationTypeAsKey: true,
                             onChange: (city) {
                               var newState = state.copyWith();
                               newState.createTokenRequest.city = city;
                               creditCardPaymentMethodController
                                   .updateState(newState);
+                            },
+                            updateValidationList: (fieldKey, isValid) {
+                              creditCardPaymentMethodController
+                                  .setTextFieldValidityStatuses(
+                                      fieldKey, isValid);
                             },
                           ),
                         ),
@@ -223,7 +280,8 @@ class _CreditCardPaymentMethodPageState
                           padding: const EdgeInsets.only(bottom: 20.0),
                           child: RoundedTextField(
                             title: "State",
-                            validationType: ValidationType.name,
+                            validationType: ValidationType.state,
+                            useValidationTypeAsKey: true,
                             enabled: isFormEnabled,
                             onChange: (addressState) {
                               var newState = state.copyWith();
@@ -231,14 +289,20 @@ class _CreditCardPaymentMethodPageState
                               creditCardPaymentMethodController
                                   .updateState(newState);
                             },
+                            updateValidationList: (fieldKey, isValid) {
+                              creditCardPaymentMethodController
+                                  .setTextFieldValidityStatuses(
+                                      fieldKey, isValid);
+                            },
                           ),
                         ),
                         Padding(
                           padding: const EdgeInsets.only(bottom: 20.0),
                           child: RoundedTextField(
                             title: "Postal code",
-                            validationType: ValidationType.name,
+                            validationType: ValidationType.postalCode,
                             enabled: isFormEnabled,
+                            useValidationTypeAsKey: true,
                             onChange: (postalCode) {
                               var newState = state.copyWith();
                               newState.createTokenRequest.postalCode =
@@ -246,28 +310,37 @@ class _CreditCardPaymentMethodPageState
                               creditCardPaymentMethodController
                                   .updateState(newState);
                             },
+                            updateValidationList: (fieldKey, isValid) {
+                              creditCardPaymentMethodController
+                                  .setTextFieldValidityStatuses(
+                                      fieldKey, isValid);
+                            },
                           ),
                         ),
                       ],
                     ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue, // Filled blue color
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            8.0), // Matching rounded corners
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 20.0),
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue, // Filled blue color
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              8.0), // Matching rounded corners
+                        ),
                       ),
-                    ),
-                    onPressed: !isFormEnabled
-                        ? null
-                        : () {
-                            creditCardPaymentMethodController.createToken();
-                          },
-                    child: const Text(
-                      'Pay',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.white, // White text for contrast
+                      onPressed: !isFormEnabled || !state.isFormValid
+                          // !isFormEnabled
+                          ? null
+                          : () {
+                              creditCardPaymentMethodController.createToken();
+                            },
+                      child: const Text(
+                        'Pay',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          color: Colors.white, // White text for contrast
+                        ),
                       ),
                     ),
                   ),

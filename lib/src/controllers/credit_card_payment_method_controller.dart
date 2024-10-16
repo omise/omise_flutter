@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/foundation.dart'; // Import this for ValueNotifier
+import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
-import 'package:omise_flutter/src/utils/validationUtils.dart';
+import 'package:omise_flutter/src/utils/validation_utils.dart';
 
 class CreditCardPaymentMethodController
     extends ValueNotifier<CreditCardPaymentMethodState> {
@@ -18,6 +19,7 @@ class CreditCardPaymentMethodController
       : super(CreditCardPaymentMethodState(
             capabilityLoadingStatus: Status.idle,
             tokenLoadingStatus: Status.idle,
+            textFieldValidityStatuses: {},
             createTokenRequest: CreateTokenRequest(
                 name: "",
                 number: "",
@@ -69,7 +71,7 @@ class CreditCardPaymentMethodController
       var error = "";
       log(e.toString());
       if (e is OmiseApiException) {
-        error = e.message;
+        error = e.response?.message ?? e.message;
       } else {
         error = e.toString();
       }
@@ -97,6 +99,13 @@ class CreditCardPaymentMethodController
     }
   }
 
+  void setTextFieldValidityStatuses(String key, bool validField) {
+    var newMap = value.textFieldValidityStatuses;
+    newMap[key] = validField;
+    var newState = value.copyWith(textFieldValidityStatuses: newMap);
+    _setValue(newState);
+  }
+
   /// Internal helper function to update the state of [ValueNotifier].
   void _setValue(CreditCardPaymentMethodState state) {
     value = state;
@@ -120,26 +129,38 @@ class CreditCardPaymentMethodState {
 
   /// The capability object fetched from the API, containing available payment methods.
   final Capability? capability;
+  final Map<String, bool> textFieldValidityStatuses;
 
   /// The token object fetched from the API.
   final Token? token;
 
   CreateTokenRequest createTokenRequest;
 
-  var avsCountries = [
+  final avsCountries = [
     CountryCode.fromCode("US")!,
     CountryCode.fromCode("CA"),
     CountryCode.fromCode("GB")!
   ];
 
+  final int avsFields = 8;
+  final int nonAvsFields = 4;
+  int get numberOfFields =>
+      avsCountries.contains(CountryCode.fromCode(createTokenRequest.country))
+          ? avsFields
+          : nonAvsFields;
   bool get shouldShowAddressFields =>
       avsCountries.contains(CountryCode.fromCode(createTokenRequest.country));
+  bool get isFormValid =>
+      textFieldValidityStatuses.values.length == numberOfFields &&
+      textFieldValidityStatuses.values.isNotEmpty &&
+      !textFieldValidityStatuses.values.contains(false);
 
   /// Constructor for creating a [CreditCardPaymentMethodState].
   CreditCardPaymentMethodState({
     required this.capabilityLoadingStatus,
     required this.tokenLoadingStatus,
     required this.createTokenRequest,
+    required this.textFieldValidityStatuses,
     this.capabilityErrorMessage,
     this.tokenErrorMessage,
     this.capability,
@@ -156,16 +177,20 @@ class CreditCardPaymentMethodState {
     Capability? capability,
     CreateTokenRequest? createTokenRequest,
     Token? token,
+    Map<String, bool>? textFieldValidityStatuses,
   }) {
     return CreditCardPaymentMethodState(
-        capabilityLoadingStatus:
-            capabilityLoadingStatus ?? this.capabilityLoadingStatus,
-        tokenLoadingStatus: tokenLoadingStatus ?? this.tokenLoadingStatus,
-        tokenErrorMessage: tokenErrorMessage ?? this.tokenErrorMessage,
-        capabilityErrorMessage:
-            capabilityErrorMessage ?? this.capabilityErrorMessage,
-        capability: capability ?? this.capability,
-        createTokenRequest: createTokenRequest ?? this.createTokenRequest,
-        token: token ?? this.token);
+      capabilityLoadingStatus:
+          capabilityLoadingStatus ?? this.capabilityLoadingStatus,
+      tokenLoadingStatus: tokenLoadingStatus ?? this.tokenLoadingStatus,
+      tokenErrorMessage: tokenErrorMessage ?? this.tokenErrorMessage,
+      capabilityErrorMessage:
+          capabilityErrorMessage ?? this.capabilityErrorMessage,
+      capability: capability ?? this.capability,
+      createTokenRequest: createTokenRequest ?? this.createTokenRequest,
+      token: token ?? this.token,
+      textFieldValidityStatuses:
+          textFieldValidityStatuses ?? this.textFieldValidityStatuses,
+    );
   }
 }

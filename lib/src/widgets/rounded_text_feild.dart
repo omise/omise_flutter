@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
-import 'package:omise_flutter/src/utils/validationUtils.dart';
+import 'package:omise_flutter/src/utils/validation_utils.dart';
 
 class RoundedTextField extends StatefulWidget {
   final TextEditingController? controller;
@@ -10,7 +11,10 @@ class RoundedTextField extends StatefulWidget {
   final ValidationType validationType;
   final String? hintText;
   final bool? enabled;
-  final Function(String)? onChange; // Passes the text as an argument
+  final List<TextInputFormatter>? inputFormatters;
+  final Function(String)? onChange;
+  final Function(String, bool)? updateValidationList;
+  final bool? useValidationTypeAsKey;
 
   const RoundedTextField({
     super.key,
@@ -22,6 +26,9 @@ class RoundedTextField extends StatefulWidget {
     this.hintText,
     this.onChange,
     this.enabled = true,
+    this.inputFormatters,
+    this.updateValidationList,
+    this.useValidationTypeAsKey = false,
   });
 
   @override
@@ -47,10 +54,14 @@ class _RoundedTextFieldState extends State<RoundedTextField> {
             ),
           ),
         TextField(
+          key: widget.useValidationTypeAsKey == true
+              ? Key(widget.validationType.name)
+              : null,
           enabled: widget.enabled,
           controller: widget.controller,
           keyboardType: widget.keyboardType,
           obscureText: widget.obscureText,
+          inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
             hintText: widget.hintText,
             border: OutlineInputBorder(
@@ -79,6 +90,13 @@ class _RoundedTextFieldState extends State<RoundedTextField> {
               _errorMessage =
                   ValidationUtils.validateInput(widget.validationType, value);
             });
+            if (widget.updateValidationList != null) {
+              if (_errorMessage == null) {
+                widget.updateValidationList!(widget.validationType.name, true);
+              } else {
+                widget.updateValidationList!(widget.validationType.name, false);
+              }
+            }
             if (widget.onChange != null) {
               widget.onChange!(value);
             }
