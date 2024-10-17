@@ -8,13 +8,20 @@ import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/utils/validation_utils.dart';
 
+/// Controller for managing credit card payment method.
+///
+/// This class is responsible for handling the state and interactions
+/// related to credit card payments, including loading capabilities,
+/// creating tokens, and validating input fields. It extends
+/// [ValueNotifier] to allow for state management and UI updates.
 class CreditCardPaymentMethodController
     extends ValueNotifier<CreditCardPaymentMethodState> {
-  /// Instance of [OmiseApiService] used to interact with the omise dart package.
+  /// Instance of [OmiseApiService] used to interact with the Omise Dart package.
   final OmiseApiService omiseApiService;
 
   /// Constructor for initializing [CreditCardPaymentMethodController].
-  /// Takes in a required [omiseApiService].
+  ///
+  /// Takes in a required [omiseApiService] to facilitate API interactions.
   CreditCardPaymentMethodController({required this.omiseApiService})
       : super(CreditCardPaymentMethodState(
             capabilityLoadingStatus: Status.idle,
@@ -26,7 +33,9 @@ class CreditCardPaymentMethodController
                 expirationMonth: "",
                 expirationYear: "")));
 
-  /// Loads the capabilities from Omise API to get the country.
+  /// Loads the capabilities from the Omise API to get the country.
+  ///
+  /// Optionally accepts a [Capability] parameter to use predefined capabilities.
   Future<void> loadCapabilities({Capability? capability}) async {
     try {
       // Set the status to loading while fetching capabilities
@@ -58,8 +67,9 @@ class CreditCardPaymentMethodController
   /// Creates a token based on the collected data from the user.
   Future<void> createToken() async {
     try {
-      // Set the status to loading while fetching capabilities
+      // Set the status to loading while creating the token
       _setValue(value.copyWith(tokenLoadingStatus: Status.loading));
+
       // Create the token using Omise API
       final token = await omiseApiService.createToken(value.createTokenRequest);
       _setValue(value.copyWith(
@@ -80,10 +90,15 @@ class CreditCardPaymentMethodController
     }
   }
 
+  /// Updates the state with a new [CreditCardPaymentMethodState].
   void updateState(CreditCardPaymentMethodState newState) {
     _setValue(newState);
   }
 
+  /// Sets the expiration date for the credit card.
+  ///
+  /// Parses the given [expiryDate] in the format MM/YY and updates
+  /// the corresponding fields in the create token request.
   void setExpiryDate(String expiryDate) {
     if (ValidationUtils.expiryDateRegEx.hasMatch(expiryDate)) {
       // Split the expiryDate into month and year
@@ -99,6 +114,10 @@ class CreditCardPaymentMethodController
     }
   }
 
+  /// Updates the validity status of a text field.
+  ///
+  /// Accepts a [key] representing the text field and a [validField]
+  /// indicating whether the field is valid or not.
   void setTextFieldValidityStatuses(String key, bool validField) {
     var newMap = value.textFieldValidityStatuses;
     newMap[key] = validField;
@@ -113,15 +132,17 @@ class CreditCardPaymentMethodController
 }
 
 /// State class that holds the values for [CreditCardPaymentMethodController].
-/// Contains the current status, error messages, capabilities...
+///
+/// Contains the current loading status, error messages, capabilities,
+/// and the create token request data.
 class CreditCardPaymentMethodState {
-  /// The current status of the capability api  call, such as idle, loading, success, or error.
+  /// The current status of the capability API call, such as idle, loading, success, or error.
   final Status capabilityLoadingStatus;
 
   /// Optional error message in case of failure.
   final String? capabilityErrorMessage;
 
-  /// The current status of the token api call, such as idle, loading, success, or error.
+  /// The current status of the token API call, such as idle, loading, success, or error.
   final Status tokenLoadingStatus;
 
   /// Optional error message in case of failure.
@@ -129,27 +150,38 @@ class CreditCardPaymentMethodState {
 
   /// The capability object fetched from the API, containing available payment methods.
   final Capability? capability;
+
+  /// Map to hold the validity status of text fields.
   final Map<String, bool> textFieldValidityStatuses;
 
   /// The token object fetched from the API.
   final Token? token;
 
+  /// Request object to create a token.
   CreateTokenRequest createTokenRequest;
 
+  /// List of countries that support AVS (Address Verification Service).
   final avsCountries = [
     CountryCode.fromCode("US")!,
     CountryCode.fromCode("CA"),
     CountryCode.fromCode("GB")!
   ];
 
+  /// Number of fields required for AVS and non-AVS countries.
   final int avsFields = 8;
   final int nonAvsFields = 4;
+
+  /// Gets the number of fields required based on the country.
   int get numberOfFields =>
       avsCountries.contains(CountryCode.fromCode(createTokenRequest.country))
           ? avsFields
           : nonAvsFields;
+
+  /// Determines whether to show address fields based on the country.
   bool get shouldShowAddressFields =>
       avsCountries.contains(CountryCode.fromCode(createTokenRequest.country));
+
+  /// Checks if the form is valid based on text field validity statuses.
   bool get isFormValid =>
       textFieldValidityStatuses.values.length == numberOfFields &&
       textFieldValidityStatuses.values.isNotEmpty &&
@@ -167,8 +199,7 @@ class CreditCardPaymentMethodState {
     this.token,
   });
 
-  /// Creates a copy of the current state while allowing overriding of
-  /// specific fields.
+  /// Creates a copy of the current state while allowing overriding of specific fields.
   CreditCardPaymentMethodState copyWith({
     Status? capabilityLoadingStatus,
     String? capabilityErrorMessage,
