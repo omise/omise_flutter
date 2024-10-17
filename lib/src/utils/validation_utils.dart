@@ -45,7 +45,7 @@ class ValidationUtils {
   }
 
   static String? validateName(String? value, {String? fieldName}) {
-    if (value == null || value.isEmpty) {
+    if (value == null || value.trim().isEmpty) {
       return '${fieldName ?? "Name"} is required';
     }
     return null;

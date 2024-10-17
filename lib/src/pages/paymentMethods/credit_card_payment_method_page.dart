@@ -43,7 +43,8 @@ class _CreditCardPaymentMethodPageState
   void initState() {
     super.initState();
 
-    creditCardPaymentMethodController.loadCapabilities(widget.capability);
+    creditCardPaymentMethodController.loadCapabilities(
+        capability: widget.capability);
     creditCardPaymentMethodController.addListener(() {
       if (creditCardPaymentMethodController.value.tokenLoadingStatus ==
           Status.error) {

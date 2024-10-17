@@ -27,7 +27,7 @@ class CreditCardPaymentMethodController
                 expirationYear: "")));
 
   /// Loads the capabilities from Omise API to get the country.
-  Future<void> loadCapabilities(Capability? capability) async {
+  Future<void> loadCapabilities({Capability? capability}) async {
     try {
       // Set the status to loading while fetching capabilities
       _setValue(value.copyWith(capabilityLoadingStatus: Status.loading));
