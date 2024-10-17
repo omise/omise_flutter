@@ -32,7 +32,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final omisePayment = OmisePayment(publicKey: "pkey", enableDebug: false);
+  final omisePayment = OmisePayment(publicKey: "pkey");
   void _openPaymentMethodsPage() {
     Navigator.push(
       context,
