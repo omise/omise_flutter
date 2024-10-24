@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart' as omiseDart;
+import 'package:omise_flutter/omise_flutter.dart';
 import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
@@ -16,6 +17,11 @@ void main() {
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
     mockController = MockCreditCardPaymentMethodController();
+  });
+  setUpAll(() {
+    // The token request is accessed from the internal value of the controller making it hard to mock without mocking previously tested entities
+    // so when the CreateTokenRequest type needs to be used it will be automatically replaced with this mock
+    registerFallbackValue(MockCreateTokenRequest());
   });
 
   // Define mock objects required for CreditCardPaymentMethodState
@@ -488,4 +494,123 @@ void main() {
     expect(mockController.value.createTokenRequest.state, "NY");
     expect(mockController.value.createTokenRequest.postalCode, "54321");
   });
+  testWidgets(
+    'After token creation, the result is returned to the integrator when the "Pay" button is clicked',
+    (WidgetTester tester) async {
+      OmisePaymentResult?
+          capturedResult; // To capture the result from the navigator pop
+      final controller = CreditCardPaymentMethodController(
+        omiseApiService: mockOmiseApiService,
+      );
+      final mockCapability = omiseDart.Capability(
+        object: 'capability',
+        location: '/capability',
+        banks: [omiseDart.Bank.scb, omiseDart.Bank.bbl],
+        limits: omiseDart.Limits(
+          chargeAmount: omiseDart.Amount(max: 100000, min: 100),
+          transferAmount: omiseDart.Amount(max: 50000, min: 500),
+          installmentAmount: omiseDart.InstallmentAmount(min: 1000),
+        ),
+        paymentMethods: [
+          omiseDart.PaymentMethod(
+            object: 'payment_method',
+            name: omiseDart.PaymentMethodName.card,
+            currencies: [omiseDart.Currency.thb],
+            banks: [omiseDart.Bank.scb],
+          ),
+          omiseDart.PaymentMethod(
+            object: 'payment_method',
+            name: omiseDart.PaymentMethodName.promptpay,
+            currencies: [omiseDart.Currency.thb],
+            banks: [omiseDart.Bank.bbl],
+          ),
+        ],
+        tokenizationMethods: [omiseDart.TokenizationMethod.applepay],
+        zeroInterestInstallments: false,
+        country: 'TH',
+      );
+
+      when(() => mockOmiseApiService.getCapabilities())
+          .thenAnswer((_) async => mockCapability);
+      final mockToken = omiseDart.Token(
+        livemode: true,
+        chargeStatus: "status",
+        createdAt: "createdAt",
+        used: false,
+        object: 'token',
+        id: 'tokn_test_123',
+        card: omiseDart.Card(
+            object: "object",
+            id: "id",
+            livemode: true,
+            deleted: false,
+            brand: "brand",
+            fingerprint: "fingerprint",
+            lastDigits: "lastDigits",
+            name: "name",
+            expirationMonth: 09,
+            expirationYear: 25,
+            securityCodeCheck: true,
+            createdAt: "createdAt"),
+      );
+
+      when(() => mockOmiseApiService.createToken(any()))
+          .thenAnswer((_) async => mockToken);
+
+      // Wrap the test in a Navigator to capture the result from the pop
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              return ElevatedButton(
+                onPressed: () async {
+                  final result = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => CreditCardPaymentMethodPage(
+                        omiseApiService: mockOmiseApiService,
+                        creditCardPaymentMethodController: controller,
+                      ),
+                    ),
+                  );
+                  capturedResult =
+                      result; // Capture the result from Navigator.pop
+                },
+                child: const Text('Open Credit Card Page'),
+              );
+            },
+          ),
+        ),
+      );
+
+      // Simulate opening the credit card page
+      await tester.tap(find.text('Open Credit Card Page'));
+      await tester.pumpAndSettle(); // Wait for the credit card page to open
+      // Find the TextFields
+      final cardNumberField = find.byKey(const Key('cardNumber'));
+      final expiryDateField = find.byKey(const Key('expiryDate'));
+      final cvvField = find.byKey(const Key('cvv'));
+      final nameField = find.byKey(const Key('name'));
+
+      // Type into the text fields
+      await tester.enterText(cardNumberField, '4242424242424242');
+      await tester.enterText(expiryDateField, '12/25');
+      await tester.enterText(cvvField, '123');
+      await tester.enterText(nameField, 'John Doe');
+      // Simulate pressing the "Pay" button
+      await tester.pumpAndSettle();
+      final payButton = find.byType(ElevatedButton);
+      expect(tester.widget<ElevatedButton>(payButton).enabled, isTrue);
+      await tester.tap(payButton);
+
+      // Wait for the token creation process to complete and the page to pop
+      await tester.pumpAndSettle();
+
+      // Check if the result is captured correctly after the page is popped
+      expect(capturedResult?.token?.id,
+          equals(mockToken.id)); // Verify result from pop
+
+      // Ensure the CreditCardPaymentMethodPage is no longer in the widget tree (i.e., the page was popped)
+      expect(find.byType(CreditCardPaymentMethodPage), findsNothing);
+    },
+  );
 }

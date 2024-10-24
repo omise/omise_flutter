@@ -25,7 +25,7 @@ class MockPaymentMethodSelectorController extends Mock
 class MockCreditCardPaymentMethodController extends Mock
     implements CreditCardPaymentMethodController {}
 
-class MockCreateTokenRequest extends Fake implements CreateTokenRequest {}
+class MockCreateTokenRequest extends Mock implements CreateTokenRequest {}
 
 // Mock class for callback
 class MockCallback extends Mock {
