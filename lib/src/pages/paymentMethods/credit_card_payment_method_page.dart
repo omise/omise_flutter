@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/utils/expiry_date_formatter.dart';
 import 'package:omise_flutter/src/utils/messgae_display_utils.dart';
@@ -66,7 +67,10 @@ class _CreditCardPaymentMethodPageState
             creditCardPaymentMethodController.value.tokenErrorMessage!);
       } else if (creditCardPaymentMethodController.value.tokenLoadingStatus ==
           Status.success) {
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        while (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop(OmisePaymentResult(
+              token: creditCardPaymentMethodController.value.token));
+        }
       }
     });
   }

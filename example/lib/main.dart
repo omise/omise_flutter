@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:omise_flutter/omise_flutter.dart';
 
@@ -32,9 +34,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final omisePayment = OmisePayment(publicKey: "pkey");
-  void _openPaymentMethodsPage() {
-    Navigator.push(
+  final omisePayment = OmisePayment(publicKey: "pkey_test_5tnt1gxjf6ecypmkfi8");
+  Future<void> _openPaymentMethodsPage() async {
+    final OmisePaymentResult? omisePaymentResult =
+        await Navigator.push<OmisePaymentResult>(
       context,
       MaterialPageRoute(
           builder: (context) =>
@@ -42,6 +45,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 PaymentMethodName.card,
               ])),
     );
+    if (omisePaymentResult == null) {
+      log('No payment');
+    } else {
+      if (omisePaymentResult.token != null) {
+        log(omisePaymentResult.token!.id);
+      }
+      // Handle other payment results like source creation
+    }
   }
 
   @override
