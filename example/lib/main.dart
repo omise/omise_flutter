@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final omisePayment = OmisePayment(publicKey: "pkey_test_5tnt1gxjf6ecypmkfi8");
+  final omisePayment = OmisePayment(publicKey: "pkey");
   Future<void> _openPaymentMethodsPage() async {
     final OmisePaymentResult? omisePaymentResult =
         await Navigator.push<OmisePaymentResult>(
