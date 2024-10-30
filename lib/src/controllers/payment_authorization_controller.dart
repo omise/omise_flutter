@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+typedef LaunchUrlFunction = Future<void> Function(Uri uri, {LaunchMode mode});
+
 /// [PaymentAuthorizationController] manages the authorization flow for payments
 /// within a WebView, using [ValueNotifier] to notify listeners of state updates.
 class PaymentAuthorizationController
@@ -13,10 +15,15 @@ class PaymentAuthorizationController
   /// Indicates if debugging logs should be enabled.
   final bool? enableDebug;
 
+  // Added for testing purposes
+  final LaunchUrlFunction launchUrlFunction;
+
   /// Creates an instance of [PaymentAuthorizationController], initializing the
   /// controller state to [idle] and enabling debug logging if specified.
-  PaymentAuthorizationController({this.enableDebug = false})
-      : super(PaymentAuthorizationState(
+  PaymentAuthorizationController({
+    this.enableDebug = false,
+    this.launchUrlFunction = launchUrl,
+  }) : super(PaymentAuthorizationState(
             webViewLoadingStatus: Status.idle,
             enableDebug: enableDebug ?? false));
 
@@ -36,12 +43,12 @@ class PaymentAuthorizationController
   Future<void> openDeepLink() async {
     try {
       final uri = Uri.parse(value.currentWebViewUrl!);
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+      await launchUrlFunction(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (enableDebug == true) {
         log("Unable to launch deep link",
-            error:
-                jsonEncode({"error": e, "deepLink": value.currentWebViewUrl}));
+            error: jsonEncode(
+                {"error": e.toString(), "deepLink": value.currentWebViewUrl}));
       }
     }
   }

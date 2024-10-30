@@ -56,14 +56,24 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _openAuthorizePaymentPage() async {
-    await Navigator.push(
+    final OmiseAuthorizationResult? omiseAuthorizationResult =
+        await Navigator.push<OmiseAuthorizationResult>(
       context,
       MaterialPageRoute(
           builder: (context) => omisePayment.authorizePayment(
-              authorizeUri:
-                  "https://pay.staging-omise.co/payments/pay2_61kae8pl93ifevzvzn0/authorize",
-              expectedReturnUrls: ["https://www.example.com/complete"])),
+                authorizeUri: Uri.parse(
+                    "https://pay.staging-omise.co/payments/pay2_61kae8pl93ifevzvzn0/authorize"),
+                expectedReturnUrls: ["https://www.example.com/complete"],
+              )),
     );
+    if (omiseAuthorizationResult != null) {
+      if (omiseAuthorizationResult.isWebViewAuthorized == true) {
+        // This indicates that the payment has been authorized using the expected flow, you can check the status using your backend integration.
+        // If you receive null/false this does not mean that the payment has not been authorized, you should check the status of the payment
+        // after the authorization page has been closed.
+        log("Payment authorized");
+      }
+    }
   }
 
   @override

@@ -62,7 +62,7 @@ class OmisePayment {
   ///
   /// Returns a [Widget] that represents the payment authorization page.
   Widget authorizePayment({
-    required String authorizeUri,
+    required Uri authorizeUri,
     List<String>? expectedReturnUrls,
   }) {
     return PaymentAuthorizationPage(

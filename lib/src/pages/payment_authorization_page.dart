@@ -11,8 +11,8 @@ import 'package:webview_flutter/webview_flutter.dart';
 /// This page displays the authorization URL and manages navigation within the WebView.
 /// It supports detecting expected return URLs and launching external links.
 class PaymentAuthorizationPage extends StatefulWidget {
-  /// The URL to be loaded in the WebView for authorization.
-  final String authorizeUri;
+  /// The URI to be loaded in the WebView for authorization.
+  final Uri authorizeUri;
 
   /// A list of URLs that are considered valid return URLs for the authorization flow.
   final List<String>? expectedReturnUrls;
@@ -23,6 +23,9 @@ class PaymentAuthorizationPage extends StatefulWidget {
   /// Allows passing an existing instance of [PaymentAuthorizationController] for easier testing.
   final PaymentAuthorizationController? paymentAuthorizationController;
 
+  // custom WebViewController for testing
+  final WebViewController? customWebViewController;
+
   /// Constructs a [PaymentAuthorizationPage] with the required authorization URL
   /// and optional expected return URLs, controller, and debug mode.
   const PaymentAuthorizationPage({
@@ -31,6 +34,7 @@ class PaymentAuthorizationPage extends StatefulWidget {
     this.paymentAuthorizationController,
     this.enableDebug = false,
     super.key,
+    this.customWebViewController,
   });
 
   @override
@@ -40,7 +44,7 @@ class PaymentAuthorizationPage extends StatefulWidget {
 
 class _PaymentAuthorizationPageState extends State<PaymentAuthorizationPage> {
   /// Controller to manage WebView navigation and interactions.
-  late final WebViewController _webViewController;
+  late final WebViewController webViewController;
 
   /// Controller to manage the state of payment authorization and update UI based on status.
   late final PaymentAuthorizationController paymentAuthorizationController;
@@ -48,7 +52,6 @@ class _PaymentAuthorizationPageState extends State<PaymentAuthorizationPage> {
   @override
   void initState() {
     super.initState();
-
     // Initialize the payment authorization controller, or use the provided one.
     paymentAuthorizationController = widget.paymentAuthorizationController ??
         PaymentAuthorizationController(enableDebug: widget.enableDebug);
@@ -59,7 +62,7 @@ class _PaymentAuthorizationPageState extends State<PaymentAuthorizationPage> {
         .copyWith(expectedReturnUrls: widget.expectedReturnUrls));
 
     // Set up the WebView controller with initial settings and navigation handling.
-    _webViewController = WebViewController()
+    webViewController = widget.customWebViewController ?? WebViewController()
       ..setBackgroundColor(Colors.white)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
@@ -114,32 +117,46 @@ class _PaymentAuthorizationPageState extends State<PaymentAuthorizationPage> {
         ),
       )
       // Load the initial authorization URL.
-      ..loadRequest(Uri.parse(widget.authorizeUri));
+      ..loadRequest(widget.authorizeUri);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        title: const Text('Secure Checkout'),
-      ),
-      body: Stack(
-        children: [
-          // Display the WebView within the page.
-          WebViewWidget(controller: _webViewController),
-          // Show a loading indicator based on the WebView loading status.
-          ValueListenableBuilder(
-              valueListenable: paymentAuthorizationController,
-              builder: (context, state, _) {
-                if (state.webViewLoadingStatus == Status.loading) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                return Container();
-              })
-        ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, data) {
+        // This means that the user exited using the phone's native integration (back gestures)
+        if (!didPop) {
+          if (data == null) {
+            Navigator.pop(
+                context, OmiseAuthorizationResult(isWebViewAuthorized: false));
+          } else {
+            Navigator.pop(context, data);
+          }
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          title: const Text('Secure Checkout'),
+        ),
+        body: Stack(
+          children: [
+            // Display the WebView within the page.
+            WebViewWidget(controller: webViewController),
+            // Show a loading indicator based on the WebView loading status.
+            ValueListenableBuilder(
+                valueListenable: paymentAuthorizationController,
+                builder: (context, state, _) {
+                  if (state.webViewLoadingStatus == Status.loading) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return Container();
+                })
+          ],
+        ),
       ),
     );
   }
