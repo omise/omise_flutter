@@ -34,7 +34,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final omisePayment = OmisePayment(publicKey: "pkey");
+  final omisePayment = OmisePayment(publicKey: "pkey", enableDebug: true);
   Future<void> _openPaymentMethodsPage() async {
     final OmisePaymentResult? omisePaymentResult =
         await Navigator.push<OmisePaymentResult>(
@@ -53,6 +53,17 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       // Handle other payment results like source creation
     }
+  }
+
+  Future<void> _openAuthorizePaymentPage() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => omisePayment.authorizePayment(
+              authorizeUri:
+                  "https://pay.staging-omise.co/payments/pay2_61kae8pl93ifevzvzn0/authorize",
+              expectedReturnUrls: ["https://www.example.com/complete"])),
+    );
   }
 
   @override
@@ -78,6 +89,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     horizontal: 32.0, vertical: 12.0),
               ),
               child: const Text('Choose payment method'),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _openAuthorizePaymentPage();
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0, vertical: 12.0),
+              ),
+              child: const Text('Authorize payment'),
             )
           ],
         ),
