@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
+import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
 import 'package:omise_flutter/src/pages/select_payment_method_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
@@ -8,6 +9,8 @@ import 'package:omise_flutter/src/services/omise_api_service.dart';
 /// using the Omise API. It initializes the necessary
 /// services and provides a way to select payment methods.
 class OmisePayment {
+  final bool? enableDebug;
+
   /// Creates an instance of [OmisePayment].
   ///
   /// Requires a [publicKey] for authenticating requests to the Omise API.
@@ -16,7 +19,7 @@ class OmisePayment {
   /// logs for API requests and responses.
   OmisePayment({
     required String publicKey,
-    bool? enableDebug,
+    this.enableDebug = false,
   }) {
     // Initialize the OmiseApiService with the provided public key
     // and debug settings.
@@ -44,6 +47,28 @@ class OmisePayment {
       omiseApiService: omiseApiService, // Pass the Omise API service
       selectedPaymentMethods:
           selectedPaymentMethods, // Pass any pre-selected methods
+    );
+  }
+
+  /// Creates and returns a [PaymentAuthorizationPage] widget.
+  ///
+  /// This function is responsible for creating a payment authorization page
+  /// that displays a WebView allowing the user to authorize a payment.
+  ///
+  /// - [authorizeUri] (required): The URL to be loaded in the WebView for
+  ///   payment authorization.
+  /// - [expectedReturnUrls] (optional): A list of return URLs to detect when the
+  ///   payment authorization is complete and to close the WebView accordingly.
+  ///
+  /// Returns a [Widget] that represents the payment authorization page.
+  Widget authorizePayment({
+    required Uri authorizeUri,
+    List<String>? expectedReturnUrls,
+  }) {
+    return PaymentAuthorizationPage(
+      authorizeUri: authorizeUri,
+      expectedReturnUrls: expectedReturnUrls,
+      enableDebug: enableDebug,
     );
   }
 }
