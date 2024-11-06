@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(
           builder: (context) => omisePayment.authorizePayment(
                 authorizeUri: Uri.parse(
-                    "https://yourAuthUri"), // Replace with actual authorization URL
+                    "https://3dsms.staging-omise.co/payments/pay2_61mtfxeqe8e5zbdilyn/authorize"), // Replace with actual authorization URL
                 expectedReturnUrls: [
                   "https://www.example.com/complete"
                 ], // Expected return URL after authorization

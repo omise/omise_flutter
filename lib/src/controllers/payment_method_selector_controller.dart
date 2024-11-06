@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart'; // Import this for ValueNotifier
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
-import 'package:omise_dart/src/exceptions/omise_api_exception.dart';
 
 /// The [PaymentMethodSelectorController] manages the state and logic for
 /// filtering and retrieving payment methods from Omise API.

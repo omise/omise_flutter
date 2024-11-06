@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:omise_dart/omise_dart.dart' as omiseDart;
+import 'package:omise_dart/omise_dart.dart'
+    as omise_dart; // avoid name conflict in this file
 import 'package:omise_flutter/omise_flutter.dart';
 import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
@@ -25,21 +26,21 @@ void main() {
   });
 
   // Define mock objects required for CreditCardPaymentMethodState
-  final mockCreateTokenRequest = omiseDart.CreateTokenRequest(
+  final mockCreateTokenRequest = omise_dart.CreateTokenRequest(
     number: '4242424242424242',
     expirationMonth: "12",
     expirationYear: "25",
     securityCode: '123',
     name: "name",
   );
-  final mockToken = omiseDart.Token(
+  final mockToken = omise_dart.Token(
       livemode: true,
-      chargeStatus: "status",
-      createdAt: "createdAt",
+      chargeStatus: omise_dart.ChargeStatus.pending,
+      createdAt: DateTime.now(),
       used: false,
       object: 'token',
       id: 'tokn_test_123',
-      card: omiseDart.Card(
+      card: omise_dart.Card(
           object: "object",
           id: "id",
           livemode: true,
@@ -367,30 +368,30 @@ void main() {
     when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
       capabilityLoadingStatus: Status.success,
       tokenLoadingStatus: Status.idle,
-      capability: omiseDart.Capability(
+      capability: omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omiseDart.Bank.scb, omiseDart.Bank.bbl],
-        limits: omiseDart.Limits(
-          chargeAmount: omiseDart.Amount(max: 100000, min: 100),
-          transferAmount: omiseDart.Amount(max: 50000, min: 500),
-          installmentAmount: omiseDart.InstallmentAmount(min: 1000),
+        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        limits: omise_dart.Limits(
+          chargeAmount: omise_dart.Amount(max: 100000, min: 100),
+          transferAmount: omise_dart.Amount(max: 50000, min: 500),
+          installmentAmount: omise_dart.InstallmentAmount(min: 1000),
         ),
         paymentMethods: [
-          omiseDart.PaymentMethod(
+          omise_dart.PaymentMethod(
             object: 'payment_method',
-            name: omiseDart.PaymentMethodName.card,
-            currencies: [omiseDart.Currency.thb],
-            banks: [omiseDart.Bank.scb],
+            name: omise_dart.PaymentMethodName.card,
+            currencies: [omise_dart.Currency.thb],
+            banks: [omise_dart.Bank.scb],
           ),
-          omiseDart.PaymentMethod(
+          omise_dart.PaymentMethod(
             object: 'payment_method',
-            name: omiseDart.PaymentMethodName.promptpay,
-            currencies: [omiseDart.Currency.thb],
-            banks: [omiseDart.Bank.bbl],
+            name: omise_dart.PaymentMethodName.promptpay,
+            currencies: [omise_dart.Currency.thb],
+            banks: [omise_dart.Bank.bbl],
           ),
         ],
-        tokenizationMethods: [omiseDart.TokenizationMethod.applepay],
+        tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
         zeroInterestInstallments: false,
         country: 'CA',
       ),
@@ -432,30 +433,30 @@ void main() {
     when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
       capabilityLoadingStatus: Status.success,
       tokenLoadingStatus: Status.idle,
-      capability: omiseDart.Capability(
+      capability: omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omiseDart.Bank.scb, omiseDart.Bank.bbl],
-        limits: omiseDart.Limits(
-          chargeAmount: omiseDart.Amount(max: 100000, min: 100),
-          transferAmount: omiseDart.Amount(max: 50000, min: 500),
-          installmentAmount: omiseDart.InstallmentAmount(min: 1000),
+        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        limits: omise_dart.Limits(
+          chargeAmount: omise_dart.Amount(max: 100000, min: 100),
+          transferAmount: omise_dart.Amount(max: 50000, min: 500),
+          installmentAmount: omise_dart.InstallmentAmount(min: 1000),
         ),
         paymentMethods: [
-          omiseDart.PaymentMethod(
+          omise_dart.PaymentMethod(
             object: 'payment_method',
-            name: omiseDart.PaymentMethodName.card,
-            currencies: [omiseDart.Currency.thb],
-            banks: [omiseDart.Bank.scb],
+            name: omise_dart.PaymentMethodName.card,
+            currencies: [omise_dart.Currency.thb],
+            banks: [omise_dart.Bank.scb],
           ),
-          omiseDart.PaymentMethod(
+          omise_dart.PaymentMethod(
             object: 'payment_method',
-            name: omiseDart.PaymentMethodName.promptpay,
-            currencies: [omiseDart.Currency.thb],
-            banks: [omiseDart.Bank.bbl],
+            name: omise_dart.PaymentMethodName.promptpay,
+            currencies: [omise_dart.Currency.thb],
+            banks: [omise_dart.Bank.bbl],
           ),
         ],
-        tokenizationMethods: [omiseDart.TokenizationMethod.applepay],
+        tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
         zeroInterestInstallments: false,
         country: 'CA',
       ),
@@ -502,44 +503,44 @@ void main() {
       final controller = CreditCardPaymentMethodController(
         omiseApiService: mockOmiseApiService,
       );
-      final mockCapability = omiseDart.Capability(
+      final mockCapability = omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omiseDart.Bank.scb, omiseDart.Bank.bbl],
-        limits: omiseDart.Limits(
-          chargeAmount: omiseDart.Amount(max: 100000, min: 100),
-          transferAmount: omiseDart.Amount(max: 50000, min: 500),
-          installmentAmount: omiseDart.InstallmentAmount(min: 1000),
+        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        limits: omise_dart.Limits(
+          chargeAmount: omise_dart.Amount(max: 100000, min: 100),
+          transferAmount: omise_dart.Amount(max: 50000, min: 500),
+          installmentAmount: omise_dart.InstallmentAmount(min: 1000),
         ),
         paymentMethods: [
-          omiseDart.PaymentMethod(
+          omise_dart.PaymentMethod(
             object: 'payment_method',
-            name: omiseDart.PaymentMethodName.card,
-            currencies: [omiseDart.Currency.thb],
-            banks: [omiseDart.Bank.scb],
+            name: omise_dart.PaymentMethodName.card,
+            currencies: [omise_dart.Currency.thb],
+            banks: [omise_dart.Bank.scb],
           ),
-          omiseDart.PaymentMethod(
+          omise_dart.PaymentMethod(
             object: 'payment_method',
-            name: omiseDart.PaymentMethodName.promptpay,
-            currencies: [omiseDart.Currency.thb],
-            banks: [omiseDart.Bank.bbl],
+            name: omise_dart.PaymentMethodName.promptpay,
+            currencies: [omise_dart.Currency.thb],
+            banks: [omise_dart.Bank.bbl],
           ),
         ],
-        tokenizationMethods: [omiseDart.TokenizationMethod.applepay],
+        tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
         zeroInterestInstallments: false,
         country: 'TH',
       );
 
       when(() => mockOmiseApiService.getCapabilities())
           .thenAnswer((_) async => mockCapability);
-      final mockToken = omiseDart.Token(
+      final mockToken = omise_dart.Token(
         livemode: true,
-        chargeStatus: "status",
-        createdAt: "createdAt",
+        chargeStatus: omise_dart.ChargeStatus.pending,
+        createdAt: DateTime.now(),
         used: false,
         object: 'token',
         id: 'tokn_test_123',
-        card: omiseDart.Card(
+        card: omise_dart.Card(
             object: "object",
             id: "id",
             livemode: true,

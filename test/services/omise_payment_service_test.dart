@@ -4,6 +4,7 @@ import 'package:omise_flutter/src/pages/select_payment_method_page.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
 import 'package:omise_flutter/omise_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+// ignore: depend_on_referenced_packages
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 void main() {
