@@ -46,8 +46,8 @@ class OmiseApiService {
   ///   A [String] containing the user agent.
   String getUserAgent() {
     const sdkVersion = PackageInfo.packageVersion;
-    const packageName = PackageInfo.packageName;
-    return 'dart/${Platform.version} $packageName/$sdkVersion (${Platform.operatingSystem} ${Platform.operatingSystemVersion})';
+    const userAgentIdentifier = PackageInfo.userAgentIdentifier;
+    return 'dart/${Platform.version} $userAgentIdentifier/$sdkVersion (${Platform.operatingSystem} ${Platform.operatingSystemVersion})';
   }
 
   /// Retrieves the capabilities of the Omise API, which includes
