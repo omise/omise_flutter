@@ -1,0 +1,54 @@
+name: Test & Publish
+
+on:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+*"
+
+jobs:
+  test_and_validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version: "3.24.0"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze (Check if distributable for flutter)
+        run: flutter analyze
+
+      - name: Run Tests
+        run: flutter test
+
+      - name: Analyze (Check if example is distributable for Flutter)
+        run: |
+          cd example/
+          flutter analyze
+
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the repository
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version: "3.24.0"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Publish - dry run
+        run: flutter pub publish --dry-run
+
+      - name: Publish to pub.dev
+        run: flutter pub publish -f

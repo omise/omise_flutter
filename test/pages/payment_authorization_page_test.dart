@@ -4,8 +4,11 @@ import 'package:mocktail/mocktail.dart';
 import 'package:omise_flutter/omise_flutter.dart';
 import 'package:omise_flutter/src/controllers/payment_authorization_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
-import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
+
+// ignore: depend_on_referenced_packages
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+// ignore: depend_on_referenced_packages
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
 
 import '../mocks.dart';
@@ -47,7 +50,8 @@ void main() {
       when(() => mockWebViewController.loadRequest(any()))
           .thenAnswer((_) async => Future.value());
       when(() => mockWebViewController.platform).thenReturn(
-          PlatformWebViewController(PlatformWebViewControllerCreationParams()));
+          PlatformWebViewController(
+              const PlatformWebViewControllerCreationParams()));
 
       await pumpAuthorizationPage(tester);
 
@@ -67,7 +71,8 @@ void main() {
       when(() => mockWebViewController.loadRequest(any()))
           .thenAnswer((_) async => Future.value());
       when(() => mockWebViewController.platform).thenReturn(
-          PlatformWebViewController(PlatformWebViewControllerCreationParams()));
+          PlatformWebViewController(
+              const PlatformWebViewControllerCreationParams()));
 
       await pumpAuthorizationPage(tester);
 

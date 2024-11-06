@@ -3,7 +3,6 @@ import 'package:mocktail/mocktail.dart';
 import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_dart/omise_dart.dart';
-import 'package:omise_dart/src/exceptions/omise_api_exception.dart';
 
 import '../mocks.dart';
 

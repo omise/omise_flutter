@@ -89,8 +89,8 @@ void main() {
     test('createToken - success', () async {
       final mockToken = Token(
           livemode: true,
-          chargeStatus: "status",
-          createdAt: "createdAt",
+          chargeStatus: ChargeStatus.pending,
+          createdAt: DateTime.now(),
           used: false,
           object: 'token',
           id: 'tokn_test_123',
