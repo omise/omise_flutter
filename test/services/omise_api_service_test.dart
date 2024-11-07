@@ -79,4 +79,12 @@ void main() {
       expect(result, equals(mockToken));
     });
   });
+
+  test('getUserAgent returns the correct format', () {
+    final userAgent = omiseApiService.getUserAgent();
+
+    final expectedUserAgentPattern =
+        RegExp(r'^dart/\d+\.\d+\.\d+ .+/\d+\.\d+\.\d+ \(.+ .+\)$');
+    expect(userAgent, matches(expectedUserAgentPattern));
+  });
 }
