@@ -1,8 +1,9 @@
 import 'dart:async';
 import 'dart:developer';
-import 'package:flutter/foundation.dart'; // Import this for ValueNotifier
+import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
 /// The [PaymentMethodSelectorController] manages the state and logic for
@@ -20,19 +21,58 @@ class PaymentMethodSelectorController
   /// Takes in a required [omiseApiService] and optional [selectedPaymentMethods].
   PaymentMethodSelectorController(
       {required this.omiseApiService, this.selectedPaymentMethods})
-      : super(PaymentMethodSelectorState(status: Status.idle));
+      : super(PaymentMethodSelectorState(
+            capabilityLoadingStatus: Status.idle,
+            sourceLoadingStatus: Status.idle));
 
   /// List of supported payment methods. Add more methods here as needed.
   final supportedPaymentMethods = [
     PaymentMethodName.card,
+    PaymentMethodName.promptpay,
   ];
+  Map<PaymentMethodName, PaymentMethodParams> getPaymentMethodsMap(
+      BuildContext context) {
+    return {
+      PaymentMethodName.card: PaymentMethodParams(
+          isNextPage: true,
+          function: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CreditCardPaymentMethodPage(
+                        omiseApiService: omiseApiService,
+                        capability: value.capability,
+                      )),
+            );
+          }),
+      PaymentMethodName.promptpay: PaymentMethodParams(
+          isNextPage: false,
+          function: () {
+            _setValue(value.copyWith(
+                selectedPaymentMethod: PaymentMethodName.promptpay));
+            createSource();
+          }),
+    };
+  }
+
+  void setSourceCreationParams(
+      {required int amount,
+      required Currency currency,
+
+      /// The selected payment method should only passed here for testing purposes
+      PaymentMethodName? selectedPaymentMethod}) {
+    _setValue(value.copyWith(
+        amount: amount,
+        currency: currency,
+        selectedPaymentMethod: selectedPaymentMethod));
+  }
 
   /// Loads the capabilities from Omise API and filters the payment methods
   /// based on the [selectedPaymentMethods] and [supportedPaymentMethods].
   Future<void> loadCapabilities() async {
     try {
       // Set the status to loading while fetching capabilities
-      _setValue(value.copyWith(status: Status.loading));
+      _setValue(value.copyWith(capabilityLoadingStatus: Status.loading));
 
       // Fetch capabilities from Omise API
       final capabilities = await omiseApiService.getCapabilities();
@@ -59,7 +99,7 @@ class PaymentMethodSelectorController
       // Update the state with the filtered methods and success status
       _setValue(value.copyWith(
           capability: capabilities,
-          status: Status.success,
+          capabilityLoadingStatus: Status.success,
           viewablePaymentMethods: filteredMethods));
     } catch (e) {
       // Handle errors and update the state with an error message
@@ -70,7 +110,39 @@ class PaymentMethodSelectorController
       } else {
         error = e.toString();
       }
-      _setValue(value.copyWith(status: Status.error, errorMessage: error));
+      _setValue(value.copyWith(
+          capabilityLoadingStatus: Status.error,
+          capabilityErrorMessage: error));
+    }
+  }
+
+  /// Creates a source based on the collected data from the user.
+  Future<void> createSource() async {
+    try {
+      // Set the status to loading while creating the token
+      _setValue(value.copyWith(sourceLoadingStatus: Status.loading));
+
+      // Create the token using Omise API
+      final source = await omiseApiService.createSource(CreateSourceRequest(
+          amount: value.amount!,
+          currency: value.currency!,
+          type: value.selectedPaymentMethod!));
+
+      _setValue(value.copyWith(
+        source: source,
+        sourceLoadingStatus: Status.success,
+      ));
+    } catch (e) {
+      // Handle errors and update the state with an error message
+      var error = "";
+      log(e.toString());
+      if (e is OmiseApiException) {
+        error = e.response?.message ?? e.message;
+      } else {
+        error = e.toString();
+      }
+      _setValue(value.copyWith(
+          sourceLoadingStatus: Status.error, sourceErrorMessage: error));
     }
   }
 
@@ -84,39 +156,88 @@ class PaymentMethodSelectorController
 /// Contains the current status, error messages, capabilities, and filtered
 /// payment methods that are viewable by the user.
 class PaymentMethodSelectorState {
-  /// The current status of the controller, such as idle, loading, success, or error.
-  final Status status;
+  /// The current status of the capability loading, such as idle, loading, success, or error.
+  final Status capabilityLoadingStatus;
 
-  /// Optional error message in case of failure.
-  final String? errorMessage;
+  /// Optional error message in case capability failure.
+  final String? capabilityErrorMessage;
 
   /// The capability object fetched from the API, containing available payment methods.
   final Capability? capability;
+
+  /// The source object received from the API after source creation.
+  final Source? source;
+
+  /// The current status of the source creation loading, such as idle, loading, success, or error.
+  final Status sourceLoadingStatus;
+
+  /// Optional error message in case capability failure.
+  final String? sourceErrorMessage;
+
+  /// The amount used in source creation.
+  final int? amount;
+
+  /// The currency used in source creation.
+  final Currency? currency;
+
+  /// The payment method selected by the user.
+  final PaymentMethodName? selectedPaymentMethod;
 
   /// The list of payment methods filtered and viewable by the user.
   final List<PaymentMethod>? viewablePaymentMethods;
 
   /// Constructor for creating a [PaymentMethodSelectorState].
   PaymentMethodSelectorState(
-      {required this.status,
-      this.errorMessage,
+      {required this.capabilityLoadingStatus,
+      required this.sourceLoadingStatus,
+      this.capabilityErrorMessage,
       this.capability,
+      this.source,
+      this.amount,
+      this.currency,
+      this.sourceErrorMessage,
+      this.selectedPaymentMethod,
       this.viewablePaymentMethods});
 
   /// Creates a copy of the current state while allowing overriding of
   /// specific fields. This is needed since in order to trigger a rebuild on the value notifier level, we need a new instance to be created for non primitive types.
   PaymentMethodSelectorState copyWith({
-    Status? status,
-    String? errorMessage,
+    Status? capabilityLoadingStatus,
+    String? capabilityErrorMessage,
     Capability? capability,
+    Source? source,
+    Status? sourceLoadingStatus,
+    int? amount,
+    Currency? currency,
+    String? sourceErrorMessage,
+    PaymentMethodName? selectedPaymentMethod,
     List<PaymentMethod>? viewablePaymentMethods,
   }) {
     return PaymentMethodSelectorState(
-        status: status ?? this.status, // Use current value if null
-        errorMessage:
-            errorMessage ?? this.errorMessage, // Use current value if null
-        capability: capability ?? this.capability, // Use current value if null
-        viewablePaymentMethods:
-            viewablePaymentMethods ?? this.viewablePaymentMethods);
+      capabilityLoadingStatus: capabilityLoadingStatus ??
+          this.capabilityLoadingStatus, // Use current value if null
+      capabilityErrorMessage: capabilityErrorMessage ??
+          this.capabilityErrorMessage, // Use current value if null
+      capability: capability ?? this.capability, // Use current value if null
+      source: source ?? this.source,
+      sourceLoadingStatus: sourceLoadingStatus ?? this.sourceLoadingStatus,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      sourceErrorMessage: sourceErrorMessage ?? this.sourceErrorMessage,
+      selectedPaymentMethod:
+          selectedPaymentMethod ?? this.selectedPaymentMethod,
+      viewablePaymentMethods:
+          viewablePaymentMethods ?? this.viewablePaymentMethods,
+    );
   }
+}
+
+class PaymentMethodParams {
+  final bool isNextPage;
+  final VoidCallback function;
+
+  PaymentMethodParams({
+    required this.isNextPage,
+    required this.function,
+  });
 }

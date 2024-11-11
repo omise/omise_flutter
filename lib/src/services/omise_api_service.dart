@@ -63,4 +63,8 @@ class OmiseApiService {
   Future<Token> createToken(CreateTokenRequest createTokenRequest) {
     return omiseApi.tokens.create(createTokenRequest);
   }
+
+  Future<Source> createSource(CreateSourceRequest createSourceRequest) {
+    return omiseApi.sources.create(createSourceRequest);
+  }
 }

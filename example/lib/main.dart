@@ -47,10 +47,8 @@ class _MyHomePageState extends State<MyHomePage> {
         await Navigator.push<OmisePaymentResult>(
       context,
       MaterialPageRoute(
-          builder: (context) =>
-              omisePayment.selectPaymentMethod(selectedPaymentMethods: [
-                PaymentMethodName.card, // Only showing card as payment method
-              ])),
+          builder: (context) => omisePayment.selectPaymentMethod(
+              amount: 1000, currency: Currency.thb)),
     );
 
     // Check if payment result is available
@@ -61,7 +59,9 @@ class _MyHomePageState extends State<MyHomePage> {
       if (omisePaymentResult.token != null) {
         log(omisePaymentResult.token!.id);
       }
-      // Other payment results (like source creation) can be handled here
+      if (omisePaymentResult.source != null) {
+        log(omisePaymentResult.source!.id);
+      }
     }
   }
 

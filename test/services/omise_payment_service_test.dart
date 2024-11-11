@@ -9,6 +9,8 @@ import 'package:webview_flutter_android/webview_flutter_android.dart';
 
 void main() {
   late OmisePayment omisePayment;
+  const amount = 1000;
+  const currency = Currency.thb;
 
   setUp(() {
     omisePayment = OmisePayment(
@@ -27,7 +29,8 @@ void main() {
   testWidgets('selectPaymentMethod returns SelectPaymentMethodPage widget',
       (WidgetTester tester) async {
     // Create the widget returned by selectPaymentMethod
-    final widget = omisePayment.selectPaymentMethod();
+    final widget =
+        omisePayment.selectPaymentMethod(amount: amount, currency: currency);
 
     // Pump the widget
     await tester.pumpWidget(MaterialApp(home: widget));
@@ -48,6 +51,8 @@ void main() {
     // Create the widget returned by selectPaymentMethod with the selected methods
     final widget = omisePayment.selectPaymentMethod(
       selectedPaymentMethods: selectedPaymentMethods,
+      amount: amount,
+      currency: currency,
     );
 
     // Pump the widget

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:omise_flutter/src/utils/messgae_display_utils.dart'; // Adjust the import path as per your project structure
+import 'package:omise_flutter/src/utils/message_display_utils.dart'; // Adjust the import path as per your project structure
 
 void main() {
   group('MessageDisplayUtils', () {
