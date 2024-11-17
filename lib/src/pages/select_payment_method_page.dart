@@ -148,8 +148,8 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                                       context)[paymentMethod.name]
                                   ?.isNextPage ==
                               true
-                          ? Icons.arrow_outward
-                          : Icons.arrow_forward_ios, // Arrow icon
+                          ? Icons.arrow_forward_ios
+                          : Icons.arrow_outward, // Arrow icon
                       onTap: () {
                         paymentMethodSelectorController
                             .getPaymentMethodsMap(context)[paymentMethod.name]

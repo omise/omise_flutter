@@ -115,6 +115,7 @@ void main() {
         sourceLoadingStatus: Status.idle,
         capabilityLoadingStatus: Status.success,
         viewablePaymentMethods: paymentMethods));
+    when(() => mockController.getPaymentMethodsMap(any())).thenReturn({});
 
     when(() => mockController.loadCapabilities())
         .thenAnswer((_) async => Future.value());
