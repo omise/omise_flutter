@@ -7,7 +7,7 @@ import 'package:omise_flutter/omise_flutter.dart';
 import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
-import 'package:omise_flutter/src/widgets/rounded_text_feild.dart';
+import 'package:omise_flutter/src/widgets/rounded_text_field.dart';
 
 import '../mocks.dart';
 

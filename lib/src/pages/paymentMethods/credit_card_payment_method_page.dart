@@ -7,7 +7,7 @@ import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/utils/expiry_date_formatter.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
-import 'package:omise_flutter/src/widgets/rounded_text_feild.dart';
+import 'package:omise_flutter/src/widgets/rounded_text_field.dart';
 
 /// A page that allows users to enter their credit card payment information.
 ///
