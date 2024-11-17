@@ -141,8 +141,15 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                               : Image.asset(
                                   'assets/${paymentMethod.name.value}.png', // Icon for payment method
                                   package: PackageInfo.packageName,
+                                  alignment: Alignment.centerLeft,
                                 ),
-                      trailingIcon: Icons.arrow_forward_ios, // Arrow icon
+                      trailingIcon: paymentMethodSelectorController
+                                  .getPaymentMethodsMap(
+                                      context)[paymentMethod.name]
+                                  ?.isNextPage ==
+                              true
+                          ? Icons.arrow_outward
+                          : Icons.arrow_forward_ios, // Arrow icon
                       onTap: () {
                         paymentMethodSelectorController
                             .getPaymentMethodsMap(context)[paymentMethod.name]

@@ -28,7 +28,11 @@ Widget paymentMethodTile({
 }) {
   return ListTile(
     title: Text((paymentMethod.name.title)),
-    leading: paymentMethod.leadingIcon,
+    leading: SizedBox(
+      height: paymentMethod.leadingIconHeight,
+      width: paymentMethod.leadingIconWidth,
+      child: paymentMethod.leadingIcon,
+    ),
     trailing: Icon(paymentMethod.trailingIcon),
     onTap: paymentMethod.onTap,
   );

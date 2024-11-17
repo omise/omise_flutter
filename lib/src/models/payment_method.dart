@@ -13,4 +13,25 @@ class PaymentMethodTileData {
     required this.trailingIcon,
     required this.onTap,
   });
+  double get leadingIconHeight {
+    switch (name) {
+      case PaymentMethodName.card:
+        return 30;
+      case PaymentMethodName.promptpay:
+        return 50;
+      default:
+        return 50;
+    }
+  }
+
+  double get leadingIconWidth {
+    switch (name) {
+      case PaymentMethodName.card:
+        return 60;
+      case PaymentMethodName.promptpay:
+        return 60;
+      default:
+        return 60;
+    }
+  }
 }
