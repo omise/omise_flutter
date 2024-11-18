@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
+import 'package:omise_flutter/src/utils/message_display_utils.dart';
+import 'package:omise_flutter/src/utils/package_info.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
 /// [SelectPaymentMethodPage] is a stateful widget that presents the user with
@@ -13,6 +15,12 @@ import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 class SelectPaymentMethodPage extends StatefulWidget {
   /// An instance of [OmiseApiService] for interacting with the Omise API.
   final OmiseApiService omiseApiService;
+
+  /// The amount that will be used to create a source.
+  final int amount;
+
+  /// The currency that will be used to create a source.
+  final Currency currency;
 
   /// Allow passing an instance of the controller to facilitate testing
   final PaymentMethodSelectorController? paymentMethodSelectorController;
@@ -23,11 +31,14 @@ class SelectPaymentMethodPage extends StatefulWidget {
 
   /// Constructor for creating a [SelectPaymentMethodPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
-  const SelectPaymentMethodPage(
-      {super.key,
-      required this.omiseApiService,
-      this.selectedPaymentMethods,
-      this.paymentMethodSelectorController});
+  const SelectPaymentMethodPage({
+    super.key,
+    required this.omiseApiService,
+    required this.amount,
+    required this.currency,
+    this.selectedPaymentMethods,
+    this.paymentMethodSelectorController,
+  });
 
   @override
   State<SelectPaymentMethodPage> createState() =>
@@ -46,6 +57,21 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
   @override
   void initState() {
     super.initState();
+    paymentMethodSelectorController.addListener(() {
+      if (paymentMethodSelectorController.value.sourceLoadingStatus ==
+          Status.error) {
+        MessageDisplayUtils.showSnackBar(
+            context, paymentMethodSelectorController.value.sourceErrorMessage!);
+      } else if (paymentMethodSelectorController.value.sourceLoadingStatus ==
+          Status.success) {
+        while (Navigator.of(context).canPop()) {
+          Navigator.of(context).pop(OmisePaymentResult(
+              source: paymentMethodSelectorController.value.source));
+        }
+      }
+    });
+    paymentMethodSelectorController.setSourceCreationParams(
+        amount: widget.amount, currency: widget.currency);
     paymentMethodSelectorController.loadCapabilities();
   }
 
@@ -70,16 +96,17 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
         valueListenable: paymentMethodSelectorController,
         builder: (context, state, _) {
           // Display a loading spinner if the controller status is idle or loading
-          if ([Status.loading, Status.idle].contains(state.status)) {
+          if ([Status.loading, Status.idle]
+              .contains(state.capabilityLoadingStatus)) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
 
           // Show the error message if the controller status is error
-          if (state.status == Status.error) {
+          if (state.capabilityLoadingStatus == Status.error) {
             return Center(
-              child: Text(state.errorMessage!),
+              child: Text(state.capabilityErrorMessage!),
             );
           }
 
@@ -92,39 +119,47 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
               child: Text("No payment methods available to display"),
             );
           }
-
+          final isSourceLoading = state.sourceLoadingStatus == Status.loading;
           // Display a list of payment methods using a ListView
-          return ListView.builder(
-            itemCount: paymentMethods.length, // Number of payment methods
-            itemBuilder: (context, index) {
-              final paymentMethod = paymentMethods[index];
+          return IgnorePointer(
+            ignoring: isSourceLoading,
+            child: Opacity(
+              opacity: isSourceLoading ? 0.5 : 1,
+              child: ListView.builder(
+                itemCount: paymentMethods.length, // Number of payment methods
+                itemBuilder: (context, index) {
+                  final paymentMethod = paymentMethods[index];
 
-              // Render each payment method as a tile with an icon and arrow
-              // TODO: Set up custom function to determine the properties of each payment method once more payment methods are added. For now only one is supported which is credit card.
-              return paymentMethodTile(
-                paymentMethod: PaymentMethodTileData(
-                  name: paymentMethod.name, // Name of the payment method
-                  leadingIcon: widget.paymentMethodSelectorController != null
-                      ? const SizedBox()
-                      : Image.asset(
-                          'assets/${paymentMethod.name.value}.png', // Icon for payment method (example icon)
-                          package: "omise_flutter",
-                        ),
-                  trailingIcon: Icons.arrow_forward_ios, // Arrow icon
-                  onTap: () {
-                    // open the credit card screen
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => CreditCardPaymentMethodPage(
-                                omiseApiService: widget.omiseApiService,
-                                capability: state.capability,
-                              )),
-                    );
-                  },
-                ),
-              );
-            },
+                  // Render each payment method as a tile with an icon and arrow
+                  return paymentMethodTile(
+                    paymentMethod: PaymentMethodTileData(
+                      name: paymentMethod.name, // Name of the payment method
+                      leadingIcon:
+                          // condition for testing as the image will not load in test mode
+                          widget.paymentMethodSelectorController != null
+                              ? const SizedBox()
+                              : Image.asset(
+                                  'assets/${paymentMethod.name.value}.png', // Icon for payment method
+                                  package: PackageInfo.packageName,
+                                  alignment: Alignment.centerLeft,
+                                ),
+                      trailingIcon: paymentMethodSelectorController
+                                  .getPaymentMethodsMap(
+                                      context)[paymentMethod.name]
+                                  ?.isNextPage ==
+                              true
+                          ? Icons.arrow_forward_ios
+                          : Icons.arrow_outward, // Arrow icon
+                      onTap: () {
+                        paymentMethodSelectorController
+                            .getPaymentMethodsMap(context)[paymentMethod.name]
+                            ?.function();
+                      },
+                    ),
+                  );
+                },
+              ),
+            ),
           );
         },
       ),

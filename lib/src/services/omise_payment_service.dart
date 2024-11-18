@@ -39,12 +39,20 @@ class OmisePayment {
   /// [selectedPaymentMethods] parameter, which is a list of payment method names
   /// that the merchant wants to display.
   ///
+  /// [amount] Represents the amount that will be used in the source creation. Should follow the amount format supported by the omise API.
+  ///
+  /// [currency] Represents the currency that will be used in the source creation.
+  ///
   /// Returns a [Widget] that represents the payment method selection page.
   Widget selectPaymentMethod({
     List<PaymentMethodName>? selectedPaymentMethods,
+    required int amount,
+    required Currency currency,
   }) {
     return SelectPaymentMethodPage(
       omiseApiService: omiseApiService, // Pass the Omise API service
+      amount: amount,
+      currency: currency,
       selectedPaymentMethods:
           selectedPaymentMethods, // Pass any pre-selected methods
     );

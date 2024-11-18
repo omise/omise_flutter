@@ -1,3 +1,5 @@
+import 'package:omise_dart/omise_dart.dart';
+
 enum Status { idle, loading, success, error }
 
 enum ValidationType {
@@ -15,4 +17,17 @@ enum ValidationType {
 
   // Constructor for the enum
   const ValidationType(this.displayName);
+}
+
+extension PaymentMethodNameTitleExtension on PaymentMethodName {
+  String get title {
+    switch (this) {
+      case PaymentMethodName.card:
+        return 'Credit/Debit Card';
+      case PaymentMethodName.promptpay:
+        return 'PromptPay';
+      default:
+        return 'Unsupported Payment Method';
+    }
+  }
 }

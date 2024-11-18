@@ -6,6 +6,9 @@
 
 - Direct integration with Omise's payment gateway in Flutter apps.
 - Easy-to-use tokenization and authorization flows.
+- Easy-to-use source creation flows.
+  - Supported sources:
+    - `promptpay`
 - Built-in support for common error handling in payment processing.
 
 ## Getting Started

@@ -3,6 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_dart/src/services/capability_api.dart';
 import 'package:omise_dart/src/services/tokens_api.dart';
+import 'package:omise_dart/src/services/sources_api.dart';
 import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
 import 'package:omise_flutter/src/controllers/payment_authorization_controller.dart';
 import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
@@ -17,9 +18,13 @@ class MockCapability extends Mock implements Capability {}
 
 class MockToken extends Mock implements Token {}
 
+class MockSource extends Mock implements Source {}
+
 class MockCapabilityResource extends Mock implements CapabilityApi {}
 
 class MockTokenResource extends Mock implements TokensApi {}
+
+class MockSourceResource extends Mock implements SourcesApi {}
 
 class MockOmiseApiService extends Mock implements OmiseApiService {}
 
@@ -30,6 +35,10 @@ class MockCreditCardPaymentMethodController extends Mock
     implements CreditCardPaymentMethodController {}
 
 class MockCreateTokenRequest extends Mock implements CreateTokenRequest {}
+
+class MockCreateSourceRequest extends Mock implements CreateSourceRequest {}
+
+class MockBuildContext extends Mock implements BuildContext {}
 
 // Mock class for callback
 class MockCallback extends Mock {

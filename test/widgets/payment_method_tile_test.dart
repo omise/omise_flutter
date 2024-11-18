@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:omise_flutter/omise_flutter.dart';
+import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
@@ -32,7 +32,7 @@ void main() {
       ));
 
       // Assert
-      expect(find.text('card'), findsOneWidget); // Verify the name
+      expect(find.text('Credit/Debit Card'), findsOneWidget); // Verify the name
       expect(
           find.byIcon(Icons.start), findsOneWidget); // Verify the leading icon
       expect(find.byIcon(Icons.arrow_forward),

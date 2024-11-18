@@ -37,7 +37,7 @@ class OmiseApiService {
   /// `dart/<DartSDKVersion> package:<PackageName> sdkVersion:<PackageVersion> (<OperatingSystem> <OSVersion>)`
   ///
   /// For example, it might return:
-  /// `dart/3.5.0 (stable) (Tue Jul 30 02:17:59 2024 -0700) on "android_arm64" omise_flutter/0.1.0 (android TE1A.220922.012)`
+  /// `dart/3.5.0 (stable) (Tue Jul 30 02:17:59 2024 -0700) on "android_arm64" OmiseFlutter/0.1.0 (android TE1A.220922.012)`
   ///
   /// This function is useful for tracking the environment and SDK version in which your application
   /// is running, often needed for analytics, logging, or debugging.
@@ -62,5 +62,9 @@ class OmiseApiService {
 
   Future<Token> createToken(CreateTokenRequest createTokenRequest) {
     return omiseApi.tokens.create(createTokenRequest);
+  }
+
+  Future<Source> createSource(CreateSourceRequest createSourceRequest) {
+    return omiseApi.sources.create(createSourceRequest);
   }
 }

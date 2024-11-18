@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
+import 'package:omise_flutter/src/enums/enums.dart';
 
 /// A reusable function for displaying a payment method tile.
 ///
@@ -26,8 +27,12 @@ Widget paymentMethodTile({
   required PaymentMethodTileData paymentMethod,
 }) {
   return ListTile(
-    title: Text(paymentMethod.name.value),
-    leading: paymentMethod.leadingIcon,
+    title: Text((paymentMethod.name.title)),
+    leading: SizedBox(
+      height: paymentMethod.leadingIconHeight,
+      width: paymentMethod.leadingIconWidth,
+      child: paymentMethod.leadingIcon,
+    ),
     trailing: Icon(paymentMethod.trailingIcon),
     onTap: paymentMethod.onTap,
   );

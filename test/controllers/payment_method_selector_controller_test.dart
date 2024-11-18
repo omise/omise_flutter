@@ -13,6 +13,22 @@ void main() {
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
   });
+  setUpAll(() {
+    registerFallbackValue(MockCreateSourceRequest());
+  });
+  const amount = 1000;
+  const currency = Currency.thb;
+  const paymentMethod = PaymentMethodName.card;
+  final mockSource = Source(
+      object: 'source',
+      id: 'src_123',
+      amount: amount,
+      currency: currency,
+      type: paymentMethod,
+      livemode: false,
+      chargeStatus: ChargeStatus.unknown,
+      flow: 'flow',
+      createdAt: DateTime.now());
 
   group('PaymentMethodSelectorController', () {
     test('loadCapabilities - success with selected payment methods', () async {
@@ -69,8 +85,8 @@ void main() {
 
       // Assertions
       expect(changes.length, 2); // One for loading, one for success
-      expect(changes[0].status, Status.loading);
-      expect(changes[1].status, Status.success);
+      expect(changes[0].capabilityLoadingStatus, Status.loading);
+      expect(changes[1].capabilityLoadingStatus, Status.success);
       expect(changes[1].viewablePaymentMethods!.length,
           1); // Only 'card' method should be available
       expect(
@@ -98,9 +114,77 @@ void main() {
 
       // Assertions
       expect(changes.length, 2); // One for loading, one for error
-      expect(changes[0].status, Status.loading);
-      expect(changes[1].status, Status.error);
-      expect(changes[1].errorMessage, 'API Error');
+      expect(changes[0].capabilityLoadingStatus, Status.loading);
+      expect(changes[1].capabilityLoadingStatus, Status.error);
+      expect(changes[1].capabilityErrorMessage, 'API Error');
     });
+  });
+
+  test('CreateSource - success with selected payment method', () async {
+    // Stub the API service to return the mocked capability
+    when(() => mockOmiseApiService.createSource(any()))
+        .thenAnswer((_) async => mockSource);
+
+    // Initialize the controller with selected payment methods
+    controller = PaymentMethodSelectorController(
+      omiseApiService: mockOmiseApiService,
+      selectedPaymentMethods: [
+        PaymentMethodName.card,
+        PaymentMethodName.promptpay
+      ],
+    );
+    controller.setSourceCreationParams(
+        amount: amount,
+        currency: currency,
+        selectedPaymentMethod: paymentMethod);
+    // Listen for value changes
+    var changes = <PaymentMethodSelectorState>[];
+    controller.addListener(() {
+      changes.add(controller.value);
+    });
+
+    // Call the createSource method
+    await controller.createSource();
+
+    // Assertions
+    expect(changes.length, 2); // One for loading, one for success
+    expect(changes[0].sourceLoadingStatus, Status.loading);
+    expect(changes[0].source, null);
+    expect(changes[1].sourceLoadingStatus, Status.success);
+    expect(changes[1].source, mockSource);
+  });
+
+  test('CreateSource - fails with no  params set for create source request',
+      () async {
+    // Mock data for source
+
+    // Stub the API service to return the mocked capability
+    when(() => mockOmiseApiService.createSource(any()))
+        .thenAnswer((_) async => mockSource);
+
+    // Initialize the controller with selected payment methods
+    controller = PaymentMethodSelectorController(
+      omiseApiService: mockOmiseApiService,
+      selectedPaymentMethods: [
+        PaymentMethodName.card,
+        PaymentMethodName.promptpay
+      ],
+    );
+
+    // Listen for value changes
+    var changes = <PaymentMethodSelectorState>[];
+    controller.addListener(() {
+      changes.add(controller.value);
+    });
+
+    // Call the createSource method
+    await controller.createSource();
+
+    // Assertions
+    expect(changes.length, 2); // One for loading, one for success
+    expect(changes[0].sourceLoadingStatus, Status.loading);
+    expect(changes[0].source, null);
+    expect(changes[1].sourceLoadingStatus, Status.error);
+    expect(changes[1].source, null);
   });
 }
