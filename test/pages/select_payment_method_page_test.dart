@@ -109,13 +109,37 @@ void main() {
         banks: mockBanks,
         provider: 'provider_example',
       ),
+      // This is how mobile banking is displayed as its a custom payment methods that sums all mobile banking payment methods together
+      omise_dart.PaymentMethod(
+        object: CustomPaymentMethod.mobileBanking.value,
+        name: omise_dart.PaymentMethodName.unknown,
+        currencies: mockCurrencies,
+        banks: [],
+        provider: 'provider_example',
+      ),
     ];
 
     when(() => mockController.value).thenReturn(PaymentMethodSelectorState(
         sourceLoadingStatus: Status.idle,
+        capability: omise_dart.Capability(
+          object: 'capability',
+          location: '/capability',
+          banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+          limits: omise_dart.Limits(
+            chargeAmount: omise_dart.Amount(max: 100000, min: 100),
+            transferAmount: omise_dart.Amount(max: 50000, min: 500),
+            installmentAmount: omise_dart.InstallmentAmount(min: 1000),
+          ),
+          paymentMethods: paymentMethods,
+          tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
+          zeroInterestInstallments: false,
+          country: 'TH',
+        ),
         capabilityLoadingStatus: Status.success,
         viewablePaymentMethods: paymentMethods));
-    when(() => mockController.getPaymentMethodsMap(any())).thenReturn({});
+    when(() =>
+            mockController.getPaymentMethodsMap(context: any(named: 'context')))
+        .thenReturn({});
 
     when(() => mockController.loadCapabilities())
         .thenAnswer((_) async => Future.value());
@@ -132,8 +156,10 @@ void main() {
     );
 
     expect(find.byType(ListTile), findsNWidgets(paymentMethods.length));
-    expect(find.text('Credit/Debit Card'), findsOneWidget);
-    expect(find.text('PromptPay'), findsOneWidget);
+    expect(find.text(omise_dart.PaymentMethodName.card.title), findsOneWidget);
+    expect(find.text(omise_dart.PaymentMethodName.promptpay.title),
+        findsOneWidget);
+    expect(find.text(CustomPaymentMethod.mobileBanking.title), findsOneWidget);
   });
 
   testWidgets('displays "No payment methods available" when the list is empty',
@@ -162,7 +188,7 @@ void main() {
   });
 
   testWidgets(
-    'After source creation, the result is returned to the integrator when the payment method is selected',
+    'After prompt pay source creation, the result is returned to the integrator when the payment method is selected',
     (WidgetTester tester) async {
       OmisePaymentResult?
           capturedResult; // To capture the result from the navigator pop
@@ -190,6 +216,12 @@ void main() {
             name: omise_dart.PaymentMethodName.promptpay,
             currencies: [omise_dart.Currency.thb],
             banks: [omise_dart.Bank.bbl],
+          ),
+          omise_dart.PaymentMethod(
+            object: 'payment_method',
+            name: omise_dart.PaymentMethodName.mobileBankingScb,
+            currencies: [omise_dart.Currency.thb],
+            banks: [],
           ),
         ],
         tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
@@ -234,7 +266,8 @@ void main() {
       await tester.tap(find.text('Open Select Payment Method Page'));
       await tester.pumpAndSettle(); // Wait for the credit card page to open
 
-      final promptPayTile = find.widgetWithText(ListTile, 'PromptPay');
+      final promptPayTile = find.widgetWithText(
+          ListTile, omise_dart.PaymentMethodName.promptpay.title);
       expect(tester.widget<ListTile>(promptPayTile).enabled, isTrue);
       await tester.tap(promptPayTile);
 
