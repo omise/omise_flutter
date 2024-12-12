@@ -129,9 +129,15 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                 itemCount: paymentMethods.length, // Number of payment methods
                 itemBuilder: (context, index) {
                   final paymentMethod = paymentMethods[index];
+                  CustomPaymentMethod? customEnum;
+                  if (paymentMethod.name == PaymentMethodName.unknown) {
+                    customEnum = CustomPaymentMethodNameExtension.fromString(
+                        paymentMethod.object);
+                  }
 
                   // Render each payment method as a tile with an icon and arrow
                   return paymentMethodTile(
+                    customTitle: customEnum?.title,
                     paymentMethod: PaymentMethodTileData(
                       name: paymentMethod.name, // Name of the payment method
                       leadingIcon:
@@ -139,20 +145,23 @@ class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
                           widget.paymentMethodSelectorController != null
                               ? const SizedBox()
                               : Image.asset(
-                                  'assets/${paymentMethod.name.value}.png', // Icon for payment method
+                                  'assets/${customEnum?.value ?? paymentMethod.name.value}.png', // Icon for payment method
                                   package: PackageInfo.packageName,
-                                  alignment: Alignment.centerLeft,
+                                  alignment: Alignment.center,
                                 ),
                       trailingIcon: paymentMethodSelectorController
                                   .getPaymentMethodsMap(
-                                      context)[paymentMethod.name]
+                                      context: context)[paymentMethod.name]
                                   ?.isNextPage ==
                               true
                           ? Icons.arrow_forward_ios
                           : Icons.arrow_outward, // Arrow icon
                       onTap: () {
                         paymentMethodSelectorController
-                            .getPaymentMethodsMap(context)[paymentMethod.name]
+                            .getPaymentMethodsMap(
+                                context: context,
+                                object:
+                                    paymentMethod.object)[paymentMethod.name]
                             ?.function();
                       },
                     ),
