@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/select_mobile_banking_payment_method_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
 /// The [PaymentMethodSelectorController] manages the state and logic for
@@ -29,9 +30,15 @@ class PaymentMethodSelectorController
   final supportedPaymentMethods = [
     PaymentMethodName.card,
     PaymentMethodName.promptpay,
+    PaymentMethodName.mobileBankingBay,
+    PaymentMethodName.mobileBankingBbl,
+    PaymentMethodName.mobileBankingKbank,
+    PaymentMethodName.mobileBankingKtb,
+    PaymentMethodName.mobileBankingOcbc,
+    PaymentMethodName.mobileBankingScb,
   ];
   Map<PaymentMethodName, PaymentMethodParams> getPaymentMethodsMap(
-      BuildContext context) {
+      {required BuildContext context, String? object}) {
     return {
       PaymentMethodName.card: PaymentMethodParams(
           isNextPage: true,
@@ -52,6 +59,27 @@ class PaymentMethodSelectorController
                 selectedPaymentMethod: PaymentMethodName.promptpay));
             createSource();
           }),
+      PaymentMethodName.unknown: PaymentMethodParams(
+          isNextPage: true,
+          function: () {
+            if (object == CustomPaymentMethod.mobileBanking.value) {
+              // open mobile banking screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => SelectMobileBankingPaymentMethodPage(
+                          mobileBankingPaymentMethods: value
+                              .capability!.paymentMethods
+                              .where((method) => method.name.value.contains(
+                                  CustomPaymentMethod.mobileBanking.value))
+                              .toList(),
+                          amount: value.amount!,
+                          currency: value.currency!,
+                          omiseApiService: omiseApiService,
+                        )),
+              );
+            }
+          })
     };
   }
 
@@ -96,6 +124,21 @@ class PaymentMethodSelectorController
         }
       }
 
+// remove mobile banking methods and replace by a single mobile banking holding all methods
+      if (filteredMethods.indexWhere(
+            (method) => method.name.value
+                .contains(CustomPaymentMethod.mobileBanking.value),
+          ) !=
+          -1) {
+        filteredMethods.add(PaymentMethod(
+            object: CustomPaymentMethod.mobileBanking.value,
+            name: PaymentMethodName.unknown,
+            currencies: [],
+            banks: []));
+      }
+
+      filteredMethods.removeWhere((method) =>
+          method.name.value.contains(CustomPaymentMethod.mobileBanking.value));
       // Update the state with the filtered methods and success status
       _setValue(value.copyWith(
           capability: capabilities,

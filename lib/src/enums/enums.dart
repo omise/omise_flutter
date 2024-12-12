@@ -19,6 +19,36 @@ enum ValidationType {
   const ValidationType(this.displayName);
 }
 
+enum CustomPaymentMethod {
+  mobileBanking("mobile_banking"),
+  unknown("unknown");
+
+  final String value;
+
+  // Constructor for the enum
+  const CustomPaymentMethod(this.value);
+}
+
+extension CustomPaymentMethodNameTitleExtension on CustomPaymentMethod {
+  String get title {
+    switch (this) {
+      case CustomPaymentMethod.mobileBanking:
+        return 'Mobile Banking';
+      default:
+        return 'Unsupported Payment Method';
+    }
+  }
+}
+
+extension CustomPaymentMethodNameExtension on CustomPaymentMethod {
+  static CustomPaymentMethod fromString(String? methodName) {
+    return CustomPaymentMethod.values.firstWhere(
+      (method) => method.value.toLowerCase() == methodName?.toLowerCase(),
+      orElse: () => CustomPaymentMethod.unknown,
+    );
+  }
+}
+
 extension PaymentMethodNameTitleExtension on PaymentMethodName {
   String get title {
     switch (this) {
@@ -26,6 +56,18 @@ extension PaymentMethodNameTitleExtension on PaymentMethodName {
         return 'Credit/Debit Card';
       case PaymentMethodName.promptpay:
         return 'PromptPay';
+      case PaymentMethodName.mobileBankingBay:
+        return "Krungsri (KMA)";
+      case PaymentMethodName.mobileBankingBbl:
+        return "Bangkok Bank";
+      case PaymentMethodName.mobileBankingKbank:
+        return "KBank (K PLUS)";
+      case PaymentMethodName.mobileBankingKtb:
+        return "Krungthai NEXT";
+      case PaymentMethodName.mobileBankingOcbc:
+        return "OCBC Digital";
+      case PaymentMethodName.mobileBankingScb:
+        return "SCB (SCB Easy)";
       default:
         return 'Unsupported Payment Method';
     }
