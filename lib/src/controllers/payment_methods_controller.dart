@@ -3,14 +3,13 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/select_mobile_banking_payment_method_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
-/// The [PaymentMethodSelectorController] manages the state and logic for
+/// The [PaymentMethodsController] manages the state and logic for
 /// filtering and retrieving payment methods from Omise API.
-class PaymentMethodSelectorController
-    extends ValueNotifier<PaymentMethodSelectorState> {
+class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
   /// Instance of [OmiseApiService] used to interact with the omise dart package.
   final OmiseApiService omiseApiService;
 
@@ -18,11 +17,11 @@ class PaymentMethodSelectorController
   /// If null, all supported payment methods will be shown.
   final List<PaymentMethodName>? selectedPaymentMethods;
 
-  /// Constructor for initializing [PaymentMethodSelectorController].
+  /// Constructor for initializing [PaymentMethodsController].
   /// Takes in a required [omiseApiService] and optional [selectedPaymentMethods].
-  PaymentMethodSelectorController(
+  PaymentMethodsController(
       {required this.omiseApiService, this.selectedPaymentMethods})
-      : super(PaymentMethodSelectorState(
+      : super(PaymentMethodsState(
             capabilityLoadingStatus: Status.idle,
             sourceLoadingStatus: Status.idle));
 
@@ -46,7 +45,7 @@ class PaymentMethodSelectorController
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => CreditCardPaymentMethodPage(
+                  builder: (context) => CreditCardPage(
                         omiseApiService: omiseApiService,
                         capability: value.capability,
                       )),
@@ -67,7 +66,7 @@ class PaymentMethodSelectorController
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => SelectMobileBankingPaymentMethodPage(
+                    builder: (context) => MobileBankingPage(
                           mobileBankingPaymentMethods: value
                               .capability!.paymentMethods
                               .where((method) => method.name.value.contains(
@@ -190,15 +189,15 @@ class PaymentMethodSelectorController
   }
 
   /// Internal helper function to update the state of [ValueNotifier].
-  void _setValue(PaymentMethodSelectorState state) {
+  void _setValue(PaymentMethodsState state) {
     value = state;
   }
 }
 
-/// State class that holds the values for [PaymentMethodSelectorController].
+/// State class that holds the values for [PaymentMethodsController].
 /// Contains the current status, error messages, capabilities, and filtered
 /// payment methods that are viewable by the user.
-class PaymentMethodSelectorState {
+class PaymentMethodsState {
   /// The current status of the capability loading, such as idle, loading, success, or error.
   final Status capabilityLoadingStatus;
 
@@ -229,8 +228,8 @@ class PaymentMethodSelectorState {
   /// The list of payment methods filtered and viewable by the user.
   final List<PaymentMethod>? viewablePaymentMethods;
 
-  /// Constructor for creating a [PaymentMethodSelectorState].
-  PaymentMethodSelectorState(
+  /// Constructor for creating a [PaymentMethodsState].
+  PaymentMethodsState(
       {required this.capabilityLoadingStatus,
       required this.sourceLoadingStatus,
       this.capabilityErrorMessage,
@@ -244,7 +243,7 @@ class PaymentMethodSelectorState {
 
   /// Creates a copy of the current state while allowing overriding of
   /// specific fields. This is needed since in order to trigger a rebuild on the value notifier level, we need a new instance to be created for non primitive types.
-  PaymentMethodSelectorState copyWith({
+  PaymentMethodsState copyWith({
     Status? capabilityLoadingStatus,
     String? capabilityErrorMessage,
     Capability? capability,
@@ -256,7 +255,7 @@ class PaymentMethodSelectorState {
     PaymentMethodName? selectedPaymentMethod,
     List<PaymentMethod>? viewablePaymentMethods,
   }) {
-    return PaymentMethodSelectorState(
+    return PaymentMethodsState(
       capabilityLoadingStatus: capabilityLoadingStatus ??
           this.capabilityLoadingStatus, // Use current value if null
       capabilityErrorMessage: capabilityErrorMessage ??

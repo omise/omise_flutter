@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart' as omise_dart;
-import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
+import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
-import 'package:omise_flutter/src/pages/select_payment_method_page.dart';
+import 'package:omise_flutter/src/pages/payment_methods_page.dart';
 
 import '../mocks.dart';
 
 void main() {
   late MockOmiseApiService mockOmiseApiService;
-  late PaymentMethodSelectorController mockController;
+  late PaymentMethodsController mockController;
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
@@ -43,7 +43,7 @@ void main() {
 
   testWidgets('displays loading spinner when capability is loading',
       (WidgetTester tester) async {
-    when(() => mockController.value).thenReturn(PaymentMethodSelectorState(
+    when(() => mockController.value).thenReturn(PaymentMethodsState(
         capabilityLoadingStatus: Status.loading,
         sourceLoadingStatus: Status.idle));
 
@@ -52,7 +52,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: SelectPaymentMethodPage(
+        home: PaymentMethodsPage(
           omiseApiService: mockOmiseApiService,
           paymentMethodSelectorController: mockController,
           amount: amount,
@@ -66,7 +66,7 @@ void main() {
   testWidgets('displays error message when capability status is error',
       (WidgetTester tester) async {
     const errorMessage = 'Something went wrong!';
-    when(() => mockController.value).thenReturn(PaymentMethodSelectorState(
+    when(() => mockController.value).thenReturn(PaymentMethodsState(
         sourceLoadingStatus: Status.idle,
         capabilityLoadingStatus: Status.error,
         capabilityErrorMessage: errorMessage));
@@ -76,7 +76,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: SelectPaymentMethodPage(
+        home: PaymentMethodsPage(
           omiseApiService: mockOmiseApiService,
           paymentMethodSelectorController: mockController,
           amount: amount,
@@ -109,20 +109,44 @@ void main() {
         banks: mockBanks,
         provider: 'provider_example',
       ),
+      // This is how mobile banking is displayed as its a custom payment methods that sums all mobile banking payment methods together
+      omise_dart.PaymentMethod(
+        object: CustomPaymentMethod.mobileBanking.value,
+        name: omise_dart.PaymentMethodName.unknown,
+        currencies: mockCurrencies,
+        banks: [],
+        provider: 'provider_example',
+      ),
     ];
 
-    when(() => mockController.value).thenReturn(PaymentMethodSelectorState(
+    when(() => mockController.value).thenReturn(PaymentMethodsState(
         sourceLoadingStatus: Status.idle,
+        capability: omise_dart.Capability(
+          object: 'capability',
+          location: '/capability',
+          banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+          limits: omise_dart.Limits(
+            chargeAmount: omise_dart.Amount(max: 100000, min: 100),
+            transferAmount: omise_dart.Amount(max: 50000, min: 500),
+            installmentAmount: omise_dart.InstallmentAmount(min: 1000),
+          ),
+          paymentMethods: paymentMethods,
+          tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
+          zeroInterestInstallments: false,
+          country: 'TH',
+        ),
         capabilityLoadingStatus: Status.success,
         viewablePaymentMethods: paymentMethods));
-    when(() => mockController.getPaymentMethodsMap(any())).thenReturn({});
+    when(() =>
+            mockController.getPaymentMethodsMap(context: any(named: 'context')))
+        .thenReturn({});
 
     when(() => mockController.loadCapabilities())
         .thenAnswer((_) async => Future.value());
 
     await tester.pumpWidget(
       MaterialApp(
-        home: SelectPaymentMethodPage(
+        home: PaymentMethodsPage(
           omiseApiService: mockOmiseApiService,
           paymentMethodSelectorController: mockController,
           amount: amount,
@@ -132,13 +156,15 @@ void main() {
     );
 
     expect(find.byType(ListTile), findsNWidgets(paymentMethods.length));
-    expect(find.text('Credit/Debit Card'), findsOneWidget);
-    expect(find.text('PromptPay'), findsOneWidget);
+    expect(find.text(omise_dart.PaymentMethodName.card.title), findsOneWidget);
+    expect(find.text(omise_dart.PaymentMethodName.promptpay.title),
+        findsOneWidget);
+    expect(find.text(CustomPaymentMethod.mobileBanking.title), findsOneWidget);
   });
 
   testWidgets('displays "No payment methods available" when the list is empty',
       (WidgetTester tester) async {
-    when(() => mockController.value).thenReturn(PaymentMethodSelectorState(
+    when(() => mockController.value).thenReturn(PaymentMethodsState(
         capabilityLoadingStatus: Status.success,
         viewablePaymentMethods: [],
         sourceLoadingStatus: Status.idle));
@@ -148,7 +174,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: SelectPaymentMethodPage(
+        home: PaymentMethodsPage(
           omiseApiService: mockOmiseApiService,
           paymentMethodSelectorController: mockController,
           amount: amount,
@@ -162,11 +188,11 @@ void main() {
   });
 
   testWidgets(
-    'After source creation, the result is returned to the integrator when the payment method is selected',
+    'After prompt pay source creation, the result is returned to the integrator when the payment method is selected',
     (WidgetTester tester) async {
       OmisePaymentResult?
           capturedResult; // To capture the result from the navigator pop
-      final controller = PaymentMethodSelectorController(
+      final controller = PaymentMethodsController(
         omiseApiService: mockOmiseApiService,
       );
       final mockCapability = omise_dart.Capability(
@@ -191,6 +217,12 @@ void main() {
             currencies: [omise_dart.Currency.thb],
             banks: [omise_dart.Bank.bbl],
           ),
+          omise_dart.PaymentMethod(
+            object: 'payment_method',
+            name: omise_dart.PaymentMethodName.mobileBankingScb,
+            currencies: [omise_dart.Currency.thb],
+            banks: [],
+          ),
         ],
         tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
         zeroInterestInstallments: false,
@@ -212,7 +244,7 @@ void main() {
                 onPressed: () async {
                   final result = await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => SelectPaymentMethodPage(
+                      builder: (context) => PaymentMethodsPage(
                         omiseApiService: mockOmiseApiService,
                         paymentMethodSelectorController: controller,
                         amount: amount,
@@ -234,7 +266,8 @@ void main() {
       await tester.tap(find.text('Open Select Payment Method Page'));
       await tester.pumpAndSettle(); // Wait for the credit card page to open
 
-      final promptPayTile = find.widgetWithText(ListTile, 'PromptPay');
+      final promptPayTile = find.widgetWithText(
+          ListTile, omise_dart.PaymentMethodName.promptpay.title);
       expect(tester.widget<ListTile>(promptPayTile).enabled, isTrue);
       await tester.tap(promptPayTile);
 
@@ -246,7 +279,7 @@ void main() {
           equals(mockSource.id)); // Verify result from pop
 
       // Ensure the SelectPaymentMethodPage is no longer in the widget tree (i.e., the page was popped)
-      expect(find.byType(SelectPaymentMethodPage), findsNothing);
+      expect(find.byType(PaymentMethodsPage), findsNothing);
     },
   );
 }

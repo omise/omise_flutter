@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
-import 'package:omise_flutter/src/controllers/mobile_banking_payment_method_selector_controller.dart';
+import 'package:omise_flutter/src/controllers/mobile_banking_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
@@ -9,7 +9,7 @@ import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
-class SelectMobileBankingPaymentMethodPage extends StatefulWidget {
+class MobileBankingPage extends StatefulWidget {
   final List<PaymentMethod> mobileBankingPaymentMethods;
 
   /// An instance of [OmiseApiService] for interacting with the Omise API.
@@ -22,9 +22,8 @@ class SelectMobileBankingPaymentMethodPage extends StatefulWidget {
   final Currency currency;
 
   /// Allow passing an instance of the controller to facilitate testing
-  final MobileBankingPaymentMethodSelectorController?
-      mobileBankingPaymentMethodSelectorController;
-  const SelectMobileBankingPaymentMethodPage(
+  final MobileBankingController? mobileBankingPaymentMethodSelectorController;
+  const MobileBankingPage(
       {super.key,
       required this.mobileBankingPaymentMethods,
       required this.omiseApiService,
@@ -33,16 +32,14 @@ class SelectMobileBankingPaymentMethodPage extends StatefulWidget {
       this.mobileBankingPaymentMethodSelectorController});
 
   @override
-  State<SelectMobileBankingPaymentMethodPage> createState() =>
-      _SelectMobileBankingPaymentMethodPageState();
+  State<MobileBankingPage> createState() => _MobileBankingPageState();
 }
 
-class _SelectMobileBankingPaymentMethodPageState
-    extends State<SelectMobileBankingPaymentMethodPage> {
-  late final MobileBankingPaymentMethodSelectorController
+class _MobileBankingPageState extends State<MobileBankingPage> {
+  late final MobileBankingController
       mobileBankingPaymentMethodSelectorController =
       widget.mobileBankingPaymentMethodSelectorController ??
-          MobileBankingPaymentMethodSelectorController(
+          MobileBankingController(
             omiseApiService: widget.omiseApiService,
           );
   @override

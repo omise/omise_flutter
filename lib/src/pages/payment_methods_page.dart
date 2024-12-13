@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
-import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
+import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
@@ -9,10 +9,10 @@ import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
-/// [SelectPaymentMethodPage] is a stateful widget that presents the user with
+/// [PaymentMethodsPage] is a stateful widget that presents the user with
 /// a list of available payment methods based on capabilities retrieved from
 /// Omise's API.
-class SelectPaymentMethodPage extends StatefulWidget {
+class PaymentMethodsPage extends StatefulWidget {
   /// An instance of [OmiseApiService] for interacting with the Omise API.
   final OmiseApiService omiseApiService;
 
@@ -23,15 +23,15 @@ class SelectPaymentMethodPage extends StatefulWidget {
   final Currency currency;
 
   /// Allow passing an instance of the controller to facilitate testing
-  final PaymentMethodSelectorController? paymentMethodSelectorController;
+  final PaymentMethodsController? paymentMethodSelectorController;
 
   /// A list of selected payment methods that should be displayed in the UI.
   /// If null, all supported payment methods will be shown.
   final List<PaymentMethodName>? selectedPaymentMethods;
 
-  /// Constructor for creating a [SelectPaymentMethodPage] widget.
+  /// Constructor for creating a [PaymentMethodsPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
-  const SelectPaymentMethodPage({
+  const PaymentMethodsPage({
     super.key,
     required this.omiseApiService,
     required this.amount,
@@ -41,15 +41,14 @@ class SelectPaymentMethodPage extends StatefulWidget {
   });
 
   @override
-  State<SelectPaymentMethodPage> createState() =>
-      _SelectPaymentMethodPageState();
+  State<PaymentMethodsPage> createState() => _PaymentMethodsPageState();
 }
 
-class _SelectPaymentMethodPageState extends State<SelectPaymentMethodPage> {
+class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
   /// The controller responsible for fetching and filtering payment methods.
-  late final PaymentMethodSelectorController paymentMethodSelectorController =
+  late final PaymentMethodsController paymentMethodSelectorController =
       widget.paymentMethodSelectorController ??
-          PaymentMethodSelectorController(
+          PaymentMethodsController(
               omiseApiService: widget.omiseApiService,
               selectedPaymentMethods: widget.selectedPaymentMethods);
 

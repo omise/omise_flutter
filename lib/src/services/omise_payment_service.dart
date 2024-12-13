@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
-import 'package:omise_flutter/src/pages/select_payment_method_page.dart';
+import 'package:omise_flutter/src/pages/payment_methods_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
 /// [OmisePayment] is the main class that users should interact with
@@ -33,7 +33,7 @@ class OmisePayment {
   /// related to payments.
   late OmiseApiService omiseApiService;
 
-  /// Creates and returns a [SelectPaymentMethodPage] widget.
+  /// Creates and returns a [PaymentMethodsPage] widget.
   ///
   /// This method allows the user to select payment methods. It takes an optional
   /// [selectedPaymentMethods] parameter, which is a list of payment method names
@@ -49,7 +49,7 @@ class OmisePayment {
     required int amount,
     required Currency currency,
   }) {
-    return SelectPaymentMethodPage(
+    return PaymentMethodsPage(
       omiseApiService: omiseApiService, // Pass the Omise API service
       amount: amount,
       currency: currency,

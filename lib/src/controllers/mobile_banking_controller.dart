@@ -5,19 +5,17 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
-/// The [MobileBankingPaymentMethodSelectorController] manages the state and logic for
+/// The [MobileBankingController] manages the state and logic for
 /// creating a mobile banking source from Omise API.
-class MobileBankingPaymentMethodSelectorController
-    extends ValueNotifier<MobileBankingPaymentMethodSelectorState> {
+class MobileBankingController extends ValueNotifier<MobileBankingPageState> {
   /// Instance of [OmiseApiService] used to interact with the omise dart package.
   final OmiseApiService omiseApiService;
 
-  /// Constructor for initializing [MobileBankingPaymentMethodSelectorController].
+  /// Constructor for initializing [MobileBankingController].
   /// Takes in a required [omiseApiService].
-  MobileBankingPaymentMethodSelectorController({
+  MobileBankingController({
     required this.omiseApiService,
-  }) : super(MobileBankingPaymentMethodSelectorState(
-            sourceLoadingStatus: Status.idle));
+  }) : super(MobileBankingPageState(sourceLoadingStatus: Status.idle));
 
   void setSourceCreationParams({
     required int amount,
@@ -60,13 +58,13 @@ class MobileBankingPaymentMethodSelectorController
   }
 
   /// Internal helper function to update the state of [ValueNotifier].
-  void _setValue(MobileBankingPaymentMethodSelectorState state) {
+  void _setValue(MobileBankingPageState state) {
     value = state;
   }
 }
 
-/// State class that holds the values for [MobileBankingPaymentMethodSelectorController].
-class MobileBankingPaymentMethodSelectorState {
+/// State class that holds the values for [MobileBankingController].
+class MobileBankingPageState {
   /// The source object received from the API after source creation.
   final Source? source;
 
@@ -82,8 +80,8 @@ class MobileBankingPaymentMethodSelectorState {
   /// The currency used in source creation.
   final Currency? currency;
 
-  /// Constructor for creating a [MobileBankingPaymentMethodSelectorState].
-  MobileBankingPaymentMethodSelectorState({
+  /// Constructor for creating a [MobileBankingPageState].
+  MobileBankingPageState({
     required this.sourceLoadingStatus,
     this.source,
     this.amount,
@@ -93,14 +91,14 @@ class MobileBankingPaymentMethodSelectorState {
 
   /// Creates a copy of the current state while allowing overriding of
   /// specific fields. This is needed since in order to trigger a rebuild on the value notifier level, we need a new instance to be created for non primitive types.
-  MobileBankingPaymentMethodSelectorState copyWith({
+  MobileBankingPageState copyWith({
     Source? source,
     Status? sourceLoadingStatus,
     int? amount,
     Currency? currency,
     String? sourceErrorMessage,
   }) {
-    return MobileBankingPaymentMethodSelectorState(
+    return MobileBankingPageState(
       source: source ?? this.source,
       sourceLoadingStatus: sourceLoadingStatus ?? this.sourceLoadingStatus,
       amount: amount ?? this.amount,
