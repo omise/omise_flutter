@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:omise_flutter/src/pages/select_payment_method_page.dart';
+import 'package:omise_flutter/src/pages/payment_methods_page.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
 import 'package:omise_flutter/omise_flutter.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -36,7 +36,7 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: widget));
 
     // Verify that the correct widget type is displayed
-    expect(find.byType(SelectPaymentMethodPage), findsOneWidget);
+    expect(find.byType(PaymentMethodsPage), findsOneWidget);
   });
 
   testWidgets(
@@ -59,12 +59,12 @@ void main() {
     await tester.pumpWidget(MaterialApp(home: widget));
 
     // Verify that the correct widget is displayed
-    final selectPaymentMethodPageFinder = find.byType(SelectPaymentMethodPage);
+    final selectPaymentMethodPageFinder = find.byType(PaymentMethodsPage);
     expect(selectPaymentMethodPageFinder, findsOneWidget);
 
     // Verify that the selectedPaymentMethods parameter was passed correctly
     final selectPaymentMethodPageWidget =
-        tester.widget<SelectPaymentMethodPage>(selectPaymentMethodPageFinder);
+        tester.widget<PaymentMethodsPage>(selectPaymentMethodPageFinder);
     expect(selectPaymentMethodPageWidget.selectedPaymentMethods,
         selectedPaymentMethods);
   });

@@ -4,16 +4,16 @@ import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart'
     as omise_dart; // avoid name conflict in this file
 import 'package:omise_flutter/omise_flutter.dart';
-import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
+import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/credit_card_payment_method_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
 import 'package:omise_flutter/src/widgets/rounded_text_field.dart';
 
 import '../mocks.dart';
 
 void main() {
   late MockOmiseApiService mockOmiseApiService;
-  late CreditCardPaymentMethodController mockController;
+  late CreditCardController mockController;
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
@@ -76,7 +76,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: CreditCardPaymentMethodPage(
+          home: CreditCardPage(
             omiseApiService: mockOmiseApiService,
             creditCardPaymentMethodController: mockController,
           ),
@@ -102,7 +102,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: CreditCardPaymentMethodPage(
+          home: CreditCardPage(
             omiseApiService: mockOmiseApiService,
             creditCardPaymentMethodController: mockController,
           ),
@@ -126,7 +126,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: CreditCardPaymentMethodPage(
+          home: CreditCardPage(
             omiseApiService: mockOmiseApiService,
             creditCardPaymentMethodController: mockController,
           ),
@@ -157,7 +157,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: CreditCardPaymentMethodPage(
+          home: CreditCardPage(
             omiseApiService: mockOmiseApiService,
             creditCardPaymentMethodController: mockController,
           ),
@@ -190,7 +190,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: CreditCardPaymentMethodPage(
+          home: CreditCardPage(
             omiseApiService: mockOmiseApiService,
             creditCardPaymentMethodController: mockController,
           ),
@@ -220,7 +220,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: CreditCardPaymentMethodPage(
+          home: CreditCardPage(
             omiseApiService: mockOmiseApiService,
             creditCardPaymentMethodController: mockController,
           ),
@@ -253,7 +253,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: CreditCardPaymentMethodPage(
+          home: CreditCardPage(
             omiseApiService: mockOmiseApiService,
             creditCardPaymentMethodController: mockController,
           ),
@@ -293,7 +293,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: CreditCardPaymentMethodPage(
+          home: CreditCardPage(
             omiseApiService: mockOmiseApiService,
             creditCardPaymentMethodController: mockController,
           ),
@@ -333,7 +333,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: CreditCardPaymentMethodPage(
+        home: CreditCardPage(
           omiseApiService: mockOmiseApiService,
           creditCardPaymentMethodController: mockController,
         ),
@@ -409,7 +409,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: CreditCardPaymentMethodPage(
+        home: CreditCardPage(
           omiseApiService: mockOmiseApiService,
           creditCardPaymentMethodController: mockController,
         ),
@@ -474,7 +474,7 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
-        home: CreditCardPaymentMethodPage(
+        home: CreditCardPage(
           omiseApiService: mockOmiseApiService,
           creditCardPaymentMethodController: mockController,
         ),
@@ -500,7 +500,7 @@ void main() {
     (WidgetTester tester) async {
       OmisePaymentResult?
           capturedResult; // To capture the result from the navigator pop
-      final controller = CreditCardPaymentMethodController(
+      final controller = CreditCardController(
         omiseApiService: mockOmiseApiService,
       );
       final mockCapability = omise_dart.Capability(
@@ -567,7 +567,7 @@ void main() {
                 onPressed: () async {
                   final result = await Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (context) => CreditCardPaymentMethodPage(
+                      builder: (context) => CreditCardPage(
                         omiseApiService: mockOmiseApiService,
                         creditCardPaymentMethodController: controller,
                       ),
@@ -611,7 +611,7 @@ void main() {
           equals(mockToken.id)); // Verify result from pop
 
       // Ensure the CreditCardPaymentMethodPage is no longer in the widget tree (i.e., the page was popped)
-      expect(find.byType(CreditCardPaymentMethodPage), findsNothing);
+      expect(find.byType(CreditCardPage), findsNothing);
     },
   );
 }

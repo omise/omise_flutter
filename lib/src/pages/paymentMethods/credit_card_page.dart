@@ -1,7 +1,7 @@
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
-import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
+import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
@@ -15,12 +15,12 @@ import 'package:omise_flutter/src/widgets/rounded_text_field.dart';
 /// security code, country or region, and optional address fields (address,
 /// city, state, postal code). It also handles the logic for creating a token
 /// from the provided credit card information through the Omise API.
-class CreditCardPaymentMethodPage extends StatefulWidget {
+class CreditCardPage extends StatefulWidget {
   /// An instance of [OmiseApiService] for interacting with the Omise API.
   final OmiseApiService omiseApiService;
 
   /// Allows passing an instance of the controller to facilitate testing.
-  final CreditCardPaymentMethodController? creditCardPaymentMethodController;
+  final CreditCardController? creditCardPaymentMethodController;
 
   /// A flag to control whether the leading icon in the AppBar is automatically implied.
   final bool automaticallyImplyLeading;
@@ -28,7 +28,7 @@ class CreditCardPaymentMethodPage extends StatefulWidget {
   /// The capability to enable specific features in the payment method.
   final Capability? capability;
 
-  const CreditCardPaymentMethodPage({
+  const CreditCardPage({
     super.key,
     this.automaticallyImplyLeading = true,
     required this.omiseApiService,
@@ -37,19 +37,16 @@ class CreditCardPaymentMethodPage extends StatefulWidget {
   });
 
   @override
-  State<CreditCardPaymentMethodPage> createState() =>
-      _CreditCardPaymentMethodPageState();
+  State<CreditCardPage> createState() => _CreditCardPageState();
 }
 
-class _CreditCardPaymentMethodPageState
-    extends State<CreditCardPaymentMethodPage> {
+class _CreditCardPageState extends State<CreditCardPage> {
   final countryPicker = const FlCountryCodePicker();
 
   /// The controller responsible for fetching and filtering payment methods.
-  late final CreditCardPaymentMethodController
-      creditCardPaymentMethodController =
+  late final CreditCardController creditCardPaymentMethodController =
       widget.creditCardPaymentMethodController ??
-          CreditCardPaymentMethodController(
+          CreditCardController(
             omiseApiService: widget.omiseApiService,
           );
 

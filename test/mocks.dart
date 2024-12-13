@@ -4,9 +4,10 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_dart/src/services/capability_api.dart';
 import 'package:omise_dart/src/services/tokens_api.dart';
 import 'package:omise_dart/src/services/sources_api.dart';
-import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
+import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
+import 'package:omise_flutter/src/controllers/mobile_banking_controller.dart';
 import 'package:omise_flutter/src/controllers/payment_authorization_controller.dart';
-import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
+import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -29,10 +30,13 @@ class MockSourceResource extends Mock implements SourcesApi {}
 class MockOmiseApiService extends Mock implements OmiseApiService {}
 
 class MockPaymentMethodSelectorController extends Mock
-    implements PaymentMethodSelectorController {}
+    implements PaymentMethodsController {}
 
 class MockCreditCardPaymentMethodController extends Mock
-    implements CreditCardPaymentMethodController {}
+    implements CreditCardController {}
+
+class MockMobileBankingPaymentMethodSelectorController extends Mock
+    implements MobileBankingController {}
 
 class MockCreateTokenRequest extends Mock implements CreateTokenRequest {}
 

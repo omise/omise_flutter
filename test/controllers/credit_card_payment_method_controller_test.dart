@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart';
-import 'package:omise_flutter/src/controllers/credit_card_payment_method_controller.dart';
+import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 
 import '../mocks.dart';
 
 void main() {
-  late CreditCardPaymentMethodController controller;
+  late CreditCardController controller;
   late MockOmiseApiService mockOmiseApiService;
 
   setUpAll(() {
@@ -18,7 +18,7 @@ void main() {
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
-    controller = CreditCardPaymentMethodController(
+    controller = CreditCardController(
       omiseApiService: mockOmiseApiService,
     );
   });

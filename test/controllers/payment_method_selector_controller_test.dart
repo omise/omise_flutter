@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:omise_flutter/src/controllers/payment_method_selector_controller.dart';
+import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_dart/omise_dart.dart';
 
 import '../mocks.dart';
 
 void main() {
-  late PaymentMethodSelectorController controller;
+  late PaymentMethodsController controller;
   late MockOmiseApiService mockOmiseApiService;
 
   setUp(() {
@@ -66,7 +66,7 @@ void main() {
           .thenAnswer((_) async => mockCapability);
 
       // Initialize the controller with selected payment methods
-      controller = PaymentMethodSelectorController(
+      controller = PaymentMethodsController(
         omiseApiService: mockOmiseApiService,
         selectedPaymentMethods: [
           PaymentMethodName.card,
@@ -75,7 +75,7 @@ void main() {
       );
 
       // Listen for value changes
-      var changes = <PaymentMethodSelectorState>[];
+      var changes = <PaymentMethodsState>[];
       controller.addListener(() {
         changes.add(controller.value);
       });
@@ -99,12 +99,12 @@ void main() {
           .thenThrow(OmiseApiException(message: 'API Error'));
 
       // Initialize the controller
-      controller = PaymentMethodSelectorController(
+      controller = PaymentMethodsController(
         omiseApiService: mockOmiseApiService,
       );
 
       // Listen for value changes
-      var changes = <PaymentMethodSelectorState>[];
+      var changes = <PaymentMethodsState>[];
       controller.addListener(() {
         changes.add(controller.value);
       });
@@ -126,7 +126,7 @@ void main() {
         .thenAnswer((_) async => mockSource);
 
     // Initialize the controller with selected payment methods
-    controller = PaymentMethodSelectorController(
+    controller = PaymentMethodsController(
       omiseApiService: mockOmiseApiService,
       selectedPaymentMethods: [
         PaymentMethodName.card,
@@ -138,7 +138,7 @@ void main() {
         currency: currency,
         selectedPaymentMethod: paymentMethod);
     // Listen for value changes
-    var changes = <PaymentMethodSelectorState>[];
+    var changes = <PaymentMethodsState>[];
     controller.addListener(() {
       changes.add(controller.value);
     });
@@ -163,7 +163,7 @@ void main() {
         .thenAnswer((_) async => mockSource);
 
     // Initialize the controller with selected payment methods
-    controller = PaymentMethodSelectorController(
+    controller = PaymentMethodsController(
       omiseApiService: mockOmiseApiService,
       selectedPaymentMethods: [
         PaymentMethodName.card,
@@ -172,7 +172,7 @@ void main() {
     );
 
     // Listen for value changes
-    var changes = <PaymentMethodSelectorState>[];
+    var changes = <PaymentMethodsState>[];
     controller.addListener(() {
       changes.add(controller.value);
     });

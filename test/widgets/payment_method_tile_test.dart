@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart';
+import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
-import '../mocks.dart'; // Adjust the import as needed
+import '../mocks.dart';
 
 void main() {
   group('paymentMethodTile Widget Tests', () {
@@ -32,7 +33,8 @@ void main() {
       ));
 
       // Assert
-      expect(find.text('Credit/Debit Card'), findsOneWidget); // Verify the name
+      expect(find.text(PaymentMethodName.card.title),
+          findsOneWidget); // Verify the name
       expect(
           find.byIcon(Icons.start), findsOneWidget); // Verify the leading icon
       expect(find.byIcon(Icons.arrow_forward),

@@ -14,15 +14,14 @@ import 'package:omise_flutter/src/utils/validation_utils.dart';
 /// related to credit card payments, including loading capabilities,
 /// creating tokens, and validating input fields. It extends
 /// [ValueNotifier] to allow for state management and UI updates.
-class CreditCardPaymentMethodController
-    extends ValueNotifier<CreditCardPaymentMethodState> {
+class CreditCardController extends ValueNotifier<CreditCardPaymentMethodState> {
   /// Instance of [OmiseApiService] used to interact with the Omise Dart package.
   final OmiseApiService omiseApiService;
 
-  /// Constructor for initializing [CreditCardPaymentMethodController].
+  /// Constructor for initializing [CreditCardController].
   ///
   /// Takes in a required [omiseApiService] to facilitate API interactions.
-  CreditCardPaymentMethodController({required this.omiseApiService})
+  CreditCardController({required this.omiseApiService})
       : super(CreditCardPaymentMethodState(
             capabilityLoadingStatus: Status.idle,
             tokenLoadingStatus: Status.idle,
@@ -131,7 +130,7 @@ class CreditCardPaymentMethodController
   }
 }
 
-/// State class that holds the values for [CreditCardPaymentMethodController].
+/// State class that holds the values for [CreditCardController].
 ///
 /// Contains the current loading status, error messages, capabilities,
 /// and the create token request data.
