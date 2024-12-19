@@ -4,11 +4,19 @@ import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
 import '../mocks.dart';
 
 void main() {
+  final MockBuildContext mockBuildContext = MockBuildContext();
+  setUpAll(() {
+    Translations.testLocale = const Locale('en');
+  });
+  tearDownAll(() {
+    Translations.testLocale = null;
+  });
   group('paymentMethodTile Widget Tests', () {
     testWidgets(
         'should display payment method name, leading icon, and trailing icon',
@@ -26,14 +34,15 @@ void main() {
         home: Scaffold(
           body: Column(
             children: [
-              paymentMethodTile(paymentMethod: testPaymentMethod),
+              paymentMethodTile(
+                  paymentMethod: testPaymentMethod, context: mockBuildContext),
             ],
           ),
         ),
       ));
 
       // Assert
-      expect(find.text(PaymentMethodName.card.title),
+      expect(find.text(PaymentMethodName.card.title(context: mockBuildContext)),
           findsOneWidget); // Verify the name
       expect(
           find.byIcon(Icons.start), findsOneWidget); // Verify the leading icon
@@ -59,7 +68,8 @@ void main() {
         home: Scaffold(
           body: Column(
             children: [
-              paymentMethodTile(paymentMethod: testPaymentMethod),
+              paymentMethodTile(
+                  paymentMethod: testPaymentMethod, context: mockBuildContext),
             ],
           ),
         ),

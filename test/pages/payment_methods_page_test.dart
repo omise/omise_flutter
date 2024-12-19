@@ -6,12 +6,14 @@ import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
 
 import '../mocks.dart';
 
 void main() {
   late MockOmiseApiService mockOmiseApiService;
   late PaymentMethodsController mockController;
+  final MockBuildContext mockBuildContext = MockBuildContext();
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
@@ -21,6 +23,11 @@ void main() {
   setUpAll(() {
     registerFallbackValue(MockBuildContext());
     registerFallbackValue(MockCreateSourceRequest());
+    Translations.testLocale = const Locale('en');
+  });
+
+  tearDownAll(() {
+    Translations.testLocale = null;
   });
 
   // Define mock currency and bank objects as they are required in PaymentMethod
@@ -137,9 +144,10 @@ void main() {
         ),
         capabilityLoadingStatus: Status.success,
         viewablePaymentMethods: paymentMethods));
-    when(() =>
-            mockController.getPaymentMethodsMap(context: any(named: 'context')))
-        .thenReturn({});
+    when(() => mockController.getPaymentMethodsMap(
+        context: any(named: 'context'),
+        locale: any(named: 'locale'),
+        object: any(named: 'object'))).thenReturn({});
 
     when(() => mockController.loadCapabilities())
         .thenAnswer((_) async => Future.value());
@@ -156,10 +164,18 @@ void main() {
     );
 
     expect(find.byType(ListTile), findsNWidgets(paymentMethods.length));
-    expect(find.text(omise_dart.PaymentMethodName.card.title), findsOneWidget);
-    expect(find.text(omise_dart.PaymentMethodName.promptpay.title),
+    expect(
+        find.text(
+            omise_dart.PaymentMethodName.card.title(context: mockBuildContext)),
         findsOneWidget);
-    expect(find.text(CustomPaymentMethod.mobileBanking.title), findsOneWidget);
+    expect(
+        find.text(omise_dart.PaymentMethodName.promptpay
+            .title(context: mockBuildContext)),
+        findsOneWidget);
+    expect(
+        find.text(
+            CustomPaymentMethod.mobileBanking.title(context: mockBuildContext)),
+        findsOneWidget);
   });
 
   testWidgets('displays "No payment methods available" when the list is empty',
@@ -267,7 +283,9 @@ void main() {
       await tester.pumpAndSettle(); // Wait for the credit card page to open
 
       final promptPayTile = find.widgetWithText(
-          ListTile, omise_dart.PaymentMethodName.promptpay.title);
+          ListTile,
+          omise_dart.PaymentMethodName.promptpay
+              .title(context: mockBuildContext));
       expect(tester.widget<ListTile>(promptPayTile).enabled, isTrue);
       await tester.tap(promptPayTile);
 

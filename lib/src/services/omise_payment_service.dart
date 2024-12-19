@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
+import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
@@ -10,6 +11,7 @@ import 'package:omise_flutter/src/services/omise_api_service.dart';
 /// services and provides a way to select payment methods.
 class OmisePayment {
   final bool? enableDebug;
+  final OmiseLocale? locale;
 
   /// Creates an instance of [OmisePayment].
   ///
@@ -17,9 +19,12 @@ class OmisePayment {
   ///
   /// An optional [enableDebug] parameter can be set to enable debugging
   /// logs for API requests and responses.
+  /// An optional [locale] parameter that can be used to set the locale
+  /// of the text. By default the SDK will use the `Localizations.localeOf(context)`.
   OmisePayment({
     required String publicKey,
     this.enableDebug = false,
+    this.locale,
   }) {
     // Initialize the OmiseApiService with the provided public key
     // and debug settings.
@@ -55,6 +60,7 @@ class OmisePayment {
       currency: currency,
       selectedPaymentMethods:
           selectedPaymentMethods, // Pass any pre-selected methods
+      locale: locale,
     );
   }
 
@@ -77,6 +83,7 @@ class OmisePayment {
       authorizeUri: authorizeUri,
       expectedReturnUrls: expectedReturnUrls,
       enableDebug: enableDebug,
+      locale: locale,
     );
   }
 }

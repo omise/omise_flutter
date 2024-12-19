@@ -6,12 +6,14 @@ import 'package:omise_flutter/src/controllers/mobile_banking_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
 
 import '../mocks.dart';
 
 void main() {
   late MockOmiseApiService mockOmiseApiService;
   late MobileBankingController mockController;
+  final MockBuildContext mockBuildContext = MockBuildContext();
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
@@ -21,6 +23,10 @@ void main() {
   setUpAll(() {
     registerFallbackValue(MockBuildContext());
     registerFallbackValue(MockCreateSourceRequest());
+    Translations.testLocale = const Locale('en');
+  });
+  tearDownAll(() {
+    Translations.testLocale = null;
   });
 
   // Define mock currency and bank objects as they are required in PaymentMethod
@@ -94,7 +100,8 @@ void main() {
       expect(find.byType(ListTile),
           findsNWidgets(mobileBankingPaymentMethods.length));
       for (var method in mobileBankingPaymentMethods) {
-        expect(find.text(method.name.title), findsOneWidget);
+        expect(find.text(method.name.title(context: mockBuildContext)),
+            findsOneWidget);
       }
     });
 
@@ -140,7 +147,9 @@ void main() {
         await tester.pumpAndSettle(); // Wait for the credit card page to open
 
         final mobileBankingScbTitle = find.widgetWithText(
-            ListTile, omise_dart.PaymentMethodName.mobileBankingScb.title);
+            ListTile,
+            omise_dart.PaymentMethodName.mobileBankingScb
+                .title(context: mockBuildContext));
         expect(tester.widget<ListTile>(mobileBankingScbTitle).enabled, isTrue);
         await tester.tap(mobileBankingScbTitle);
 

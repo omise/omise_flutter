@@ -23,12 +23,14 @@ import 'package:omise_flutter/src/enums/enums.dart';
 ///
 /// Returns:
 /// A [ListTile] widget configured with the provided payment method data.
-Widget paymentMethodTile({
-  required PaymentMethodTileData paymentMethod,
-  String? customTitle,
-}) {
+Widget paymentMethodTile(
+    {required PaymentMethodTileData paymentMethod,
+    required BuildContext context,
+    String? customTitle,
+    OmiseLocale? locale}) {
   return ListTile(
-    title: Text(customTitle ?? paymentMethod.name.title),
+    title: Text(customTitle ??
+        paymentMethod.name.title(context: context, locale: locale)),
     leading: SizedBox(
       height: paymentMethod.leadingIconHeight,
       width: paymentMethod.leadingIconWidth,

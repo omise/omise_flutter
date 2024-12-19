@@ -1,22 +1,18 @@
+import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
 
 enum Status { idle, loading, success, error }
 
 enum ValidationType {
-  cardNumber("Card Number"),
-  name("Name"),
-  expiryDate("Expiry Date"),
-  cvv("CVV"),
-  address("Address"),
-  city("City"),
-  state("State"),
-  postalCode("Postal Code");
-
-  // Field to hold the display name
-  final String displayName;
-
-  // Constructor for the enum
-  const ValidationType(this.displayName);
+  cardNumber,
+  name,
+  expiryDate,
+  cvv,
+  address,
+  city,
+  state,
+  postalCode;
 }
 
 enum CustomPaymentMethod {
@@ -30,12 +26,12 @@ enum CustomPaymentMethod {
 }
 
 extension CustomPaymentMethodNameTitleExtension on CustomPaymentMethod {
-  String get title {
+  String title({required BuildContext context, OmiseLocale? locale}) {
     switch (this) {
       case CustomPaymentMethod.mobileBanking:
-        return 'Mobile Banking';
+        return Translations.get('mobileBanking', locale, context);
       default:
-        return 'Unsupported Payment Method';
+        return Translations.get('unsupportedPaymentMethod', locale, context);
     }
   }
 }
@@ -50,26 +46,34 @@ extension CustomPaymentMethodNameExtension on CustomPaymentMethod {
 }
 
 extension PaymentMethodNameTitleExtension on PaymentMethodName {
-  String get title {
+  String title({required BuildContext context, OmiseLocale? locale}) {
     switch (this) {
       case PaymentMethodName.card:
-        return 'Credit/Debit Card';
       case PaymentMethodName.promptpay:
-        return 'PromptPay';
       case PaymentMethodName.mobileBankingBay:
-        return "Krungsri (KMA)";
       case PaymentMethodName.mobileBankingBbl:
-        return "Bangkok Bank";
       case PaymentMethodName.mobileBankingKbank:
-        return "KBank (K PLUS)";
       case PaymentMethodName.mobileBankingKtb:
-        return "Krungthai NEXT";
       case PaymentMethodName.mobileBankingOcbc:
-        return "OCBC Digital";
       case PaymentMethodName.mobileBankingScb:
-        return "SCB (SCB Easy)";
+        return Translations.get(name, locale, context);
       default:
-        return 'Unsupported Payment Method';
+        return Translations.get('unsupportedPaymentMethod', locale, context);
     }
+  }
+}
+
+enum OmiseLocale { en, th, ja }
+
+extension OmiseLocaleFromLocaleExtension on OmiseLocale {
+  static OmiseLocale fromString(Locale locale) {
+    final languageCode = locale.languageCode.toLowerCase();
+    final mainCode = languageCode.contains(('_'))
+        ? languageCode.split('_')[0]
+        : languageCode;
+    return OmiseLocale.values.firstWhere(
+      (omiseLocale) => omiseLocale.name.toLowerCase() == mainCode.toLowerCase(),
+      orElse: () => OmiseLocale.en,
+    );
   }
 }

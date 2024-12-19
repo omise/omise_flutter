@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:omise_flutter/omise_flutter.dart';
 
 void main() {
@@ -15,6 +16,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+        Locale('ja'),
+        Locale('th'),
+      ],
+      locale: const Locale('en'),
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
@@ -39,7 +51,8 @@ class MyHomePage extends StatefulWidget {
 // State class for MyHomePage that handles payment actions
 class _MyHomePageState extends State<MyHomePage> {
   // Omise payment instance, replace "pkey" with your actual Omise public key
-  final omisePayment = OmisePayment(publicKey: "pkey", enableDebug: true);
+  final omisePayment = OmisePayment(
+      publicKey: "pkey", enableDebug: true, locale: OmiseLocale.en);
 
   // Opens a page to select payment methods and handle token creation
   Future<void> _openPaymentMethodsPage() async {
