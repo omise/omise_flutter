@@ -36,7 +36,8 @@ dependencies:
   cupertino_icons: ^1.0.8
   omise_flutter:
     path: ../
-  flutter_localization: ^0.3.0
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
