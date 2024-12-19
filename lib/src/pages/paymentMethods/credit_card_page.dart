@@ -66,6 +66,10 @@ class _CreditCardPageState extends State<CreditCardPage> {
           Status.error) {
         MessageDisplayUtils.showSnackBar(context,
             creditCardPaymentMethodController.value.tokenErrorMessage!);
+        // reset the status so that the snackbar does not appear every time the user types
+        creditCardPaymentMethodController.updateState(
+            creditCardPaymentMethodController.value
+                .copyWith(tokenLoadingStatus: Status.idle));
       } else if (creditCardPaymentMethodController.value.tokenLoadingStatus ==
           Status.success) {
         while (Navigator.of(context).canPop()) {
