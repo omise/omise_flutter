@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:omise_flutter/src/controllers/payment_authorization_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_authorization_result.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 /// A page for handling payment authorization using a WebView.
@@ -23,11 +24,14 @@ class PaymentAuthorizationPage extends StatefulWidget {
   /// Allows passing an existing instance of [PaymentAuthorizationController] for easier testing.
   final PaymentAuthorizationController? paymentAuthorizationController;
 
-  // custom WebViewController for testing
+  /// custom WebViewController for testing
   final WebViewController? customWebViewController;
 
+  /// The custom locale passed by the merchant.
+  final OmiseLocale? locale;
+
   /// Constructs a [PaymentAuthorizationPage] with the required authorization URL
-  /// and optional expected return URLs, controller, and debug mode.
+  /// and optional expected return URLs, controller, locale and debug mode.
   const PaymentAuthorizationPage({
     required this.authorizeUri,
     this.expectedReturnUrls,
@@ -35,6 +39,7 @@ class PaymentAuthorizationPage extends StatefulWidget {
     this.enableDebug = false,
     super.key,
     this.customWebViewController,
+    this.locale,
   });
 
   @override
@@ -138,7 +143,8 @@ class _PaymentAuthorizationPageState extends State<PaymentAuthorizationPage> {
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text('Secure Checkout'),
+          title:
+              Text(Translations.get('secureCheckout', widget.locale, context)),
         ),
         body: Stack(
           children: [

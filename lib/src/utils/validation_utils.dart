@@ -1,9 +1,12 @@
+import 'package:flutter/material.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
 
 class ValidationUtils {
-  static String? validateCardNumber(String? value) {
+  static String? validateCardNumber(
+      {required BuildContext context, String? value, OmiseLocale? locale}) {
     if (value == null || value.isEmpty) {
-      return 'Card number is required';
+      return Translations.get('cardNumberRequired', locale, context);
     }
 
     // Remove any spaces or dashes if present in the card number
@@ -11,11 +14,11 @@ class ValidationUtils {
 
     // Check if the string contains only digits
     if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-      return 'Invalid card number';
+      return Translations.get('invalidCardNumber', locale, context);
     }
 
     if (!_isValidLuhn(value)) {
-      return 'Invalid card number';
+      return Translations.get('invalidCardNumber', locale, context);
     }
 
     return null;
@@ -44,58 +47,77 @@ class ValidationUtils {
     return (sum % 10 == 0);
   }
 
-  static String? validateName(String? value, {String? fieldName}) {
+  static String? validateName(String? value,
+      {required String fieldName,
+      required BuildContext context,
+      OmiseLocale? locale}) {
+    final currentLocale = Translations.detectLocale(locale, context);
     if (value == null || value.trim().isEmpty) {
-      return '${fieldName ?? "Name"} is required';
+      return '$fieldName${currentLocale == OmiseLocale.en ? ' ' : ''}${Translations.get('isRequired', locale, context)}';
     }
     return null;
   }
 
   static final expiryDateRegEx = RegExp(r'^(0[1-9]|1[0-2])\/?([0-9]{2})$');
-  static String? validateExpiryDate(String? value) {
+  static String? validateExpiryDate(
+      {required BuildContext context, OmiseLocale? locale, String? value}) {
     if (value == null || value.isEmpty) {
-      return 'Expiry date is required';
+      return Translations.get('expiryDateRequired', locale, context);
     } else {
       // Expiry date validation logic (MM/YY format)
       if (!expiryDateRegEx.hasMatch(value)) {
-        return 'MM/YY format';
+        return Translations.get('expiryFormat', locale, context);
       }
     }
     return null;
   }
 
-  static String? validateCVV(String? value) {
+  static String? validateCVV(
+      {required BuildContext context, OmiseLocale? locale, String? value}) {
     if (value == null || value.isEmpty) {
-      return 'CVV is required';
+      return Translations.get('cvvRequired', locale, context);
     }
 
     // Check if the string contains only digits
     if (!RegExp(r'^\d+$').hasMatch(value)) {
-      return 'Only digits are allowed';
+      return Translations.get('onlyDigits', locale, context);
     }
 
     // Validate length (3 digits for most cards, 4 digits for AMEX)
     if (value.length != 3 && value.length != 4) {
-      return 'CVV must be 3 or 4 digits';
+      return Translations.get('cvvDigits', locale, context);
     }
 
     return null; // CVV is valid
   }
 
-  static String? validateInput(ValidationType validationType, String? value) {
+  static String? validateInput(
+      {required ValidationType validationType,
+      required BuildContext context,
+      OmiseLocale? locale,
+      String? value}) {
     switch (validationType) {
       case ValidationType.cardNumber:
-        return validateCardNumber(value);
+        return validateCardNumber(
+            value: value, context: context, locale: locale);
       case ValidationType.name:
       case ValidationType.address:
       case ValidationType.city:
       case ValidationType.state:
       case ValidationType.postalCode:
-        return validateName(value, fieldName: validationType.displayName);
+        return validateName(value,
+            fieldName: Translations.get(
+              validationType.name,
+              locale,
+              context,
+            ),
+            locale: locale,
+            context: context);
       case ValidationType.expiryDate:
-        return validateExpiryDate(value);
+        return validateExpiryDate(
+            value: value, locale: locale, context: context);
       case ValidationType.cvv:
-        return validateCVV(value);
+        return validateCVV(value: value, locale: locale, context: context);
       default:
         return null;
     }

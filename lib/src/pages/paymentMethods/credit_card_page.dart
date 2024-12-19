@@ -5,6 +5,7 @@ import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/expiry_date_formatter.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/widgets/rounded_text_field.dart';
@@ -28,13 +29,16 @@ class CreditCardPage extends StatefulWidget {
   /// The capability to enable specific features in the payment method.
   final Capability? capability;
 
-  const CreditCardPage({
-    super.key,
-    this.automaticallyImplyLeading = true,
-    required this.omiseApiService,
-    this.creditCardPaymentMethodController,
-    this.capability,
-  });
+  /// The custom locale passed by the merchant.
+  final OmiseLocale? locale;
+
+  const CreditCardPage(
+      {super.key,
+      this.automaticallyImplyLeading = true,
+      required this.omiseApiService,
+      this.creditCardPaymentMethodController,
+      this.capability,
+      this.locale});
 
   @override
   State<CreditCardPage> createState() => _CreditCardPageState();
@@ -82,7 +86,7 @@ class _CreditCardPageState extends State<CreditCardPage> {
       ),
       body: ValueListenableBuilder(
         valueListenable: creditCardPaymentMethodController,
-        builder: (context, state, widget) {
+        builder: (context, state, _) {
           // Display a loading indicator or an error message if necessary.
           if ([Status.loading, Status.idle]
               .contains(state.capabilityLoadingStatus)) {
@@ -103,7 +107,7 @@ class _CreditCardPageState extends State<CreditCardPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0, top: 20),
                 child: RoundedTextField(
-                  title: "Card Number",
+                  title: Translations.get('cardNumber', widget.locale, context),
                   validationType: ValidationType.cardNumber,
                   enabled: isFormEnabled,
                   keyboardType: TextInputType.number,
@@ -124,7 +128,7 @@ class _CreditCardPageState extends State<CreditCardPage> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0),
                 child: RoundedTextField(
-                  title: "Name on card",
+                  title: Translations.get('nameOnCard', widget.locale, context),
                   validationType: ValidationType.name,
                   enabled: isFormEnabled,
                   useValidationTypeAsKey: true,
@@ -151,8 +155,10 @@ class _CreditCardPageState extends State<CreditCardPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 12.0),
                         child: RoundedTextField(
-                          hintText: "MM/YY",
-                          title: "Expiry date",
+                          hintText: Translations.get(
+                              'hintExpiry', widget.locale, context),
+                          title: Translations.get(
+                              'expiryDate', widget.locale, context),
                           validationType: ValidationType.expiryDate,
                           enabled: isFormEnabled,
                           inputFormatters: [ExpiryDateFormatter()],
@@ -173,7 +179,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 12.0),
                         child: RoundedTextField(
-                          title: "Security code",
+                          title: Translations.get(
+                              'securityCode', widget.locale, context),
                           validationType: ValidationType.cvv,
                           enabled: isFormEnabled,
                           keyboardType: TextInputType.number,
@@ -199,11 +206,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
               ),
 
               // Country or Region Selector
-              const Padding(
-                padding: EdgeInsets.only(bottom: 8),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
                 child: Text(
-                  "Country or region",
-                  style: TextStyle(fontSize: 16),
+                  Translations.get('countryRegion', widget.locale, context),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
               Opacity(
@@ -255,7 +262,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: RoundedTextField(
-                        title: "Address",
+                        title: Translations.get(ValidationType.address.name,
+                            widget.locale, context),
                         validationType: ValidationType.address,
                         enabled: isFormEnabled,
                         useValidationTypeAsKey: true,
@@ -274,7 +282,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: RoundedTextField(
-                        title: "City",
+                        title: Translations.get(
+                            ValidationType.city.name, widget.locale, context),
                         validationType: ValidationType.city,
                         enabled: isFormEnabled,
                         useValidationTypeAsKey: true,
@@ -293,7 +302,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: RoundedTextField(
-                        title: "State",
+                        title:
+                            Translations.get('state', widget.locale, context),
                         validationType: ValidationType.state,
                         enabled: isFormEnabled,
                         useValidationTypeAsKey: true,
@@ -346,9 +356,9 @@ class _CreditCardPageState extends State<CreditCardPage> {
                       : () {
                           creditCardPaymentMethodController.createToken();
                         },
-                  child: const Text(
-                    'Pay',
-                    style: TextStyle(
+                  child: Text(
+                    Translations.get('pay', widget.locale, context),
+                    style: const TextStyle(
                       fontSize: 16.0,
                       color: Colors.white,
                     ),
