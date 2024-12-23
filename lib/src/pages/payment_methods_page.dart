@@ -5,6 +5,7 @@ import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
@@ -29,6 +30,9 @@ class PaymentMethodsPage extends StatefulWidget {
   /// If null, all supported payment methods will be shown.
   final List<PaymentMethodName>? selectedPaymentMethods;
 
+  /// The custom locale passed by the merchant.
+  final OmiseLocale? locale;
+
   /// Constructor for creating a [PaymentMethodsPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
   const PaymentMethodsPage({
@@ -38,6 +42,7 @@ class PaymentMethodsPage extends StatefulWidget {
     required this.currency,
     this.selectedPaymentMethods,
     this.paymentMethodSelectorController,
+    this.locale,
   });
 
   @override
@@ -78,7 +83,8 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Select a payment method"),
+        title: Text(
+            Translations.get('selectPaymentMethod', widget.locale, context)),
         automaticallyImplyLeading: false, // Disable the default back button
         centerTitle: false, // Align the title to the left
         actions: [
@@ -114,8 +120,9 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
 
           // Show a message if no payment methods are available
           if (paymentMethods.isEmpty) {
-            return const Center(
-              child: Text("No payment methods available to display"),
+            return Center(
+              child: Text(
+                  Translations.get('noPaymentMethods', widget.locale, context)),
             );
           }
           final isSourceLoading = state.sourceLoadingStatus == Status.loading;
@@ -133,10 +140,16 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                     customEnum = CustomPaymentMethodNameExtension.fromString(
                         paymentMethod.object);
                   }
-
+                  final paymentMethodsMap =
+                      paymentMethodSelectorController.getPaymentMethodsMap(
+                          context: context,
+                          object: paymentMethod.object,
+                          locale: widget.locale);
                   // Render each payment method as a tile with an icon and arrow
                   return paymentMethodTile(
-                    customTitle: customEnum?.title,
+                    context: context,
+                    customTitle: customEnum?.title(
+                        context: context, locale: widget.locale),
                     paymentMethod: PaymentMethodTileData(
                       name: paymentMethod.name, // Name of the payment method
                       leadingIcon:
@@ -148,20 +161,13 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                                   package: PackageInfo.packageName,
                                   alignment: Alignment.center,
                                 ),
-                      trailingIcon: paymentMethodSelectorController
-                                  .getPaymentMethodsMap(
-                                      context: context)[paymentMethod.name]
-                                  ?.isNextPage ==
-                              true
-                          ? Icons.arrow_forward_ios
-                          : Icons.arrow_outward, // Arrow icon
+                      trailingIcon:
+                          paymentMethodsMap[paymentMethod.name]?.isNextPage ==
+                                  true
+                              ? Icons.arrow_forward_ios
+                              : Icons.arrow_outward, // Arrow icon
                       onTap: () {
-                        paymentMethodSelectorController
-                            .getPaymentMethodsMap(
-                                context: context,
-                                object:
-                                    paymentMethod.object)[paymentMethod.name]
-                            ?.function();
+                        paymentMethodsMap[paymentMethod.name]?.function();
                       },
                     ),
                   );

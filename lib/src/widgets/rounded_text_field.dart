@@ -121,8 +121,10 @@ class _RoundedTextFieldState extends State<RoundedTextField> {
           onChanged: (value) {
             setState(() {
               // Validate input and set error message if any
-              _errorMessage =
-                  ValidationUtils.validateInput(widget.validationType, value);
+              _errorMessage = ValidationUtils.validateInput(
+                  validationType: widget.validationType,
+                  value: value,
+                  context: context);
             });
             // Update validation status in parent widget
             if (widget.updateValidationList != null) {

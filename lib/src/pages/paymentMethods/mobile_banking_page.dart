@@ -21,6 +21,9 @@ class MobileBankingPage extends StatefulWidget {
   /// The currency that will be used to create a source.
   final Currency currency;
 
+  /// The custom locale passed by the merchant.
+  final OmiseLocale? locale;
+
   /// Allow passing an instance of the controller to facilitate testing
   final MobileBankingController? mobileBankingPaymentMethodSelectorController;
   const MobileBankingPage(
@@ -29,7 +32,8 @@ class MobileBankingPage extends StatefulWidget {
       required this.omiseApiService,
       required this.amount,
       required this.currency,
-      this.mobileBankingPaymentMethodSelectorController});
+      this.mobileBankingPaymentMethodSelectorController,
+      this.locale});
 
   @override
   State<MobileBankingPage> createState() => _MobileBankingPageState();
@@ -71,7 +75,8 @@ class _MobileBankingPageState extends State<MobileBankingPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(CustomPaymentMethod.mobileBanking.title),
+          title: Text(CustomPaymentMethod.mobileBanking
+              .title(context: context, locale: widget.locale)),
         ),
         body: ValueListenableBuilder(
             valueListenable: mobileBankingPaymentMethodSelectorController,
@@ -88,6 +93,7 @@ class _MobileBankingPageState extends State<MobileBankingPage> {
                       final paymentMethod =
                           widget.mobileBankingPaymentMethods[index];
                       return paymentMethodTile(
+                        context: context,
                         paymentMethod: PaymentMethodTileData(
                           name:
                               paymentMethod.name, // Name of the payment method

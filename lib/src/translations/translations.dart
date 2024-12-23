@@ -1,0 +1,126 @@
+import 'package:flutter/material.dart';
+import 'package:omise_flutter/src/enums/enums.dart';
+
+class Translations {
+  /// A test locale that can be set during utility unit testing since mocking context delegates in hard.
+  /// In actual widget tests the actual context must be used.
+  static Locale? testLocale;
+  static const Map<OmiseLocale, Map<String, String>> translations = {
+    OmiseLocale.en: {
+      "cardNumber": "Card Number",
+      "name": "Name",
+      "expiryDate": "Expiry Date",
+      "cvv": "CVV",
+      "address": "Address",
+      "city": "City",
+      "state": "State",
+      "postalCode": "Postal Code",
+      "mobileBanking": "Mobile Banking",
+      "unsupportedPaymentMethod": "Unsupported Payment Method",
+      "card": "Credit/Debit Card",
+      "promptpay": "PromptPay",
+      "mobileBankingBay": "Krungsri (KMA)",
+      "mobileBankingBbl": "Bangkok Bank",
+      "mobileBankingKbank": "KBank (K PLUS)",
+      "mobileBankingKtb": "Krungthai NEXT",
+      "mobileBankingOcbc": "OCBC Digital",
+      "mobileBankingScb": "SCB (SCB Easy)",
+      "secureCheckout": "Secure Checkout",
+      "selectPaymentMethod": "Select a payment method",
+      "noPaymentMethods": "No payment methods available to display",
+      "nameOnCard": "Name on card",
+      "hintExpiry": "MM/YY",
+      "securityCode": "Security code",
+      "countryRegion": "Country or region",
+      "pay": "Pay",
+      "cardNumberRequired": "Card number is required",
+      "invalidCardNumber": "Invalid card number",
+      "isRequired": "is required",
+      "expiryDateRequired": "Expiry date is required",
+      "expiryFormat": "MM/YY format",
+      "cvvRequired": "CVV is required",
+      "onlyDigits": "Only digits are allowed",
+      "cvvDigits": "CVV must be 3 or 4 digits"
+    },
+    OmiseLocale.th: {
+      "cardNumber": "หมายเลขบัตร",
+      "name": "ชื่อ",
+      "expiryDate": "วันหมดอายุ",
+      "cvv": "รหัส CVV",
+      "address": "ที่อยู่",
+      "city": "เมือง",
+      "state": "รัฐ/จังหวัด",
+      "postalCode": "รหัสไปรษณีย์",
+      "mobileBanking": "โมบายแบงก์กิ้ง",
+      "unsupportedPaymentMethod": "วิธีการชำระเงินที่ไม่รองรับ",
+      "card": "บัตรเครดิต/เดบิต",
+      "promptpay": "พร้อมเพย์",
+      "mobileBankingBay": "กรุงศรี (KMA)",
+      "mobileBankingBbl": "ธนาคารกรุงเทพ",
+      "mobileBankingKbank": "กสิกรไทย (K PLUS)",
+      "mobileBankingKtb": "กรุงไทย (Krungthai NEXT)",
+      "mobileBankingOcbc": "OCBC Digital",
+      "mobileBankingScb": "ไทยพาณิชย์ (SCB Easy)",
+      "secureCheckout": "ชำระเงินอย่างปลอดภัย",
+      "selectPaymentMethod": "เลือกวิธีการชำระเงิน",
+      "noPaymentMethods": "ยังไม่มีวิธีการชำระเงิน",
+      "nameOnCard": "ชื่อบนบัตร",
+      "hintExpiry": "เดือน/ปี (MM/YY)",
+      "securityCode": "รหัสความปลอดภัย",
+      "countryRegion": "ประเทศหรือภูมิภาค",
+      "pay": "ชำระเงิน",
+      "cardNumberRequired": "จำเป็นต้องกรอกหมายเลขบัตร",
+      "invalidCardNumber": "หมายเลขบัตรไม่ถูกต้อง",
+      "isRequired": "จำเป็นต้องกรอก",
+      "expiryDateRequired": "จำเป็นต้องกรอกวันหมดอายุ",
+      "expiryFormat": "รูปแบบเดือน/ปี (MM/YY)",
+      "cvvRequired": "จำเป็นต้องกรอกรหัส CVV",
+      "onlyDigits": "สามารถกรอกได้เฉพาะตัวเลขเท่านั้น",
+      "cvvDigits": "รหัส CVV ต้องมี 3 หรือ 4 หลัก"
+    },
+    OmiseLocale.ja: {
+      "cardNumber": "カード番号",
+      "name": "氏名",
+      "expiryDate": "有効期限",
+      "cvv": "CVV",
+      "address": "住所",
+      "city": "市区町村",
+      "state": "都道府県",
+      "postalCode": "郵便番号",
+      "mobileBanking": "モバイルバンキング",
+      "unsupportedPaymentMethod": "未対応の決済方法",
+      "card": "クレジットカード／デビットカード",
+      "promptpay": "PromptPay",
+      "mobileBankingBay": "クルンシィ (KMA)",
+      "mobileBankingBbl": "バンコック銀行",
+      "mobileBankingKbank": "KBANK (K PLUS)",
+      "mobileBankingKtb": "Krungthai NEXT",
+      "mobileBankingOcbc": "OCBC Digital",
+      "mobileBankingScb": "SCB (SCB Easy)",
+      "secureCheckout": "セキュアチェックアウト",
+      "selectPaymentMethod": "決済方法を選択する",
+      "noPaymentMethods": "表示可能な決済方法がありません",
+      "nameOnCard": "カードの名義人の氏名",
+      "hintExpiry": "月/年",
+      "securityCode": "セキュリティコード",
+      "countryRegion": "国または地域",
+      "pay": "支払う",
+      "cardNumberRequired": "カード番号は必須です",
+      "invalidCardNumber": "無効なカード番号です",
+      "isRequired": "は必須です",
+      "expiryDateRequired": "有効期限は必須です",
+      "expiryFormat": "月/年 形式です",
+      "cvvRequired": "CVVは必須です",
+      "onlyDigits": "数字のみをご入力ください",
+      "cvvDigits": "CVVは3桁または4桁の数字です"
+    },
+  };
+  static OmiseLocale detectLocale(OmiseLocale? locale, BuildContext context) {
+    final currentLocale = testLocale ?? Localizations.localeOf(context);
+    return locale ?? OmiseLocaleFromLocaleExtension.fromString(currentLocale);
+  }
+
+  static String get(String key, OmiseLocale? locale, BuildContext context) {
+    return translations[detectLocale(locale, context)]?[key] ?? 'N/A';
+  }
+}

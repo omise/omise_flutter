@@ -10,6 +10,7 @@
   - Supported sources:
     - `promptpay`
 - Built-in support for common error handling in payment processing.
+- Internationalization support for : en, th and ja.
 
 ## Getting Started
 
@@ -63,7 +64,7 @@ class MyHomePage extends StatefulWidget {
 // State class for MyHomePage that handles payment actions
 class _MyHomePageState extends State<MyHomePage> {
   // Omise payment instance, replace "pkey" with your actual Omise public key
-  final omisePayment = OmisePayment(publicKey: "pkey", enableDebug: true);
+  final omisePayment = OmisePayment(publicKey: "pkey", enableDebug: true, locale: OmiseLocale.en);
 
   // Opens a page to select payment methods and handle token creation
   Future<void> _openPaymentMethodsPage() async {

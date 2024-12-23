@@ -37,7 +37,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.mobileBankingScb,
   ];
   Map<PaymentMethodName, PaymentMethodParams> getPaymentMethodsMap(
-      {required BuildContext context, String? object}) {
+      {required BuildContext context, String? object, OmiseLocale? locale}) {
     return {
       PaymentMethodName.card: PaymentMethodParams(
           isNextPage: true,
@@ -48,6 +48,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                   builder: (context) => CreditCardPage(
                         omiseApiService: omiseApiService,
                         capability: value.capability,
+                        locale: locale,
                       )),
             );
           }),
@@ -75,6 +76,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                           amount: value.amount!,
                           currency: value.currency!,
                           omiseApiService: omiseApiService,
+                          locale: locale,
                         )),
               );
             }
