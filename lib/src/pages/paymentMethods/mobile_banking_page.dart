@@ -92,26 +92,29 @@ class _MobileBankingPageState extends State<MobileBankingPage> {
                     itemBuilder: (context, index) {
                       final paymentMethod =
                           widget.mobileBankingPaymentMethods[index];
-                      return paymentMethodTile(
-                        context: context,
-                        paymentMethod: PaymentMethodTileData(
-                          name:
-                              paymentMethod.name, // Name of the payment method
-                          leadingIcon:
-                              // condition for testing as the image will not load in test mode
-                              widget.mobileBankingPaymentMethodSelectorController !=
-                                      null
-                                  ? const SizedBox()
-                                  : Image.asset(
-                                      'assets/${paymentMethod.name.value}.png', // Icon for payment method
-                                      package: PackageInfo.packageName,
-                                      alignment: Alignment.center,
-                                    ),
-                          trailingIcon: Icons.arrow_forward_ios,
-                          onTap: () {
-                            mobileBankingPaymentMethodSelectorController
-                                .createSource(paymentMethod.name);
-                          },
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: paymentMethodTile(
+                          context: context,
+                          paymentMethod: PaymentMethodTileData(
+                            name: paymentMethod
+                                .name, // Name of the payment method
+                            leadingIcon:
+                                // condition for testing as the image will not load in test mode
+                                widget.mobileBankingPaymentMethodSelectorController !=
+                                        null
+                                    ? const SizedBox()
+                                    : Image.asset(
+                                        'assets/${paymentMethod.name.value}.png', // Icon for payment method
+                                        package: PackageInfo.packageName,
+                                        alignment: Alignment.center,
+                                      ),
+                            trailingIcon: Icons.arrow_forward_ios,
+                            onTap: () {
+                              mobileBankingPaymentMethodSelectorController
+                                  .createSource(paymentMethod.name);
+                            },
+                          ),
                         ),
                       );
                     },

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
 
@@ -47,6 +48,11 @@ class OmiseApiService {
   String getUserAgent() {
     const sdkVersion = PackageInfo.packageVersion;
     const userAgentIdentifier = PackageInfo.userAgentIdentifier;
+    if (kIsWeb) {
+      // Browsers ignore attempts to override the user agent, and `Platform.version` causes errors on web.
+      // Return an empty string to prevent errors on web platforms.
+      return "";
+    }
     return 'dart/${Platform.version} $userAgentIdentifier/$sdkVersion (${Platform.operatingSystem} ${Platform.operatingSystemVersion})';
   }
 
