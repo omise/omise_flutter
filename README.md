@@ -4,6 +4,7 @@
 
 ## Features
 
+- Built in UI components.
 - Direct integration with Omise's payment gateway in Flutter apps.
 - Easy-to-use tokenization and authorization flows.
 - Easy-to-use source creation flows.
@@ -13,13 +14,29 @@
 - Built-in support for common error handling in payment processing.
 - Internationalization support for : en, th and ja.
 
+## Breaking Change - Library Rewrite
+
+The `omise_flutter` library has undergone a complete rewrite in version `0.2.0`. This major update introduces significant changes to the API and architecture, which are **not backwards compatible** with previous versions (`0.1.x` and earlier).
+
+### Key Changes:
+
+- **API Overhaul**: All existing APIs from the `0.1.x` series have been removed. The API is now more streamlined and easier to use.
+- **New UI Components**: The new version comes with built-in UI components for payment processing, providing a more user-friendly experience.
+- **Source Creation**: Added seamless support for source creation like `promptpay` and `mobile_banking`.
+- **Internationalization**: The library now supports English, Thai, and Japanese out of the box.
+- **Debugging & Error Handling**: Added enhanced debugging options and better error handling for payment flows.
+
+### Migration Notes:
+
+If you were using version `0.1.x` or earlier, you will need to update your code to align with the new API. Please refer to the [Migration Guide](link-to-migration-guide) for detailed steps on how to migrate to the new version.
+
 ## Getting Started
 
 To use the package, add it to your project by including the following in your `pubspec.yaml`:
 
 ```yaml
 dependencies:
-  omise_flutter: ^0.1.0
+  omise_flutter: ^0.2.0
 ```
 
 Run:
