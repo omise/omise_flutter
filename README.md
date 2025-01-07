@@ -9,6 +9,7 @@
 - Easy-to-use source creation flows.
   - Supported sources:
     - `promptpay`
+    - `mobile_banking`
 - Built-in support for common error handling in payment processing.
 - Internationalization support for : en, th and ja.
 
