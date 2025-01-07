@@ -28,7 +28,7 @@ The `omise_flutter` library has undergone a complete rewrite in version `0.2.0`.
 
 ### Migration Notes:
 
-If you were using version `0.1.x` or earlier, you will need to update your code to align with the new API. Please refer to the [Migration Guide](link-to-migration-guide) for detailed steps on how to migrate to the new version.
+If you were using version `0.1.x` or earlier, you will need to update your code to align with the new API as it has been completely rewritten.
 
 ## Getting Started
 
