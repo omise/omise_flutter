@@ -13,7 +13,7 @@ class MethodChannelService {
       final parsedArgs = Map<String, dynamic>.from(call.arguments as Map);
       final String pkey = parsedArgs['pkey'];
       final int? amount = parsedArgs['amount'];
-      final Currency? currency =
+      final Currency currency =
           CurrencyExtension.fromString(parsedArgs['currency'] as String?);
       final String? authUrl = parsedArgs['authUrl'];
       final List<String>? expectedReturnUrls = parsedArgs['expectedReturnUrls'];

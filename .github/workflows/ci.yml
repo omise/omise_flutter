@@ -18,6 +18,8 @@ jobs:
       - name: Install dependencies
         run: |
           flutter pub get
+          cd omise_flutter_module/
+          flutter pub get
 
       - name: Analyze (Check if distributable for Dart)
         run: flutter analyze

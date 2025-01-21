@@ -48,7 +48,6 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
           expectedReturnUrls: methodChannelController.value.expectedReturnUrls,
         );
       case null:
-        print("No method channel method detected yet");
         return const SizedBox.shrink();
       case MethodNames.unknown:
         throw PlatformException(
