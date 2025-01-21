@@ -365,10 +365,10 @@ packages:
     dependency: transitive
     description:
       name: webview_flutter_android
-      sha256: d1ee28f44894cbabb1d94cc42f9980297f689ff844d067ec50ff88d86e27d63f
+      sha256: "5568f17a9c25c0fdd0737900fa1c2d1fee2d780bc212d9aec10c2d1f48ef0f59"
       url: "https://pub.dev"
     source: hosted
-    version: "4.3.0"
+    version: "4.3.1"
   webview_flutter_platform_interface:
     dependency: transitive
     description:
