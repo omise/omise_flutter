@@ -118,8 +118,6 @@ class ValidationUtils {
             value: value, locale: locale, context: context);
       case ValidationType.cvv:
         return validateCVV(value: value, locale: locale, context: context);
-      default:
-        return null;
     }
   }
 }

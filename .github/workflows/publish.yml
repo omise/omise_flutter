@@ -16,10 +16,13 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
-          flutter-version: "3.24.0"
+          flutter-version: "3.27.2"
 
       - name: Install dependencies
-        run: flutter pub get
+        run: |
+          flutter pub get
+          cd omise_flutter_module/
+          flutter pub get
 
       - name: Analyze (Check if distributable for flutter)
         run: flutter analyze
@@ -42,7 +45,7 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: "stable"
-          flutter-version: "3.24.0"
+          flutter-version: "3.27.2"
 
       - name: Install dependencies
         run: flutter pub get
