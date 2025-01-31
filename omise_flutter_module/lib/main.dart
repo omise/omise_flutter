@@ -28,53 +28,71 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
   void initState() {
     super.initState();
     MethodChannelService.setupMethodChannel(methodChannelController);
+    methodChannelController.addListener(() {
+      if (methodChannelController.value.methodName != null) {
+        selectedPage();
+      }
+    });
   }
 
-  Widget selectedPage() {
+  Future<void> selectedPage() async {
     final methodName = methodChannelController.value.methodName;
     switch (methodName) {
       case MethodNames.selectPaymentMethod:
         final OmisePayment omisePayment =
             OmisePayment(publicKey: methodChannelController.value.pkey!);
-        return omisePayment.selectPaymentMethod(
-            amount: methodChannelController.value.amount!,
-            currency: methodChannelController.value.currency!);
-
+        final OmisePaymentResult? omisePaymentResult = await FlutterUIBridge
+            .navigatorKey.currentState
+            ?.push<OmisePaymentResult>(
+          MaterialPageRoute(
+              builder: (context) => omisePayment.selectPaymentMethod(
+                  amount: methodChannelController.value.amount!,
+                  currency: methodChannelController.value.currency!)),
+        );
+        await MethodChannelService.sendResultToNative(
+            '${methodChannelController.value.methodName!.name}Result',
+            omisePaymentResult!.toJson());
+      // Not used in our native SDKs as we support Netcetera in native but flutter does not support it(No Netcetera package yet).
       case MethodNames.authorizePayment:
         final OmisePayment omisePayment =
             OmisePayment(publicKey: methodChannelController.value.pkey!);
-        return omisePayment.authorizePayment(
-          authorizeUri: Uri.parse(methodChannelController.value.authUrl!),
-          expectedReturnUrls: methodChannelController.value.expectedReturnUrls,
+        final OmiseAuthorizationResult? omiseAuthorizationResult =
+            await Navigator.push<OmiseAuthorizationResult>(
+          context,
+          MaterialPageRoute(
+              builder: (context) => omisePayment.authorizePayment(
+                    authorizeUri:
+                        Uri.parse(methodChannelController.value.authUrl!),
+                    expectedReturnUrls:
+                        methodChannelController.value.expectedReturnUrls,
+                  )),
         );
+        MethodChannelService.sendResultToNative(
+            '${methodChannelController.value.methodName!.name}Result',
+            omiseAuthorizationResult!.toJson());
       case null:
-        return const SizedBox.shrink();
       case MethodNames.unknown:
         throw PlatformException(
           code: 'METHOD_NOT_IMPLEMENTED',
           message:
-              'The method ${methodName.name} is not implemented in omise flutter module',
+              'The method ${methodName?.name} is not implemented in omise flutter module',
         );
     }
   }
 
   @override
-  void dispose() {
-    MethodChannelService.sendResultToNative(
-        '${methodChannelController.value.methodName!.name}Result',
-        {"demo": 10}).then((_) {
-      super.dispose();
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        navigatorKey: FlutterUIBridge.navigatorKey,
-        home: ValueListenableBuilder(
-            valueListenable: methodChannelController,
-            builder: (context, state, _) {
-              return selectedPage();
-            }));
+      navigatorKey: FlutterUIBridge.navigatorKey,
+      home: ValueListenableBuilder(
+        valueListenable: methodChannelController,
+        builder: (context, state, _) {
+          return const Scaffold(
+            backgroundColor: Colors.transparent, // Fully transparent background
+            body: SizedBox.shrink(), // No UI elements displayed
+          );
+        },
+      ),
+    );
   }
 }
