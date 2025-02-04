@@ -1,11 +1,18 @@
 # omise_flutter_module
 
-A new Flutter module project.
+A flutter module used in native SDKs to replace the native UI and add payment methods in one place and reflect changes across the other native platforms.
 
 ## Getting Started
 
-For help getting started with Flutter development, view the online
-[documentation](https://flutter.dev/).
+To use this module you should compile it and add it into your desired native integration.
 
-For instructions integrating Flutter modules to your existing applications,
-see the [add-to-app documentation](https://flutter.dev/to/add-to-app).
+### For android use:
+
+```
+flutter build aar
+```
+
+Copy the folder with everything inside it `~/omise_flutter/omise_flutter_module/build/host/outputs/repo`.
+
+- There are three major builds: release, debug and profile.
+- Paste that folder in the desired path, you can use any of the desired builds and delete the ones that you do not need.
