@@ -5,4 +5,10 @@ class OmiseAuthorizationResult {
   final bool? isWebViewAuthorized;
 
   OmiseAuthorizationResult({this.isWebViewAuthorized});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'isWebViewAuthorized': isWebViewAuthorized,
+    };
+  }
 }
