@@ -5,6 +5,7 @@ import 'package:omise_dart/src/services/capability_api.dart';
 import 'package:omise_dart/src/services/tokens_api.dart';
 import 'package:omise_dart/src/services/sources_api.dart';
 import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
+import 'package:omise_flutter/src/controllers/installments_controller.dart';
 import 'package:omise_flutter/src/controllers/mobile_banking_controller.dart';
 import 'package:omise_flutter/src/controllers/payment_authorization_controller.dart';
 import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
@@ -37,6 +38,9 @@ class MockCreditCardPaymentMethodController extends Mock
 
 class MockMobileBankingPaymentMethodSelectorController extends Mock
     implements MobileBankingController {}
+
+class MockInstallmentsController extends Mock
+    implements InstallmentsController {}
 
 class MockCreateTokenRequest extends Mock implements CreateTokenRequest {}
 

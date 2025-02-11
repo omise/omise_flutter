@@ -7,6 +7,7 @@ import 'package:omise_flutter/src/models/payment_method.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
+import 'package:omise_flutter/src/utils/payment_utils.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
 class MobileBankingPage extends StatefulWidget {
@@ -105,7 +106,9 @@ class _MobileBankingPageState extends State<MobileBankingPage> {
                                         null
                                     ? const SizedBox()
                                     : Image.asset(
-                                        'assets/${paymentMethod.name.value}.png', // Icon for payment method
+                                        PaymentUtils.getPaymentMethodImageName(
+                                            paymentMethod: paymentMethod
+                                                .name), // Icon for payment method
                                         package: PackageInfo.packageName,
                                         alignment: Alignment.center,
                                       ),
