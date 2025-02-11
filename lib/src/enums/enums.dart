@@ -17,6 +17,7 @@ enum ValidationType {
 
 enum CustomPaymentMethod {
   mobileBanking("mobile_banking"),
+  installments("installment"),
   unknown("unknown");
 
   final String value;
@@ -27,12 +28,10 @@ enum CustomPaymentMethod {
 
 extension CustomPaymentMethodNameTitleExtension on CustomPaymentMethod {
   String title({required BuildContext context, OmiseLocale? locale}) {
-    switch (this) {
-      case CustomPaymentMethod.mobileBanking:
-        return Translations.get('mobileBanking', locale, context);
-      default:
-        return Translations.get('unsupportedPaymentMethod', locale, context);
-    }
+    final translation = Translations.get(name, locale, context);
+    return translation == "N/A"
+        ? Translations.get('unsupportedPaymentMethod', locale, context)
+        : translation;
   }
 }
 
@@ -47,19 +46,10 @@ extension CustomPaymentMethodNameExtension on CustomPaymentMethod {
 
 extension PaymentMethodNameTitleExtension on PaymentMethodName {
   String title({required BuildContext context, OmiseLocale? locale}) {
-    switch (this) {
-      case PaymentMethodName.card:
-      case PaymentMethodName.promptpay:
-      case PaymentMethodName.mobileBankingBay:
-      case PaymentMethodName.mobileBankingBbl:
-      case PaymentMethodName.mobileBankingKbank:
-      case PaymentMethodName.mobileBankingKtb:
-      case PaymentMethodName.mobileBankingOcbc:
-      case PaymentMethodName.mobileBankingScb:
-        return Translations.get(name, locale, context);
-      default:
-        return Translations.get('unsupportedPaymentMethod', locale, context);
-    }
+    final translation = Translations.get(name, locale, context);
+    return translation == "N/A"
+        ? Translations.get('unsupportedPaymentMethod', locale, context)
+        : translation;
   }
 }
 

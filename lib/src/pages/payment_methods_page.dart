@@ -8,6 +8,7 @@ import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
+import 'package:omise_flutter/src/utils/payment_utils.dart';
 import 'package:omise_flutter/src/widgets/payment_method_tile.dart';
 
 /// [PaymentMethodsPage] is a stateful widget that presents the user with
@@ -157,7 +158,10 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                           widget.paymentMethodSelectorController != null
                               ? const SizedBox()
                               : Image.asset(
-                                  'assets/${customEnum?.value ?? paymentMethod.name.value}.png', // Icon for payment method
+                                  PaymentUtils.getPaymentMethodImageName(
+                                      customPaymentMethod: customEnum,
+                                      paymentMethod: paymentMethod
+                                          .name), // Icon for payment method
                                   package: PackageInfo.packageName,
                                   alignment: Alignment.center,
                                 ),

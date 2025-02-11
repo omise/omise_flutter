@@ -24,7 +24,7 @@ class CreditCardController extends ValueNotifier<CreditCardPaymentMethodState> {
   CreditCardController({required this.omiseApiService})
       : super(CreditCardPaymentMethodState(
             capabilityLoadingStatus: Status.idle,
-            tokenLoadingStatus: Status.idle,
+            tokenAndSourceLoadingStatus: Status.idle,
             textFieldValidityStatuses: {},
             createTokenRequest: CreateTokenRequest(
                 name: "",
@@ -63,17 +63,37 @@ class CreditCardController extends ValueNotifier<CreditCardPaymentMethodState> {
     }
   }
 
-  /// Creates a token based on the collected data from the user.
-  Future<void> createToken() async {
+  void setInstallmentsSourceParameters({
+    PaymentMethodName? paymentMethod,
+    Currency? currency,
+    int? amount,
+    int? term,
+  }) {
+    _setValue(value.copyWith(
+        paymentMethod: paymentMethod,
+        amount: amount,
+        currency: currency,
+        term: term));
+  }
+
+  /// Creates a token and a source based on the collected data from the user.
+  Future<void> createSourceAndToken() async {
     try {
       // Set the status to loading while creating the token
-      _setValue(value.copyWith(tokenLoadingStatus: Status.loading));
-
+      _setValue(value.copyWith(tokenAndSourceLoadingStatus: Status.loading));
       // Create the token using Omise API
       final token = await omiseApiService.createToken(value.createTokenRequest);
+      if (value.paymentMethod != null) {
+        final source = await omiseApiService.createSource(CreateSourceRequest(
+            amount: value.amount!,
+            currency: value.currency!,
+            type: value.paymentMethod!,
+            installmentTerm: value.term));
+        _setValue(value.copyWith(source: source));
+      }
       _setValue(value.copyWith(
         token: token,
-        tokenLoadingStatus: Status.success,
+        tokenAndSourceLoadingStatus: Status.success,
       ));
     } catch (e) {
       // Handle errors and update the state with an error message
@@ -85,7 +105,8 @@ class CreditCardController extends ValueNotifier<CreditCardPaymentMethodState> {
         error = e.toString();
       }
       _setValue(value.copyWith(
-          tokenLoadingStatus: Status.error, tokenErrorMessage: error));
+          tokenAndSourceLoadingStatus: Status.error,
+          tokenAndSourceErrorMessage: error));
     }
   }
 
@@ -142,10 +163,10 @@ class CreditCardPaymentMethodState {
   final String? capabilityErrorMessage;
 
   /// The current status of the token API call, such as idle, loading, success, or error.
-  final Status tokenLoadingStatus;
+  final Status tokenAndSourceLoadingStatus;
 
   /// Optional error message in case of failure.
-  final String? tokenErrorMessage;
+  final String? tokenAndSourceErrorMessage;
 
   /// The capability object fetched from the API, containing available payment methods.
   final Capability? capability;
@@ -155,6 +176,20 @@ class CreditCardPaymentMethodState {
 
   /// The token object fetched from the API.
   final Token? token;
+
+  /// The payment method selected if coming from wlb installments screen
+  final PaymentMethodName? paymentMethod;
+
+  /// The currency if coming from wlb installments screen
+  final Currency? currency;
+
+  /// The amount if coming from wlb installments screen
+  final int? amount;
+
+  /// The term if coming from wlb installments screen
+  final int? term;
+
+  final Source? source;
 
   /// Request object to create a token.
   CreateTokenRequest createTokenRequest;
@@ -189,31 +224,43 @@ class CreditCardPaymentMethodState {
   /// Constructor for creating a [CreditCardPaymentMethodState].
   CreditCardPaymentMethodState({
     required this.capabilityLoadingStatus,
-    required this.tokenLoadingStatus,
+    required this.tokenAndSourceLoadingStatus,
     required this.createTokenRequest,
     required this.textFieldValidityStatuses,
     this.capabilityErrorMessage,
-    this.tokenErrorMessage,
+    this.tokenAndSourceErrorMessage,
     this.capability,
     this.token,
+    this.paymentMethod,
+    this.currency,
+    this.amount,
+    this.term,
+    this.source,
   });
 
   /// Creates a copy of the current state while allowing overriding of specific fields.
   CreditCardPaymentMethodState copyWith({
     Status? capabilityLoadingStatus,
     String? capabilityErrorMessage,
-    Status? tokenLoadingStatus,
-    String? tokenErrorMessage,
+    Status? tokenAndSourceLoadingStatus,
+    String? tokenAndSourceErrorMessage,
     Capability? capability,
     CreateTokenRequest? createTokenRequest,
     Token? token,
     Map<String, bool>? textFieldValidityStatuses,
+    PaymentMethodName? paymentMethod,
+    Currency? currency,
+    int? amount,
+    int? term,
+    Source? source,
   }) {
     return CreditCardPaymentMethodState(
       capabilityLoadingStatus:
           capabilityLoadingStatus ?? this.capabilityLoadingStatus,
-      tokenLoadingStatus: tokenLoadingStatus ?? this.tokenLoadingStatus,
-      tokenErrorMessage: tokenErrorMessage ?? this.tokenErrorMessage,
+      tokenAndSourceLoadingStatus:
+          tokenAndSourceLoadingStatus ?? this.tokenAndSourceLoadingStatus,
+      tokenAndSourceErrorMessage:
+          tokenAndSourceErrorMessage ?? this.tokenAndSourceErrorMessage,
       capabilityErrorMessage:
           capabilityErrorMessage ?? this.capabilityErrorMessage,
       capability: capability ?? this.capability,
@@ -221,6 +268,11 @@ class CreditCardPaymentMethodState {
       token: token ?? this.token,
       textFieldValidityStatuses:
           textFieldValidityStatuses ?? this.textFieldValidityStatuses,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      paymentMethod: paymentMethod ?? this.paymentMethod,
+      term: term ?? this.term,
+      source: source ?? this.source,
     );
   }
 }

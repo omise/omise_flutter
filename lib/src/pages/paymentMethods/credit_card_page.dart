@@ -32,13 +32,29 @@ class CreditCardPage extends StatefulWidget {
   /// The custom locale passed by the merchant.
   final OmiseLocale? locale;
 
+  /// The payment method selected if coming from wlb installments screen
+  final PaymentMethodName? paymentMethod;
+
+  /// The currency if coming from wlb installments screen
+  final Currency? currency;
+
+  /// The amount if coming from wlb installments screen
+  final int? amount;
+
+  /// The term if coming from wlb installments screen
+  final int? term;
+
   const CreditCardPage(
       {super.key,
       this.automaticallyImplyLeading = true,
       required this.omiseApiService,
       this.creditCardPaymentMethodController,
       this.capability,
-      this.locale});
+      this.paymentMethod,
+      this.locale,
+      this.currency,
+      this.amount,
+      this.term});
 
   @override
   State<CreditCardPage> createState() => _CreditCardPageState();
@@ -57,24 +73,34 @@ class _CreditCardPageState extends State<CreditCardPage> {
   @override
   void initState() {
     super.initState();
+    // set the source parameters when dealing with wlb installments
+    creditCardPaymentMethodController.setInstallmentsSourceParameters(
+        amount: widget.amount,
+        currency: widget.currency,
+        paymentMethod: widget.paymentMethod,
+        term: widget.term);
 
     // Load capabilities and set up listeners for token loading status.
     creditCardPaymentMethodController.loadCapabilities(
         capability: widget.capability);
     creditCardPaymentMethodController.addListener(() {
-      if (creditCardPaymentMethodController.value.tokenLoadingStatus ==
+      if (creditCardPaymentMethodController.value.tokenAndSourceLoadingStatus ==
           Status.error) {
-        MessageDisplayUtils.showSnackBar(context,
-            creditCardPaymentMethodController.value.tokenErrorMessage!);
+        MessageDisplayUtils.showSnackBar(
+            context,
+            creditCardPaymentMethodController
+                .value.tokenAndSourceErrorMessage!);
         // reset the status so that the snackbar does not appear every time the user types
         creditCardPaymentMethodController.updateState(
             creditCardPaymentMethodController.value
-                .copyWith(tokenLoadingStatus: Status.idle));
-      } else if (creditCardPaymentMethodController.value.tokenLoadingStatus ==
+                .copyWith(tokenAndSourceLoadingStatus: Status.idle));
+      } else if (creditCardPaymentMethodController
+              .value.tokenAndSourceLoadingStatus ==
           Status.success) {
         while (Navigator.of(context).canPop()) {
           Navigator.of(context).pop(OmisePaymentResult(
-              token: creditCardPaymentMethodController.value.token));
+              token: creditCardPaymentMethodController.value.token,
+              source: creditCardPaymentMethodController.value.source));
         }
       }
     });
@@ -102,7 +128,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
           }
 
           // Determine if the form should be enabled based on the token loading status.
-          bool isFormEnabled = state.tokenLoadingStatus != Status.loading;
+          bool isFormEnabled =
+              state.tokenAndSourceLoadingStatus != Status.loading;
 
           return ListView(
             padding: const EdgeInsets.only(left: 20, right: 20),
@@ -358,7 +385,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
                   onPressed: !isFormEnabled || !state.isFormValid
                       ? null
                       : () {
-                          creditCardPaymentMethodController.createToken();
+                          creditCardPaymentMethodController
+                              .createSourceAndToken();
                         },
                   child: Text(
                     Translations.get('pay', widget.locale, context),

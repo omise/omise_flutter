@@ -116,11 +116,11 @@ void main() {
         changes.add(controller.value);
       });
 
-      await controller.createToken();
+      await controller.createSourceAndToken();
 
       expect(changes.length, 2); // One for loading, one for success
-      expect(changes[0].tokenLoadingStatus, Status.loading);
-      expect(changes[1].tokenLoadingStatus, Status.success);
+      expect(changes[0].tokenAndSourceLoadingStatus, Status.loading);
+      expect(changes[1].tokenAndSourceLoadingStatus, Status.success);
       expect(changes[1].token!.id, 'tokn_test_123');
     });
 
@@ -135,13 +135,13 @@ void main() {
       });
 
       // Call the createToken method
-      await controller.createToken();
+      await controller.createSourceAndToken();
 
       // Assertions
       expect(changes.length, 2); // One for loading, one for error
-      expect(changes[0].tokenLoadingStatus, Status.loading);
-      expect(changes[1].tokenLoadingStatus, Status.error);
-      expect(changes[1].tokenErrorMessage, 'Token Error');
+      expect(changes[0].tokenAndSourceLoadingStatus, Status.loading);
+      expect(changes[1].tokenAndSourceLoadingStatus, Status.error);
+      expect(changes[1].tokenAndSourceErrorMessage, 'Token Error');
     });
 
     test('setExpiryDate - valid expiry date', () {

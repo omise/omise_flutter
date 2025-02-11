@@ -66,7 +66,7 @@ void main() {
         (WidgetTester tester) async {
       when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
         capabilityLoadingStatus: Status.loading,
-        tokenLoadingStatus: Status.idle,
+        tokenAndSourceLoadingStatus: Status.idle,
         createTokenRequest: mockCreateTokenRequest,
         textFieldValidityStatuses: mockTextFieldValidityStatuses,
       ));
@@ -91,7 +91,7 @@ void main() {
       const errorMessage = 'Something went wrong!';
       when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
         capabilityLoadingStatus: Status.error,
-        tokenLoadingStatus: Status.idle,
+        tokenAndSourceLoadingStatus: Status.idle,
         capabilityErrorMessage: errorMessage,
         createTokenRequest: mockCreateTokenRequest,
         textFieldValidityStatuses: mockTextFieldValidityStatuses,
@@ -116,7 +116,7 @@ void main() {
         (WidgetTester tester) async {
       when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
         capabilityLoadingStatus: Status.success,
-        tokenLoadingStatus: Status.idle,
+        tokenAndSourceLoadingStatus: Status.idle,
         createTokenRequest: mockCreateTokenRequest,
         textFieldValidityStatuses: mockTextFieldValidityStatuses,
       ));
@@ -142,7 +142,7 @@ void main() {
       newTokenRequest.number = '';
       when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
         capabilityLoadingStatus: Status.success,
-        tokenLoadingStatus: Status.idle,
+        tokenAndSourceLoadingStatus: Status.idle,
         createTokenRequest: newTokenRequest,
         textFieldValidityStatuses: {
           'cardNumber': false, // invalid
@@ -175,7 +175,7 @@ void main() {
       newTokenRequest.number = '4242';
       when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
         capabilityLoadingStatus: Status.success,
-        tokenLoadingStatus: Status.idle,
+        tokenAndSourceLoadingStatus: Status.idle,
         createTokenRequest: newTokenRequest,
         textFieldValidityStatuses: {
           'cardNumber': false, // invalid
@@ -205,7 +205,7 @@ void main() {
         (WidgetTester tester) async {
       when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
         capabilityLoadingStatus: Status.success,
-        tokenLoadingStatus: Status.idle,
+        tokenAndSourceLoadingStatus: Status.idle,
         createTokenRequest: mockCreateTokenRequest,
         textFieldValidityStatuses: {
           'cardNumber': true,
@@ -236,7 +236,7 @@ void main() {
         (WidgetTester tester) async {
       when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
         capabilityLoadingStatus: Status.success,
-        tokenLoadingStatus: Status.loading,
+        tokenAndSourceLoadingStatus: Status.loading,
         createTokenRequest: mockCreateTokenRequest,
         textFieldValidityStatuses: {
           'cardNumber': true,
@@ -248,7 +248,7 @@ void main() {
 
       when(() => mockController.loadCapabilities())
           .thenAnswer((_) async => Future.value());
-      when(() => mockController.createToken())
+      when(() => mockController.createSourceAndToken())
           .thenAnswer((_) async => mockToken);
 
       await tester.pumpWidget(
@@ -278,7 +278,7 @@ void main() {
         (WidgetTester tester) async {
       when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
         capabilityLoadingStatus: Status.success,
-        tokenLoadingStatus: Status.idle, // Finished loading
+        tokenAndSourceLoadingStatus: Status.idle, // Finished loading
         createTokenRequest: mockCreateTokenRequest,
         textFieldValidityStatuses: {
           'cardNumber': true,
@@ -318,7 +318,7 @@ void main() {
       (WidgetTester tester) async {
     when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
       capabilityLoadingStatus: Status.success,
-      tokenLoadingStatus: Status.idle,
+      tokenAndSourceLoadingStatus: Status.idle,
       createTokenRequest: mockCreateTokenRequest,
       textFieldValidityStatuses: {
         'cardNumber': true,
@@ -367,7 +367,7 @@ void main() {
     mockCreateTokenRequest.country = 'CA';
     when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
       capabilityLoadingStatus: Status.success,
-      tokenLoadingStatus: Status.idle,
+      tokenAndSourceLoadingStatus: Status.idle,
       capability: omise_dart.Capability(
         object: 'capability',
         location: '/capability',
@@ -432,7 +432,7 @@ void main() {
     mockCreateTokenRequest.country = 'CA';
     when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
       capabilityLoadingStatus: Status.success,
-      tokenLoadingStatus: Status.idle,
+      tokenAndSourceLoadingStatus: Status.idle,
       capability: omise_dart.Capability(
         object: 'capability',
         location: '/capability',
