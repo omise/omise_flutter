@@ -14,7 +14,6 @@ import '../mocks.dart';
 void main() {
   late MockOmiseApiService mockOmiseApiService;
   late InstallmentsController mockController;
-  final MockBuildContext mockBuildContext = MockBuildContext();
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
