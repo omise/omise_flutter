@@ -53,69 +53,94 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.installmentUob,
     PaymentMethodName.installmentWlbUob,
     PaymentMethodName.installmentMbb,
+    PaymentMethodName.alipay,
+    PaymentMethodName.alipayCn,
+    PaymentMethodName.alipayHk,
+    PaymentMethodName.paynow,
+    PaymentMethodName.dana,
+    PaymentMethodName.gcash,
+    PaymentMethodName.kakaopay,
+    PaymentMethodName.touchNGo,
+    PaymentMethodName.rabbitLinepay,
+    PaymentMethodName.boost,
+    PaymentMethodName.shopeePay,
+    PaymentMethodName.shopeePayJumpapp,
+    PaymentMethodName.duitnowQr,
+    PaymentMethodName.mayBankQr,
+    PaymentMethodName.grabpay,
+    PaymentMethodName.paypay,
+    PaymentMethodName.wechatPay,
   };
-  Map<PaymentMethodName, PaymentMethodParams> getPaymentMethodsMap(
-      {required BuildContext context, String? object, OmiseLocale? locale}) {
-    return {
-      PaymentMethodName.card: PaymentMethodParams(
-          isNextPage: true,
-          function: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => CreditCardPage(
-                        omiseApiService: omiseApiService,
-                        capability: value.capability,
-                        locale: locale,
-                      )),
-            );
-          }),
-      PaymentMethodName.promptpay: PaymentMethodParams(
-          isNextPage: false,
-          function: () {
-            _setValue(value.copyWith(
-                selectedPaymentMethod: PaymentMethodName.promptpay));
-            createSource();
-          }),
-      PaymentMethodName.unknown: PaymentMethodParams(
-          isNextPage: true,
-          function: () {
-            if (object == CustomPaymentMethod.mobileBanking.value) {
-              // open mobile banking screen
+  final aliPayPartners = {PaymentMethodName.alipayCn};
+  PaymentMethodParams getPaymentMethodParams(
+      {required BuildContext context,
+      String? object,
+      OmiseLocale? locale,
+      required PaymentMethodName paymentMethodName}) {
+    switch (paymentMethodName) {
+      case PaymentMethodName.card:
+        return PaymentMethodParams(
+            isNextPage: true,
+            function: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => MobileBankingPage(
-                          mobileBankingPaymentMethods: value
-                              .capability!.paymentMethods
-                              .where((method) => method.name.value.contains(
-                                  CustomPaymentMethod.mobileBanking.value))
-                              .toList(),
-                          amount: value.amount!,
-                          currency: value.currency!,
+                    builder: (context) => CreditCardPage(
                           omiseApiService: omiseApiService,
+                          capability: value.capability,
                           locale: locale,
                         )),
               );
-            }
-            if (object == CustomPaymentMethod.installments.value) {
-              // open installments screen
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => InstallmentsPage(
-                          installmentPaymentMethods:
-                              value.installmentPaymentMethods!,
-                          amount: value.amount!,
-                          currency: value.currency!,
-                          omiseApiService: omiseApiService,
-                          locale: locale,
-                          capability: value.capability!,
-                        )),
-              );
-            }
-          })
-    };
+            });
+      case PaymentMethodName.unknown:
+        return PaymentMethodParams(
+            isNextPage: true,
+            function: () {
+              if (object == CustomPaymentMethod.mobileBanking.value) {
+                // open mobile banking screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MobileBankingPage(
+                            mobileBankingPaymentMethods: value
+                                .capability!.paymentMethods
+                                .where((method) => method.name.value.contains(
+                                    CustomPaymentMethod.mobileBanking.value))
+                                .toList(),
+                            amount: value.amount!,
+                            currency: value.currency!,
+                            omiseApiService: omiseApiService,
+                            locale: locale,
+                          )),
+                );
+              }
+              if (object == CustomPaymentMethod.installments.value) {
+                // open installments screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => InstallmentsPage(
+                            installmentPaymentMethods:
+                                value.installmentPaymentMethods!,
+                            amount: value.amount!,
+                            currency: value.currency!,
+                            omiseApiService: omiseApiService,
+                            locale: locale,
+                            capability: value.capability!,
+                          )),
+                );
+              }
+            });
+
+      default:
+        return PaymentMethodParams(
+            isNextPage: false,
+            function: () {
+              _setValue(
+                  value.copyWith(selectedPaymentMethod: paymentMethodName));
+              createSource();
+            });
+    }
   }
 
   void setSourceCreationParams(
@@ -196,6 +221,15 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
       filteredMethods.removeWhere((method) =>
           method.name.value.contains(CustomPaymentMethod.mobileBanking.value) ||
           method.name.value.contains(CustomPaymentMethod.installments.value));
+      // if shepeePay and shopeePayJumpApp are both available, remove non jumpApp
+      final methodNames = filteredMethods.map((method) => method.name).toList();
+      final bothShopeePayMethodsExist =
+          methodNames.contains(PaymentMethodName.shopeePay) &&
+              methodNames.contains(PaymentMethodName.shopeePayJumpapp);
+      if (bothShopeePayMethodsExist) {
+        filteredMethods.removeWhere(
+            (method) => method.name == PaymentMethodName.shopeePay);
+      }
       // Update the state with the filtered methods and success status
       _setValue(value.copyWith(
           capability: capabilities,
@@ -341,7 +375,6 @@ class PaymentMethodsState {
 class PaymentMethodParams {
   final bool isNextPage;
   final VoidCallback function;
-
   PaymentMethodParams({
     required this.isNextPage,
     required this.function,

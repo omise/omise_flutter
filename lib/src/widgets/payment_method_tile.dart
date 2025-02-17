@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/translations/translations.dart';
+import 'package:omise_flutter/src/utils/payment_utils.dart';
 
 /// A reusable function for displaying a payment method tile.
 ///
@@ -28,9 +30,21 @@ Widget paymentMethodTile(
     required BuildContext context,
     String? customTitle,
     OmiseLocale? locale}) {
+  String? footer() {
+    if (PaymentUtils.aliPayPartners.contains(paymentMethod.name)) {
+      return Translations.get('aliPayPartnerFooter', locale, context);
+    }
+    if (PaymentUtils.grabPartners.contains(paymentMethod.name)) {
+      return Translations.get('grabPayFooter', locale, context);
+    }
+    return null;
+  }
+
+  final footerText = footer();
   return ListTile(
     title: Text(customTitle ??
         paymentMethod.name.title(context: context, locale: locale)),
+    subtitle: footerText != null ? Text(footerText) : null,
     leading: SizedBox(
       height: paymentMethod.leadingIconHeight,
       width: paymentMethod.leadingIconWidth,

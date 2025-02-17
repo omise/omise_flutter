@@ -146,10 +146,12 @@ void main() {
         ),
         capabilityLoadingStatus: Status.success,
         viewablePaymentMethods: paymentMethods));
-    when(() => mockController.getPaymentMethodsMap(
-        context: any(named: 'context'),
-        locale: any(named: 'locale'),
-        object: any(named: 'object'))).thenReturn({});
+    when(() => mockController.getPaymentMethodParams(
+            context: any(named: 'context'),
+            locale: any(named: 'locale'),
+            object: any(named: 'object'),
+            paymentMethodName: any(named: 'paymentMethodName')))
+        .thenReturn(PaymentMethodParams(isNextPage: false, function: () {}));
 
     when(() => mockController.loadCapabilities())
         .thenAnswer((_) async => Future.value());

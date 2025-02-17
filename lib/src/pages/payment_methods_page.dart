@@ -141,8 +141,9 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                     customEnum = CustomPaymentMethodNameExtension.fromString(
                         paymentMethod.object);
                   }
-                  final paymentMethodsMap =
-                      paymentMethodSelectorController.getPaymentMethodsMap(
+                  final paymentMethodParams =
+                      paymentMethodSelectorController.getPaymentMethodParams(
+                          paymentMethodName: paymentMethod.name,
                           context: context,
                           object: paymentMethod.object,
                           locale: widget.locale);
@@ -165,13 +166,11 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                                   package: PackageInfo.packageName,
                                   alignment: Alignment.center,
                                 ),
-                      trailingIcon:
-                          paymentMethodsMap[paymentMethod.name]?.isNextPage ==
-                                  true
-                              ? Icons.arrow_forward_ios
-                              : Icons.arrow_outward, // Arrow icon
+                      trailingIcon: paymentMethodParams.isNextPage == true
+                          ? Icons.arrow_forward_ios
+                          : Icons.arrow_outward, // Arrow icon
                       onTap: () {
-                        paymentMethodsMap[paymentMethod.name]?.function();
+                        paymentMethodParams.function();
                       },
                     ),
                   );
