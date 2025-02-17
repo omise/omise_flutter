@@ -5,6 +5,8 @@ import 'package:omise_dart/omise_dart.dart' as omise_dart;
 import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 
@@ -33,7 +35,7 @@ void main() {
   // Define mock currency and bank objects as they are required in PaymentMethod
   final mockCurrencies = [omise_dart.Currency.thb];
   final mockBanks = [omise_dart.Bank.kbank];
-  const amount = 1000;
+  const amount = 1000000;
   const currency = omise_dart.Currency.thb;
   const paymentMethod = omise_dart.PaymentMethodName.promptpay;
 
@@ -298,6 +300,118 @@ void main() {
 
       // Ensure the SelectPaymentMethodPage is no longer in the widget tree (i.e., the page was popped)
       expect(find.byType(PaymentMethodsPage), findsNothing);
+    },
+  );
+  testWidgets(
+    'When installments tile is clicked, the installments page opens',
+    (WidgetTester tester) async {
+      final controller = PaymentMethodsController(
+        omiseApiService: mockOmiseApiService,
+      );
+      final mockCapability = omise_dart.Capability(
+        object: 'capability',
+        location: '/capability',
+        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        limits: omise_dart.Limits(
+          chargeAmount: omise_dart.Amount(max: 100000, min: 100),
+          transferAmount: omise_dart.Amount(max: 50000, min: 500),
+          installmentAmount: omise_dart.InstallmentAmount(min: 1000),
+        ),
+        paymentMethods: [
+          omise_dart.PaymentMethod(
+            object: 'payment_method',
+            name: omise_dart.PaymentMethodName.installmentScb,
+            currencies: [omise_dart.Currency.thb],
+            banks: [],
+          ),
+        ],
+        tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
+        zeroInterestInstallments: false,
+        country: 'TH',
+      );
+
+      when(() => mockOmiseApiService.getCapabilities())
+          .thenAnswer((_) async => mockCapability);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: PaymentMethodsPage(
+            omiseApiService: mockOmiseApiService,
+            paymentMethodSelectorController: controller,
+            amount: amount,
+            currency: currency,
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final installmentsTile = find.widgetWithText(
+        ListTile,
+        CustomPaymentMethod.installments.title(context: mockBuildContext),
+      );
+      expect(installmentsTile, findsOneWidget);
+      await tester.tap(installmentsTile);
+      await tester.pumpAndSettle();
+
+      // Verify that the installments page has opened
+      expect(find.byType(InstallmentsPage), findsOneWidget);
+    },
+  );
+  testWidgets(
+    'When mobile banking tile is clicked, the mobile banking page opens',
+    (WidgetTester tester) async {
+      final controller = PaymentMethodsController(
+        omiseApiService: mockOmiseApiService,
+      );
+      final mockCapability = omise_dart.Capability(
+        object: 'capability',
+        location: '/capability',
+        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        limits: omise_dart.Limits(
+          chargeAmount: omise_dart.Amount(max: 100000, min: 100),
+          transferAmount: omise_dart.Amount(max: 50000, min: 500),
+          installmentAmount: omise_dart.InstallmentAmount(min: 1000),
+        ),
+        paymentMethods: [
+          omise_dart.PaymentMethod(
+            object: 'payment_method',
+            name: omise_dart.PaymentMethodName.mobileBankingScb,
+            currencies: [omise_dart.Currency.thb],
+            banks: [],
+          ),
+        ],
+        tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
+        zeroInterestInstallments: false,
+        country: 'TH',
+      );
+
+      when(() => mockOmiseApiService.getCapabilities())
+          .thenAnswer((_) async => mockCapability);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: PaymentMethodsPage(
+            omiseApiService: mockOmiseApiService,
+            paymentMethodSelectorController: controller,
+            amount: amount,
+            currency: currency,
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final installmentsTile = find.widgetWithText(
+        ListTile,
+        CustomPaymentMethod.mobileBanking.title(context: mockBuildContext),
+      );
+      expect(installmentsTile, findsOneWidget);
+      await tester.tap(installmentsTile);
+      await tester.pumpAndSettle();
+
+      // Verify that the installments page has opened
+      expect(find.byType(MobileBankingPage), findsOneWidget);
     },
   );
 }
