@@ -168,11 +168,10 @@ packages:
   omise_dart:
     dependency: transitive
     description:
-      name: omise_dart
-      sha256: "8ab894bbdef8211195a599499fb18c600b54033046d4bfdc6076f4b06faf9224"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.3.0"
+      path: "../../omise_dart"
+      relative: true
+    source: path
+    version: "0.4.0"
   omise_flutter:
     dependency: "direct main"
     description:
