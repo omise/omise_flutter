@@ -71,7 +71,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.paypay,
     PaymentMethodName.wechatPay,
   };
-  final aliPayPartners = {PaymentMethodName.alipayCn};
+  final alipayPartners = {PaymentMethodName.alipayCn};
   PaymentMethodParams getPaymentMethodParams(
       {required BuildContext context,
       String? object,
@@ -221,7 +221,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
       filteredMethods.removeWhere((method) =>
           method.name.value.contains(CustomPaymentMethod.mobileBanking.value) ||
           method.name.value.contains(CustomPaymentMethod.installments.value));
-      // if shepeePay and shopeePayJumpApp are both available, remove non jumpApp
+      // if shopeePay and shopeePayJumpApp are both available, remove non jumpApp
       final methodNames = filteredMethods.map((method) => method.name).toList();
       final bothShopeePayMethodsExist =
           methodNames.contains(PaymentMethodName.shopeePay) &&

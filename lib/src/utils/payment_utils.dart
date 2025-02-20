@@ -21,7 +21,7 @@ class PaymentUtils {
     PaymentMethodName.shopeePayJumpapp,
   };
   static Set<PaymentMethodName> grabPartners = {PaymentMethodName.grabpay};
-  static Set<PaymentMethodName> aliPayPartners = {
+  static Set<PaymentMethodName> alipayPartners = {
     PaymentMethodName.alipayCn,
     PaymentMethodName.alipayHk
   };

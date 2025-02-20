@@ -31,11 +31,11 @@ Widget paymentMethodTile(
     String? customTitle,
     OmiseLocale? locale}) {
   String? footer() {
-    if (PaymentUtils.aliPayPartners.contains(paymentMethod.name)) {
-      return Translations.get('aliPayPartnerFooter', locale, context);
+    if (PaymentUtils.alipayPartners.contains(paymentMethod.name)) {
+      return Translations.get('alipayPartnerFooter', locale, context);
     }
     if (PaymentUtils.grabPartners.contains(paymentMethod.name)) {
-      return Translations.get('grabPayFooter', locale, context);
+      return Translations.get('grabpayFooter', locale, context);
     }
     return null;
   }
