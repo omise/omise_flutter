@@ -5,7 +5,6 @@ import 'package:omise_dart/omise_dart.dart' as omise_dart;
 import 'package:omise_flutter/omise_flutter.dart';
 import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
-import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
