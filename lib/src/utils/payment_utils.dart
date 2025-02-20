@@ -16,6 +16,15 @@ class PaymentUtils {
     PaymentMethodName.installmentBay,
     PaymentMethodName.installmentWlbBay,
   };
+  static Set<PaymentMethodName> sharedShopeeAssets = {
+    PaymentMethodName.shopeePay,
+    PaymentMethodName.shopeePayJumpapp,
+  };
+  static Set<PaymentMethodName> grabPartners = {PaymentMethodName.grabpay};
+  static Set<PaymentMethodName> alipayPartners = {
+    PaymentMethodName.alipayCn,
+    PaymentMethodName.alipayHk
+  };
 
   static String getPaymentMethodImageName(
       {CustomPaymentMethod? customPaymentMethod,
@@ -28,6 +37,9 @@ class PaymentUtils {
     }
     if (sharedBayAssets.contains(paymentMethod)) {
       return 'assets/installment_bay.png';
+    }
+    if (sharedShopeeAssets.contains(paymentMethod)) {
+      return 'assets/payment_shopeepay.png';
     }
     // Default behavior: Use method name as filename
     return 'assets/${customPaymentMethod?.value ?? paymentMethod!.value.replaceAll('_wlb', '')}.png';

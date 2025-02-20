@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart' as omise_dart;
+import 'package:omise_flutter/omise_flutter.dart';
 import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
-import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
@@ -25,6 +25,7 @@ void main() {
   setUpAll(() {
     registerFallbackValue(MockBuildContext());
     registerFallbackValue(MockCreateSourceRequest());
+    registerFallbackValue(PaymentMethodName.card);
     Translations.testLocale = const Locale('en');
   });
 
@@ -146,10 +147,12 @@ void main() {
         ),
         capabilityLoadingStatus: Status.success,
         viewablePaymentMethods: paymentMethods));
-    when(() => mockController.getPaymentMethodsMap(
-        context: any(named: 'context'),
-        locale: any(named: 'locale'),
-        object: any(named: 'object'))).thenReturn({});
+    when(() => mockController.getPaymentMethodParams(
+            context: any(named: 'context'),
+            locale: any(named: 'locale'),
+            object: any(named: 'object'),
+            paymentMethodName: any(named: 'paymentMethodName')))
+        .thenReturn(PaymentMethodParams(isNextPage: false, function: () {}));
 
     when(() => mockController.loadCapabilities())
         .thenAnswer((_) async => Future.value());
