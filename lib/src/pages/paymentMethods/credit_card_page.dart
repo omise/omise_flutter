@@ -110,7 +110,7 @@ class _CreditCardPageState extends State<CreditCardPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Credit Card"),
+        title: Text(Translations.get('card', widget.locale, context)),
         automaticallyImplyLeading: widget.automaticallyImplyLeading,
         centerTitle: false,
       ),

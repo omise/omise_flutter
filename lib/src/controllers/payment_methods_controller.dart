@@ -6,6 +6,7 @@ import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/truemoney_wallet_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
 /// The [PaymentMethodsController] manages the state and logic for
@@ -70,6 +71,8 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.grabpay,
     PaymentMethodName.paypay,
     PaymentMethodName.wechatPay,
+    PaymentMethodName.truemoney, // truemoney wallet
+    PaymentMethodName.truemoneyJumpapp,
   };
   final alipayPartners = {PaymentMethodName.alipayCn};
   PaymentMethodParams getPaymentMethodParams(
@@ -88,6 +91,21 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                     builder: (context) => CreditCardPage(
                           omiseApiService: omiseApiService,
                           capability: value.capability,
+                          locale: locale,
+                        )),
+              );
+            });
+      case PaymentMethodName.truemoney:
+        return PaymentMethodParams(
+            isNextPage: true,
+            function: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => TrueMoneyWalletPage(
+                          omiseApiService: omiseApiService,
+                          amount: value.amount!,
+                          currency: value.currency!,
                           locale: locale,
                         )),
               );
@@ -230,6 +248,14 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
         filteredMethods.removeWhere(
             (method) => method.name == PaymentMethodName.shopeePay);
       }
+      // if truemoney and truemoneyJumpapp are both available, remove non jumpApp
+      final bothTruemoneyMethodsExist =
+          methodNames.contains(PaymentMethodName.truemoney) &&
+              methodNames.contains(PaymentMethodName.truemoneyJumpapp);
+      if (bothTruemoneyMethodsExist) {
+        filteredMethods.removeWhere(
+            (method) => method.name == PaymentMethodName.truemoney);
+      }
       // Update the state with the filtered methods and success status
       _setValue(value.copyWith(
           capability: capabilities,
@@ -257,7 +283,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
       // Set the status to loading while creating the token
       _setValue(value.copyWith(sourceLoadingStatus: Status.loading));
 
-      // Create the token using Omise API
+      // Create the source using Omise API
       final source = await omiseApiService.createSource(CreateSourceRequest(
           amount: value.amount!,
           currency: value.currency!,

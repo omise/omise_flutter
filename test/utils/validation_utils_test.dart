@@ -190,5 +190,45 @@ void main() {
         expect(result, 'CVVは3桁または4桁の数字です');
       });
     });
+    group('ValidationUtils - Phone Number', () {
+      test('Phone number is required', () {
+        Translations.testLocale = const Locale('en');
+        final result = ValidationUtils.validatePhoneNumber(
+            phoneNumber: null, context: mockBuildContext);
+        expect(result, 'Phone number is invalid');
+      });
+
+      test('Empty phone number returns error', () {
+        final result = ValidationUtils.validatePhoneNumber(
+            phoneNumber: '', context: mockBuildContext);
+        expect(result, 'Phone number is invalid');
+      });
+
+      test('Phone number with non-digit characters returns error', () {
+        final result = ValidationUtils.validatePhoneNumber(
+            phoneNumber: '081-234-5678',
+            context: mockBuildContext); // Invalid format
+        expect(result, 'Phone number is invalid');
+      });
+
+      test('Phone number with letters returns error', () {
+        final result = ValidationUtils.validatePhoneNumber(
+            phoneNumber: '081abc5678',
+            context: mockBuildContext); // Invalid characters
+        expect(result, 'Phone number is invalid');
+      });
+
+      test('Valid phone number with + passes', () {
+        final result = ValidationUtils.validatePhoneNumber(
+            phoneNumber: '+15551234567', context: mockBuildContext);
+        expect(result, null);
+      });
+
+      test('Valid phone number without + passes', () {
+        final result = ValidationUtils.validatePhoneNumber(
+            phoneNumber: '0812345678', context: mockBuildContext);
+        expect(result, null);
+      });
+    });
   });
 }
