@@ -111,7 +111,7 @@ class InstallmentsController extends ValueNotifier<InstallmentsPageState> {
       // Set the status to loading while creating the token
       _setValue(value.copyWith(sourceLoadingStatus: Status.loading));
 
-      // Create the token using Omise API
+      // Create the source using Omise API
       final source = await omiseApiService.createSource(CreateSourceRequest(
           amount: value.amount!,
           currency: value.currency!,

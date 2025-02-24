@@ -91,6 +91,26 @@ class ValidationUtils {
     return null; // CVV is valid
   }
 
+  static String? validatePhoneNumber(
+      {required BuildContext context,
+      OmiseLocale? locale,
+      String? phoneNumber}) {
+    if (phoneNumber == null || phoneNumber.isEmpty) {
+      return Translations.get('invalidPhoneNumber', locale, context);
+    }
+
+    // Allow numbers that:
+    // - Start with `+`
+    // - Contain only digits otherwise
+    final RegExp phoneRegExp = RegExp(r'^\+?\d+$');
+
+    if (!phoneRegExp.hasMatch(phoneNumber)) {
+      return Translations.get('invalidPhoneNumber', locale, context);
+    }
+
+    return null; // Valid phone number
+  }
+
   static String? validateInput(
       {required ValidationType validationType,
       required BuildContext context,
@@ -118,6 +138,9 @@ class ValidationUtils {
             value: value, locale: locale, context: context);
       case ValidationType.cvv:
         return validateCVV(value: value, locale: locale, context: context);
+      case ValidationType.phoneNumber:
+        return validatePhoneNumber(
+            phoneNumber: value, locale: locale, context: context);
     }
   }
 }

@@ -5,17 +5,18 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
-/// The [MobileBankingController] manages the state and logic for
-/// creating a mobile banking source from Omise API.
-class MobileBankingController extends ValueNotifier<MobileBankingPageState> {
+/// The [TrueMoneyWalletController] manages the state and logic for
+/// creating a truemoney source from Omise API.
+class TrueMoneyWalletController
+    extends ValueNotifier<TrueMoneyWalletPageState> {
   /// Instance of [OmiseApiService] used to interact with the omise dart package.
   final OmiseApiService omiseApiService;
 
-  /// Constructor for initializing [MobileBankingController].
+  /// Constructor for initializing [TrueMoneyWalletController].
   /// Takes in a required [omiseApiService].
-  MobileBankingController({
+  TrueMoneyWalletController({
     required this.omiseApiService,
-  }) : super(MobileBankingPageState(sourceLoadingStatus: Status.idle));
+  }) : super(TrueMoneyWalletPageState(sourceLoadingStatus: Status.idle));
 
   void setSourceCreationParams({
     required int amount,
@@ -27,8 +28,13 @@ class MobileBankingController extends ValueNotifier<MobileBankingPageState> {
     ));
   }
 
+  /// Updates the state with a new [CreditCardPaymentMethodState].
+  void updateState(TrueMoneyWalletPageState newState) {
+    _setValue(newState);
+  }
+
   /// Creates a source based on the collected data from the user.
-  Future<void> createSource(PaymentMethodName paymentMethodName) async {
+  Future<void> createSource() async {
     try {
       // Set the status to loading while creating the token
       _setValue(value.copyWith(sourceLoadingStatus: Status.loading));
@@ -37,7 +43,8 @@ class MobileBankingController extends ValueNotifier<MobileBankingPageState> {
       final source = await omiseApiService.createSource(CreateSourceRequest(
           amount: value.amount!,
           currency: value.currency!,
-          type: paymentMethodName));
+          type: PaymentMethodName.truemoney,
+          phoneNumber: value.phoneNumber!));
 
       _setValue(value.copyWith(
         source: source,
@@ -58,13 +65,13 @@ class MobileBankingController extends ValueNotifier<MobileBankingPageState> {
   }
 
   /// Internal helper function to update the state of [ValueNotifier].
-  void _setValue(MobileBankingPageState state) {
+  void _setValue(TrueMoneyWalletPageState state) {
     value = state;
   }
 }
 
-/// State class that holds the values for [MobileBankingController].
-class MobileBankingPageState {
+/// State class that holds the values for [TrueMoneyWalletController].
+class TrueMoneyWalletPageState {
   /// The source object received from the API after source creation.
   final Source? source;
 
@@ -80,30 +87,35 @@ class MobileBankingPageState {
   /// The currency used in source creation.
   final Currency? currency;
 
-  /// Constructor for creating a [MobileBankingPageState].
-  MobileBankingPageState({
+  /// The phoneNumber of the user
+  final String? phoneNumber;
+
+  /// Constructor for creating a [TrueMoneyWalletPageState].
+  TrueMoneyWalletPageState({
     required this.sourceLoadingStatus,
     this.source,
     this.amount,
     this.currency,
     this.sourceErrorMessage,
+    this.phoneNumber,
   });
 
   /// Creates a copy of the current state while allowing overriding of
   /// specific fields. This is needed since in order to trigger a rebuild on the value notifier level, we need a new instance to be created for non primitive types.
-  MobileBankingPageState copyWith({
+  TrueMoneyWalletPageState copyWith({
     Source? source,
     Status? sourceLoadingStatus,
     int? amount,
     Currency? currency,
     String? sourceErrorMessage,
+    String? phoneNumber,
   }) {
-    return MobileBankingPageState(
-      source: source ?? this.source,
-      sourceLoadingStatus: sourceLoadingStatus ?? this.sourceLoadingStatus,
-      amount: amount ?? this.amount,
-      currency: currency ?? this.currency,
-      sourceErrorMessage: sourceErrorMessage ?? this.sourceErrorMessage,
-    );
+    return TrueMoneyWalletPageState(
+        source: source ?? this.source,
+        sourceLoadingStatus: sourceLoadingStatus ?? this.sourceLoadingStatus,
+        amount: amount ?? this.amount,
+        currency: currency ?? this.currency,
+        sourceErrorMessage: sourceErrorMessage ?? this.sourceErrorMessage,
+        phoneNumber: phoneNumber ?? this.phoneNumber);
   }
 }
