@@ -111,6 +111,23 @@ class ValidationUtils {
     return null; // Valid phone number
   }
 
+  static String? validateEmail(
+      {required BuildContext context, OmiseLocale? locale, String? email}) {
+    if (email == null || email.isEmpty) {
+      return 'Invalid email'; // There is no text actually displayed for the user when the email is invalid, the button is disabled so no need for translation.
+    }
+
+    final RegExp emailRegExp = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+
+    if (!emailRegExp.hasMatch(email)) {
+      return 'Invalid email';
+    }
+
+    return null; // Valid email
+  }
+
   static String? validateInput(
       {required ValidationType validationType,
       required BuildContext context,
@@ -141,6 +158,11 @@ class ValidationUtils {
       case ValidationType.phoneNumber:
         return validatePhoneNumber(
             phoneNumber: value, locale: locale, context: context);
+      case ValidationType.email:
+        return validatePhoneNumber(
+            phoneNumber: value, locale: locale, context: context);
+      case ValidationType.none:
+        return null;
     }
   }
 }

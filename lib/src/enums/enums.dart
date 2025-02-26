@@ -13,7 +13,9 @@ enum ValidationType {
   city,
   state,
   postalCode,
-  phoneNumber;
+  phoneNumber,
+  email,
+  none;
 }
 
 enum CustomPaymentMethod {

@@ -25,6 +25,16 @@ class PaymentUtils {
     PaymentMethodName.truemoney,
     PaymentMethodName.truemoneyJumpapp,
   };
+  static Set<String> sharedMayBankAssets = {
+    PaymentMethodName.mayBankQr.value,
+    FpxBankCode.maybank2e.value,
+    FpxBankCode.maybank2u.value,
+  };
+  static Set<String> sharedUobAssets = {
+    PaymentMethodName.installmentUob.value,
+    PaymentMethodName.installmentWlbUob.value,
+    FpxBankCode.uob.value,
+  };
 
   static Set<PaymentMethodName> grabPartners = {PaymentMethodName.grabpay};
   static Set<PaymentMethodName> alipayPartners = {
@@ -54,7 +64,23 @@ class PaymentUtils {
     if (sharedTruemoneyAssets.contains(paymentMethod)) {
       return 'assets/payment_truemoney.png';
     }
+    if (sharedMayBankAssets.contains(paymentMethod?.value)) {
+      return 'assets/payment_maybank.png';
+    }
+    if (sharedUobAssets.contains(paymentMethod?.value)) {
+      return 'assets/payment_uob.png';
+    }
     // Default behavior: Use method name as filename
     return 'assets/${customPaymentMethod?.value ?? paymentMethod!.value.replaceAll('_wlb', '')}.png';
+  }
+
+  static String getFpxBankImageName(FpxBankCode bankName) {
+    if (sharedMayBankAssets.contains(bankName.value)) {
+      return 'assets/payment_maybank.png';
+    }
+    if (sharedUobAssets.contains(bankName.value)) {
+      return 'assets/payment_uob.png';
+    }
+    return 'assets/fpxBanks/${bankName.value}.png';
   }
 }
