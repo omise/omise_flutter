@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/fpx/fpx_banks_page.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/fpx/fpx_email_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/bank_selector_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/fpx_email_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/widgets/rounded_text_field.dart';
 
@@ -14,9 +14,7 @@ void main() {
   const testAmount = 1000;
   const testCurrency = Currency.thb;
   const testEmail = 'test@example.com';
-  final testFpxBanks = [
-    Bank(code: FpxBankCode.affin, name: 'name', active: true)
-  ];
+  final testFpxBanks = [Bank(code: BankCode.affin, name: 'name', active: true)];
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
@@ -71,6 +69,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(FpxEmailPage), findsNothing);
-    expect(find.byType(FpxBanksPage), findsOneWidget);
+    expect(find.byType(BankSelectorPage), findsOneWidget);
   });
 }

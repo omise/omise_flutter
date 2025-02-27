@@ -383,8 +383,7 @@ void main() {
             name: omise_dart.PaymentMethodName.card,
             currencies: [omise_dart.Currency.thb],
             banks: [
-              omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+              omise_dart.Bank(code: BankCode.affin, name: "name", active: true)
             ],
           ),
           omise_dart.PaymentMethod(
@@ -392,8 +391,7 @@ void main() {
             name: omise_dart.PaymentMethodName.promptpay,
             currencies: [omise_dart.Currency.thb],
             banks: [
-              omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+              omise_dart.Bank(code: BankCode.affin, name: "name", active: true)
             ],
           ),
         ],
@@ -454,8 +452,7 @@ void main() {
             name: omise_dart.PaymentMethodName.card,
             currencies: [omise_dart.Currency.thb],
             banks: [
-              omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+              omise_dart.Bank(code: BankCode.affin, name: "name", active: true)
             ],
           ),
           omise_dart.PaymentMethod(
@@ -463,8 +460,7 @@ void main() {
             name: omise_dart.PaymentMethodName.promptpay,
             currencies: [omise_dart.Currency.thb],
             banks: [
-              omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+              omise_dart.Bank(code: BankCode.affin, name: "name", active: true)
             ],
           ),
         ],
@@ -530,8 +526,7 @@ void main() {
             name: omise_dart.PaymentMethodName.card,
             currencies: [omise_dart.Currency.thb],
             banks: [
-              omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+              omise_dart.Bank(code: BankCode.affin, name: "name", active: true)
             ],
           ),
           omise_dart.PaymentMethod(
@@ -539,8 +534,7 @@ void main() {
             name: omise_dart.PaymentMethodName.promptpay,
             currencies: [omise_dart.Currency.thb],
             banks: [
-              omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+              omise_dart.Bank(code: BankCode.affin, name: "name", active: true)
             ],
           ),
         ],

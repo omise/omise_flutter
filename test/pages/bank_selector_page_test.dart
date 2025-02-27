@@ -3,9 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:omise_dart/omise_dart.dart' as omise_dart;
 import 'package:omise_flutter/omise_flutter.dart';
-import 'package:omise_flutter/src/controllers/fpx_bank_selector_controller.dart';
+import 'package:omise_flutter/src/controllers/bank_selector_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/fpx/fpx_banks_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/bank_selector_page.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import '../mocks.dart';
 
@@ -21,15 +21,15 @@ void main() {
   setUpAll(() {
     registerFallbackValue(MockBuildContext());
     registerFallbackValue(MockCreateSourceRequest());
-    registerFallbackValue(FpxBankCode.affin);
+    registerFallbackValue(BankCode.affin);
     Translations.testLocale = const Locale('en');
   });
 
   final mockBanks = [
     omise_dart.Bank(
-        name: "Affin", code: omise_dart.FpxBankCode.affin, active: true),
+        name: "Affin", code: omise_dart.BankCode.affin, active: true),
     omise_dart.Bank(
-        name: "Bank B", code: omise_dart.FpxBankCode.affin, active: true),
+        name: "Bank B", code: omise_dart.BankCode.affin, active: true),
   ];
   const amount = 1000;
   const currency = omise_dart.Currency.myr;
@@ -54,12 +54,13 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          home: FpxBanksPage(
+          home: BankSelectorPage(
             omiseApiService: mockOmiseApiService,
             amount: 1000,
             currency: omise_dart.Currency.myr,
             fpxBanks: mockBanks,
             fpxBankSelectorController: mockController,
+            paymentMethod: paymentMethod,
           ),
         ),
       );
@@ -88,12 +89,13 @@ void main() {
                   onPressed: () async {
                     final result = await Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => FpxBanksPage(
+                        builder: (context) => BankSelectorPage(
                           omiseApiService: mockOmiseApiService,
                           amount: amount,
                           currency: currency,
                           fpxBanks: mockBanks,
                           email: testEmail,
+                          paymentMethod: paymentMethod,
                         ),
                       ),
                     );
@@ -123,7 +125,7 @@ void main() {
             equals(mockSource.id)); // Verify result from pop
 
         // Ensure the SelectMobileBankingPaymentMethodPage is no longer in the widget tree (i.e., the page was popped)
-        expect(find.byType(FpxBanksPage), findsNothing);
+        expect(find.byType(BankSelectorPage), findsNothing);
       },
     );
   });
