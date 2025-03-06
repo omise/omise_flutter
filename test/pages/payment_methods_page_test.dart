@@ -35,7 +35,10 @@ void main() {
 
   // Define mock currency and bank objects as they are required in PaymentMethod
   final mockCurrencies = [omise_dart.Currency.thb];
-  final mockBanks = [omise_dart.Bank.kbank];
+  final mockBanks = ['kbank'];
+  final mockBanksPaymentMethod = [
+    omise_dart.Bank(code: omise_dart.BankCode.affin, name: "name", active: true)
+  ];
   const amount = 1000000;
   const currency = omise_dart.Currency.thb;
   const paymentMethod = omise_dart.PaymentMethodName.promptpay;
@@ -106,7 +109,7 @@ void main() {
         object: 'payment_method',
         name: omise_dart.PaymentMethodName.card,
         currencies: mockCurrencies,
-        banks: mockBanks,
+        banks: mockBanksPaymentMethod,
         cardBrands: [
           omise_dart.CardBrand.visa,
           omise_dart.CardBrand.masterCard
@@ -116,7 +119,7 @@ void main() {
         object: 'payment_method',
         name: omise_dart.PaymentMethodName.promptpay,
         currencies: mockCurrencies,
-        banks: mockBanks,
+        banks: mockBanksPaymentMethod,
         provider: 'provider_example',
       ),
       // This is how mobile banking is displayed as its a custom payment methods that sums all mobile banking payment methods together
@@ -134,7 +137,7 @@ void main() {
         capability: omise_dart.Capability(
           object: 'capability',
           location: '/capability',
-          banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+          banks: mockBanks,
           limits: omise_dart.Limits(
             chargeAmount: omise_dart.Amount(max: 100000, min: 100),
             transferAmount: omise_dart.Amount(max: 50000, min: 500),
@@ -219,7 +222,7 @@ void main() {
       final mockCapability = omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        banks: mockBanks,
         limits: omise_dart.Limits(
           chargeAmount: omise_dart.Amount(max: 100000, min: 100),
           transferAmount: omise_dart.Amount(max: 50000, min: 500),
@@ -230,13 +233,13 @@ void main() {
             object: 'payment_method',
             name: omise_dart.PaymentMethodName.card,
             currencies: [omise_dart.Currency.thb],
-            banks: [omise_dart.Bank.scb],
+            banks: mockBanksPaymentMethod,
           ),
           omise_dart.PaymentMethod(
             object: 'payment_method',
             name: omise_dart.PaymentMethodName.promptpay,
             currencies: [omise_dart.Currency.thb],
-            banks: [omise_dart.Bank.bbl],
+            banks: mockBanksPaymentMethod,
           ),
           omise_dart.PaymentMethod(
             object: 'payment_method',
@@ -314,7 +317,7 @@ void main() {
       final mockCapability = omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        banks: mockBanks,
         limits: omise_dart.Limits(
           chargeAmount: omise_dart.Amount(max: 100000, min: 100),
           transferAmount: omise_dart.Amount(max: 50000, min: 500),
@@ -370,7 +373,7 @@ void main() {
       final mockCapability = omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        banks: mockBanks,
         limits: omise_dart.Limits(
           chargeAmount: omise_dart.Amount(max: 100000, min: 100),
           transferAmount: omise_dart.Amount(max: 50000, min: 500),

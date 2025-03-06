@@ -63,6 +63,9 @@ class Translations {
       "wechatPay": "WeChat Pay",
       "truemoney": "TrueMoney",
       "truemoneyJumpapp": "TrueMoney",
+      "fpx": "FPX",
+      "fpxInfoText":
+          "(Optional) Please input your email to receive transaction confirmation from FPX",
       "trueMoneyWalletInfoText":
           "Please input the mobile number connected to your TrueMoney Wallet account",
       "phone": "Phone",
@@ -81,6 +84,7 @@ class Translations {
       "securityCode": "Security code",
       "countryRegion": "Country or region",
       "pay": "Pay",
+      "email": "Email",
       "cardNumberRequired": "Card number is required",
       "invalidCardNumber": "Invalid card number",
       "isRequired": "is required",
@@ -147,6 +151,9 @@ class Translations {
       "wechatPay": "WeChat Pay",
       "truemoney": "ทรูมันนี่",
       "truemoneyJumpapp": "ทรูมันนี่",
+      "fpx": "FPX",
+      "fpxInfoText":
+          "กรุณากรอกอีเมลเพื่อรับการยืนยันการรับชำระจากเอฟพีเอ็กซ์ (ถ้ามี)",
       "trueMoneyWalletInfoText":
           "กรุณากรอกหมายเลขโทรศัพท์ที่ผูกกับบัญชีทรูมันนี่วอลเล็ท",
       "phone": "โทร.",
@@ -165,6 +172,7 @@ class Translations {
       "securityCode": "รหัสความปลอดภัย",
       "countryRegion": "ประเทศหรือภูมิภาค",
       "pay": "ชำระเงิน",
+      "email": "อีเมล์",
       "cardNumberRequired": "จำเป็นต้องกรอกหมายเลขบัตร",
       "invalidCardNumber": "หมายเลขบัตรไม่ถูกต้อง",
       "isRequired": "จำเป็นต้องกรอก",
@@ -231,6 +239,8 @@ class Translations {
       "wechatPay": "WeChat Pay",
       "truemoney": "TrueMoney",
       "truemoneyJumpapp": "TrueMoney",
+      "fpx": "FPX",
+      "fpxInfoText": "(任意) メールアドレスを入力し、FPXからの取引確認メールを受信します",
       "trueMoneyWalletInfoText": "TrueMoney ウォレットアカウントに登録されている携帯電話番号を入力してください",
       "phone": "電話",
       "invalidPhoneNumber": "電話番号が無効です",
@@ -247,6 +257,7 @@ class Translations {
       "securityCode": "セキュリティコード",
       "countryRegion": "国または地域",
       "pay": "支払う",
+      "email": "メール",
       "cardNumberRequired": "カード番号は必須です",
       "invalidCardNumber": "無効なカード番号です",
       "isRequired": "は必須です",

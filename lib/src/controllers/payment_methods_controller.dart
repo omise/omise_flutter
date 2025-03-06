@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/fpx/fpx_email_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/truemoney_wallet_page.dart';
@@ -73,6 +74,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.wechatPay,
     PaymentMethodName.truemoney, // truemoney wallet
     PaymentMethodName.truemoneyJumpapp,
+    PaymentMethodName.fpx,
   };
   final alipayPartners = {PaymentMethodName.alipayCn};
   PaymentMethodParams getPaymentMethodParams(
@@ -108,6 +110,27 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                           currency: value.currency!,
                           locale: locale,
                         )),
+              );
+            });
+      case PaymentMethodName.fpx:
+        return PaymentMethodParams(
+            isNextPage: true,
+            function: () {
+              int index = value.capability!.paymentMethods.indexWhere(
+                  (element) => element.name == PaymentMethodName.fpx);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FpxEmailPage(
+                    omiseApiService: omiseApiService,
+                    amount: value.amount!,
+                    currency: value.currency!,
+                    locale: locale,
+                    fpxBanks: index != -1
+                        ? value.capability!.paymentMethods[index].banks
+                        : [],
+                  ),
+                ),
               );
             });
       case PaymentMethodName.unknown:

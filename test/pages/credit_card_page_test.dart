@@ -371,7 +371,7 @@ void main() {
       capability: omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        banks: ['scb', 'bbl'],
         limits: omise_dart.Limits(
           chargeAmount: omise_dart.Amount(max: 100000, min: 100),
           transferAmount: omise_dart.Amount(max: 50000, min: 500),
@@ -382,13 +382,19 @@ void main() {
             object: 'payment_method',
             name: omise_dart.PaymentMethodName.card,
             currencies: [omise_dart.Currency.thb],
-            banks: [omise_dart.Bank.scb],
+            banks: [
+              omise_dart.Bank(
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
+            ],
           ),
           omise_dart.PaymentMethod(
             object: 'payment_method',
             name: omise_dart.PaymentMethodName.promptpay,
             currencies: [omise_dart.Currency.thb],
-            banks: [omise_dart.Bank.bbl],
+            banks: [
+              omise_dart.Bank(
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
+            ],
           ),
         ],
         tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
@@ -436,7 +442,7 @@ void main() {
       capability: omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        banks: ['scb', 'bbl'],
         limits: omise_dart.Limits(
           chargeAmount: omise_dart.Amount(max: 100000, min: 100),
           transferAmount: omise_dart.Amount(max: 50000, min: 500),
@@ -447,13 +453,19 @@ void main() {
             object: 'payment_method',
             name: omise_dart.PaymentMethodName.card,
             currencies: [omise_dart.Currency.thb],
-            banks: [omise_dart.Bank.scb],
+            banks: [
+              omise_dart.Bank(
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
+            ],
           ),
           omise_dart.PaymentMethod(
             object: 'payment_method',
             name: omise_dart.PaymentMethodName.promptpay,
             currencies: [omise_dart.Currency.thb],
-            banks: [omise_dart.Bank.bbl],
+            banks: [
+              omise_dart.Bank(
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
+            ],
           ),
         ],
         tokenizationMethods: [omise_dart.TokenizationMethod.applepay],
@@ -506,7 +518,7 @@ void main() {
       final mockCapability = omise_dart.Capability(
         object: 'capability',
         location: '/capability',
-        banks: [omise_dart.Bank.scb, omise_dart.Bank.bbl],
+        banks: ['scb', 'bbl'],
         limits: omise_dart.Limits(
           chargeAmount: omise_dart.Amount(max: 100000, min: 100),
           transferAmount: omise_dart.Amount(max: 50000, min: 500),
@@ -517,13 +529,19 @@ void main() {
             object: 'payment_method',
             name: omise_dart.PaymentMethodName.card,
             currencies: [omise_dart.Currency.thb],
-            banks: [omise_dart.Bank.scb],
+            banks: [
+              omise_dart.Bank(
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
+            ],
           ),
           omise_dart.PaymentMethod(
             object: 'payment_method',
             name: omise_dart.PaymentMethodName.promptpay,
             currencies: [omise_dart.Currency.thb],
-            banks: [omise_dart.Bank.bbl],
+            banks: [
+              omise_dart.Bank(
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
+            ],
           ),
         ],
         tokenizationMethods: [omise_dart.TokenizationMethod.applepay],

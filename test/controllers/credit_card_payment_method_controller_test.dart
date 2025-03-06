@@ -28,7 +28,7 @@ void main() {
       final mockCapability = Capability(
         object: 'capability',
         location: '/capability',
-        banks: [Bank.scb, Bank.bbl],
+        banks: ['scb', 'bbl'],
         limits: Limits(
           chargeAmount: Amount(max: 100000, min: 100),
           transferAmount: Amount(max: 50000, min: 500),
@@ -39,13 +39,13 @@ void main() {
             object: 'payment_method',
             name: PaymentMethodName.card,
             currencies: [Currency.thb],
-            banks: [Bank.scb],
+            banks: [Bank(code: BankCode.affin, name: "name", active: true)],
           ),
           PaymentMethod(
             object: 'payment_method',
             name: PaymentMethodName.promptpay,
             currencies: [Currency.thb],
-            banks: [Bank.bbl],
+            banks: [Bank(code: BankCode.affin, name: "name", active: true)],
           ),
         ],
         tokenizationMethods: [TokenizationMethod.applepay],
