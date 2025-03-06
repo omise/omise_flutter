@@ -159,8 +159,7 @@ class ValidationUtils {
         return validatePhoneNumber(
             phoneNumber: value, locale: locale, context: context);
       case ValidationType.email:
-        return validatePhoneNumber(
-            phoneNumber: value, locale: locale, context: context);
+        return validateEmail(email: value, locale: locale, context: context);
       case ValidationType.none:
         return null;
     }
