@@ -27,13 +27,13 @@ class PaymentUtils {
   };
   static Set<String> sharedMayBankAssets = {
     PaymentMethodName.mayBankQr.value,
-    FpxBankCode.maybank2e.value,
-    FpxBankCode.maybank2u.value,
+    BankCode.maybank2e.value,
+    BankCode.maybank2u.value,
   };
   static Set<String> sharedUobAssets = {
     PaymentMethodName.installmentUob.value,
     PaymentMethodName.installmentWlbUob.value,
-    FpxBankCode.uob.value,
+    BankCode.uob.value,
   };
 
   static Set<PaymentMethodName> grabPartners = {PaymentMethodName.grabpay};
@@ -74,7 +74,7 @@ class PaymentUtils {
     return 'assets/${customPaymentMethod?.value ?? paymentMethod!.value.replaceAll('_wlb', '')}.png';
   }
 
-  static String getFpxBankImageName(FpxBankCode bankName) {
+  static String getFpxBankImageName(BankCode bankName) {
     if (sharedMayBankAssets.contains(bankName.value)) {
       return 'assets/payment_maybank.png';
     }

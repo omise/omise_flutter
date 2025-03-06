@@ -14,9 +14,7 @@ void main() {
   const testAmount = 1000;
   const testCurrency = Currency.thb;
   const testEmail = 'test@example.com';
-  final testFpxBanks = [
-    Bank(code: FpxBankCode.affin, name: 'name', active: true)
-  ];
+  final testFpxBanks = [Bank(code: BankCode.affin, name: 'name', active: true)];
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();

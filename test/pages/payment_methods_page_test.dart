@@ -37,7 +37,7 @@ void main() {
   final mockCurrencies = [omise_dart.Currency.thb];
   final mockBanks = ['kbank'];
   final mockBanksPaymentMethod = [
-    omise_dart.Bank(code: FpxBankCode.affin, name: "name", active: true)
+    omise_dart.Bank(code: omise_dart.BankCode.affin, name: "name", active: true)
   ];
   const amount = 1000000;
   const currency = omise_dart.Currency.thb;

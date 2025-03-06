@@ -110,9 +110,14 @@ class _FpxBanksPageState extends State<FpxBanksPage> {
                                               (context, error, stackTrace) =>
                                                   Image.asset(
                                             PaymentUtils.getFpxBankImageName(
-                                                FpxBankCode.unknown),
+                                              BankCode.unknown,
+                                            ),
                                             package: PackageInfo.packageName,
                                             alignment: Alignment.center,
+                                            // nested error builder because in unit tests images cannot be displayed
+                                            errorBuilder:
+                                                (context, error, stackTrace) =>
+                                                    const SizedBox.shrink(),
                                           ),
                                         ),
                                       ),

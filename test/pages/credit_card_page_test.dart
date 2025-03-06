@@ -384,7 +384,7 @@ void main() {
             currencies: [omise_dart.Currency.thb],
             banks: [
               omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
             ],
           ),
           omise_dart.PaymentMethod(
@@ -393,7 +393,7 @@ void main() {
             currencies: [omise_dart.Currency.thb],
             banks: [
               omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
             ],
           ),
         ],
@@ -455,7 +455,7 @@ void main() {
             currencies: [omise_dart.Currency.thb],
             banks: [
               omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
             ],
           ),
           omise_dart.PaymentMethod(
@@ -464,7 +464,7 @@ void main() {
             currencies: [omise_dart.Currency.thb],
             banks: [
               omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
             ],
           ),
         ],
@@ -531,7 +531,7 @@ void main() {
             currencies: [omise_dart.Currency.thb],
             banks: [
               omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
             ],
           ),
           omise_dart.PaymentMethod(
@@ -540,7 +540,7 @@ void main() {
             currencies: [omise_dart.Currency.thb],
             banks: [
               omise_dart.Bank(
-                  code: FpxBankCode.affin, name: "name", active: true)
+                  code: omise_dart.BankCode.affin, name: "name", active: true)
             ],
           ),
         ],

@@ -21,7 +21,7 @@ void main() {
   const amount = 1000;
   const currency = Currency.myr;
   const email = "test@example.com";
-  const fpxBankCode = FpxBankCode.ambank;
+  const fpxBankCode = BankCode.ambank;
   final mockSource = Source(
     object: 'source',
     id: 'src_123',

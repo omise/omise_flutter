@@ -21,15 +21,15 @@ void main() {
   setUpAll(() {
     registerFallbackValue(MockBuildContext());
     registerFallbackValue(MockCreateSourceRequest());
-    registerFallbackValue(FpxBankCode.affin);
+    registerFallbackValue(omise_dart.BankCode.affin);
     Translations.testLocale = const Locale('en');
   });
 
   final mockBanks = [
     omise_dart.Bank(
-        name: "Affin", code: omise_dart.FpxBankCode.affin, active: true),
+        name: "Affin", code: omise_dart.BankCode.affin, active: true),
     omise_dart.Bank(
-        name: "Bank B", code: omise_dart.FpxBankCode.affin, active: true),
+        name: "Bank B", code: omise_dart.BankCode.affin, active: true),
   ];
   const amount = 1000;
   const currency = omise_dart.Currency.myr;

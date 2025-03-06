@@ -27,7 +27,7 @@ class FpxBankSelectorController
   }
 
   /// Creates a source based on the collected data from the user.
-  Future<void> createSource(FpxBankCode fpxBankCode) async {
+  Future<void> createSource(BankCode fpxBankCode) async {
     try {
       // Set the status to loading while creating the token
       _setValue(value.copyWith(sourceLoadingStatus: Status.loading));
