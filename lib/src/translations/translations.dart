@@ -64,6 +64,7 @@ class Translations {
       "truemoney": "TrueMoney",
       "truemoneyJumpapp": "TrueMoney",
       "fpx": "FPX",
+      "duitnowObw": "DuitNow Online Banking/Wallets",
       "fpxInfoText":
           "(Optional) Please input your email to receive transaction confirmation from FPX",
       "trueMoneyWalletInfoText":
@@ -152,6 +153,7 @@ class Translations {
       "truemoney": "ทรูมันนี่",
       "truemoneyJumpapp": "ทรูมันนี่",
       "fpx": "FPX",
+      "duitnowObw": "DuitNow Online Banking/Wallets",
       "fpxInfoText":
           "กรุณากรอกอีเมลเพื่อรับการยืนยันการรับชำระจากเอฟพีเอ็กซ์ (ถ้ามี)",
       "trueMoneyWalletInfoText":
@@ -240,6 +242,7 @@ class Translations {
       "truemoney": "TrueMoney",
       "truemoneyJumpapp": "TrueMoney",
       "fpx": "FPX",
+      "duitnowObw": "DuitNow Online Banking/Wallets",
       "fpxInfoText": "(任意) メールアドレスを入力し、FPXからの取引確認メールを受信します",
       "trueMoneyWalletInfoText": "TrueMoney ウォレットアカウントに登録されている携帯電話番号を入力してください",
       "phone": "電話",

@@ -1,13 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:omise_flutter/src/controllers/fpx_bank_selector_controller.dart';
+import 'package:omise_flutter/src/controllers/bank_selector_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_dart/omise_dart.dart';
 
 import '../mocks.dart';
 
 void main() {
-  late FpxBankSelectorController controller;
+  late BankSelectorController controller;
   late MockOmiseApiService mockOmiseApiService;
 
   setUp(() {
@@ -41,13 +41,16 @@ void main() {
           .thenAnswer((_) async => mockSource);
 
       // Initialize the controller
-      controller = FpxBankSelectorController(
+      controller = BankSelectorController(
         omiseApiService: mockOmiseApiService,
       );
 
       // Set the source params
       controller.setSourceCreationParams(
-          amount: amount, currency: currency, email: email);
+          amount: amount,
+          currency: currency,
+          email: email,
+          paymentMethod: PaymentMethodName.fpx);
 
       // Track state changes
       var changes = <FpxBankSelectorPageState>[];
@@ -72,7 +75,7 @@ void main() {
           .thenAnswer((_) async => mockSource);
 
       // Initialize the controller
-      controller = FpxBankSelectorController(
+      controller = BankSelectorController(
         omiseApiService: mockOmiseApiService,
       );
 

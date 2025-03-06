@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/fpx/fpx_banks_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/bank_selector_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
@@ -108,7 +108,7 @@ class _FpxEmailPageState extends State<FpxEmailPage> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => FpxBanksPage(
+                                      builder: (context) => BankSelectorPage(
                                             omiseApiService:
                                                 widget.omiseApiService,
                                             amount: widget.amount,
@@ -116,6 +116,8 @@ class _FpxEmailPageState extends State<FpxEmailPage> {
                                             locale: widget.locale,
                                             email: fpxEmail,
                                             fpxBanks: widget.fpxBanks,
+                                            paymentMethod:
+                                                PaymentMethodName.fpx,
                                           )),
                                 );
                               }
