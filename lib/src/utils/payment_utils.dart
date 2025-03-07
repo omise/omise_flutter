@@ -74,7 +74,7 @@ class PaymentUtils {
     return 'assets/${customPaymentMethod?.value ?? paymentMethod!.value.replaceAll('_wlb', '')}.png';
   }
 
-  static String getFpxBankImageName(BankCode bankName) {
+  static String getBankImageName(BankCode bankName) {
     if (sharedMayBankAssets.contains(bankName.value)) {
       return 'assets/payment_maybank.png';
     }

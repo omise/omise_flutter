@@ -5,16 +5,15 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 
-/// The [FpxBankSelectorController] manages the state and logic for
+/// The [BankSelectorController] manages the state and logic for
 /// creating a mobile banking source from Omise API.
-class FpxBankSelectorController
-    extends ValueNotifier<FpxBankSelectorPageState> {
+class BankSelectorController extends ValueNotifier<FpxBankSelectorPageState> {
   /// Instance of [OmiseApiService] used to interact with the omise dart package.
   final OmiseApiService omiseApiService;
 
-  /// Constructor for initializing [FpxBankSelectorController].
+  /// Constructor for initializing [BankSelectorController].
   /// Takes in a required [omiseApiService].
-  FpxBankSelectorController({
+  BankSelectorController({
     required this.omiseApiService,
   }) : super(FpxBankSelectorPageState(sourceLoadingStatus: Status.idle));
 
@@ -22,12 +21,17 @@ class FpxBankSelectorController
     required int amount,
     required Currency currency,
     required String? email,
+    required PaymentMethodName paymentMethod,
   }) {
-    _setValue(value.copyWith(amount: amount, currency: currency, email: email));
+    _setValue(value.copyWith(
+        amount: amount,
+        currency: currency,
+        email: email,
+        paymentMethod: paymentMethod));
   }
 
   /// Creates a source based on the collected data from the user.
-  Future<void> createSource(BankCode fpxBankCode) async {
+  Future<void> createSource(BankCode bankCode) async {
     try {
       // Set the status to loading while creating the token
       _setValue(value.copyWith(sourceLoadingStatus: Status.loading));
@@ -36,8 +40,8 @@ class FpxBankSelectorController
       final source = await omiseApiService.createSource(CreateSourceRequest(
           amount: value.amount!,
           currency: value.currency!,
-          type: PaymentMethodName.fpx,
-          bank: fpxBankCode.value,
+          type: value.paymentMethod!,
+          bank: bankCode.value,
           email: value.email));
 
       _setValue(value.copyWith(
@@ -64,7 +68,7 @@ class FpxBankSelectorController
   }
 }
 
-/// State class that holds the values for [FpxBankSelectorController].
+/// State class that holds the values for [BankSelectorController].
 class FpxBankSelectorPageState {
   /// The source object received from the API after source creation.
   final Source? source;
@@ -84,6 +88,9 @@ class FpxBankSelectorPageState {
   /// The email of the user.
   final String? email;
 
+  /// The payment method connected to the list of banks.
+  final PaymentMethodName? paymentMethod;
+
   /// Constructor for creating a [FpxBankSelectorPageState].
   FpxBankSelectorPageState({
     required this.sourceLoadingStatus,
@@ -92,6 +99,7 @@ class FpxBankSelectorPageState {
     this.currency,
     this.sourceErrorMessage,
     this.email,
+    this.paymentMethod,
   });
 
   /// Creates a copy of the current state while allowing overriding of
@@ -103,14 +111,15 @@ class FpxBankSelectorPageState {
     Currency? currency,
     String? sourceErrorMessage,
     String? email,
+    PaymentMethodName? paymentMethod,
   }) {
     return FpxBankSelectorPageState(
-      source: source ?? this.source,
-      sourceLoadingStatus: sourceLoadingStatus ?? this.sourceLoadingStatus,
-      amount: amount ?? this.amount,
-      currency: currency ?? this.currency,
-      sourceErrorMessage: sourceErrorMessage ?? this.sourceErrorMessage,
-      email: email ?? this.email,
-    );
+        source: source ?? this.source,
+        sourceLoadingStatus: sourceLoadingStatus ?? this.sourceLoadingStatus,
+        amount: amount ?? this.amount,
+        currency: currency ?? this.currency,
+        sourceErrorMessage: sourceErrorMessage ?? this.sourceErrorMessage,
+        email: email ?? this.email,
+        paymentMethod: paymentMethod ?? this.paymentMethod);
   }
 }

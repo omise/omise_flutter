@@ -3,8 +3,9 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/bank_selector_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
-import 'package:omise_flutter/src/pages/paymentMethods/fpx/fpx_email_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/fpx_email_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/truemoney_wallet_page.dart';
@@ -75,6 +76,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.truemoney, // truemoney wallet
     PaymentMethodName.truemoneyJumpapp,
     PaymentMethodName.fpx,
+    PaymentMethodName.duitnowObw,
   };
   final alipayPartners = {PaymentMethodName.alipayCn};
   PaymentMethodParams getPaymentMethodParams(
@@ -116,8 +118,8 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
         return PaymentMethodParams(
             isNextPage: true,
             function: () {
-              int index = value.capability!.paymentMethods.indexWhere(
-                  (element) => element.name == PaymentMethodName.fpx);
+              int index = value.capability!.paymentMethods
+                  .indexWhere((element) => element.name == paymentMethodName);
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -129,6 +131,28 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                     fpxBanks: index != -1
                         ? value.capability!.paymentMethods[index].banks
                         : [],
+                  ),
+                ),
+              );
+            });
+      case PaymentMethodName.duitnowObw:
+        return PaymentMethodParams(
+            isNextPage: true,
+            function: () {
+              int index = value.capability!.paymentMethods
+                  .indexWhere((element) => element.name == paymentMethodName);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => BankSelectorPage(
+                    omiseApiService: omiseApiService,
+                    amount: value.amount!,
+                    currency: value.currency!,
+                    locale: locale,
+                    fpxBanks: index != -1
+                        ? value.capability!.paymentMethods[index].banks
+                        : [],
+                    paymentMethod: paymentMethodName,
                   ),
                 ),
               );

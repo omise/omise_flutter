@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
-import 'package:omise_flutter/src/controllers/fpx_bank_selector_controller.dart';
+import 'package:omise_flutter/src/controllers/bank_selector_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
@@ -9,7 +9,7 @@ import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
 import 'package:omise_flutter/src/utils/payment_utils.dart';
 
-class FpxBanksPage extends StatefulWidget {
+class BankSelectorPage extends StatefulWidget {
   final List<Bank> fpxBanks;
 
   /// An instance of [OmiseApiService] for interacting with the Omise API.
@@ -27,26 +27,30 @@ class FpxBanksPage extends StatefulWidget {
   /// The email of the user.
   final String? email;
 
+  /// The payment method the is connected to the list of banks.
+  final PaymentMethodName paymentMethod;
+
   /// Allow passing an instance of the controller to facilitate testing
-  final FpxBankSelectorController? fpxBankSelectorController;
-  const FpxBanksPage(
+  final BankSelectorController? fpxBankSelectorController;
+  const BankSelectorPage(
       {super.key,
       required this.fpxBanks,
       required this.omiseApiService,
       required this.amount,
       required this.currency,
+      required this.paymentMethod,
       this.fpxBankSelectorController,
       this.locale,
       this.email});
 
   @override
-  State<FpxBanksPage> createState() => _FpxBanksPageState();
+  State<BankSelectorPage> createState() => _BankSelectorPageState();
 }
 
-class _FpxBanksPageState extends State<FpxBanksPage> {
-  late final FpxBankSelectorController fpxBankSelectorController =
+class _BankSelectorPageState extends State<BankSelectorPage> {
+  late final BankSelectorController fpxBankSelectorController =
       widget.fpxBankSelectorController ??
-          FpxBankSelectorController(
+          BankSelectorController(
             omiseApiService: widget.omiseApiService,
           );
   @override
@@ -65,14 +69,18 @@ class _FpxBanksPageState extends State<FpxBanksPage> {
       }
     });
     fpxBankSelectorController.setSourceCreationParams(
-        amount: widget.amount, currency: widget.currency, email: widget.email);
+        amount: widget.amount,
+        currency: widget.currency,
+        email: widget.email,
+        paymentMethod: widget.paymentMethod);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(Translations.get('fpx', widget.locale, context)),
+          title: Text(Translations.get(
+              widget.paymentMethod.name, widget.locale, context)),
         ),
         body: ValueListenableBuilder(
             valueListenable: fpxBankSelectorController,
@@ -102,16 +110,15 @@ class _FpxBanksPageState extends State<FpxBanksPage> {
                                         height: 50,
                                         width: 50,
                                         child: Image.asset(
-                                          PaymentUtils.getFpxBankImageName(
+                                          PaymentUtils.getBankImageName(
                                               fpxBank.code), // Icon for bank
                                           package: PackageInfo.packageName,
                                           alignment: Alignment.center,
                                           errorBuilder:
                                               (context, error, stackTrace) =>
                                                   Image.asset(
-                                            PaymentUtils.getFpxBankImageName(
-                                              BankCode.unknown,
-                                            ),
+                                            PaymentUtils.getBankImageName(
+                                                BankCode.unknown),
                                             package: PackageInfo.packageName,
                                             alignment: Alignment.center,
                                             // nested error builder because in unit tests images cannot be displayed
