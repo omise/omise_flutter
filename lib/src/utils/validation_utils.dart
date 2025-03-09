@@ -122,7 +122,7 @@ class ValidationUtils {
     );
 
     if (!emailRegExp.hasMatch(email)) {
-      return 'Invalid email';
+      return Translations.get('invalidEmail', locale, context);
     }
 
     return null; // Valid email

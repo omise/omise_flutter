@@ -54,14 +54,25 @@ class _MyHomePageState extends State<MyHomePage> {
   final omisePayment = OmisePayment(
       publicKey: "pkey", enableDebug: true, locale: OmiseLocale.en);
 
-  // Opens a page to select payment methods and handle token creation
+  // Opens a page to select payment methods and handle token and source creation
   Future<void> _openPaymentMethodsPage() async {
     final OmisePaymentResult? omisePaymentResult =
         await Navigator.push<OmisePaymentResult>(
       context,
       MaterialPageRoute(
           builder: (context) => omisePayment.selectPaymentMethod(
-              amount: 1000, currency: Currency.thb)),
+                selectedPaymentMethods: [PaymentMethodName.card],
+                selectedTokenizationMethods: [TokenizationMethod.googlepay],
+                amount: 1000,
+                currency: Currency.thb,
+                // Google pay parameters
+                googleMerchantId: 'googleMerchantId',
+                requestBillingAddress: true,
+                requestPhoneNumber: true,
+                googlePayCardBrands: ['VISA'],
+                googlePayEnvironment: 'TEST',
+                googlePayItemDescription: "test description",
+              )),
     );
 
     // Check if payment result is available
@@ -74,6 +85,35 @@ class _MyHomePageState extends State<MyHomePage> {
       }
       if (omisePaymentResult.source != null) {
         log(omisePaymentResult.source!.id);
+      }
+    }
+  }
+
+  // Opens the google pay page and handles token creation.
+  Future<void> _openGooglePayPage() async {
+    final OmisePaymentResult? omisePaymentResult =
+        await Navigator.push<OmisePaymentResult>(
+      context,
+      MaterialPageRoute(
+          builder: (context) => omisePayment.buildGooglePayPage(
+                amount: 1000,
+                currency: Currency.thb,
+                googleMerchantId: 'googleMerchantId',
+                requestBillingAddress: true,
+                requestPhoneNumber: true,
+                googlePayCardBrands: ['VISA'],
+                googlePayEnvironment: 'TEST',
+                googlePayItemDescription: "test description",
+              )),
+    );
+
+    // Check if payment result is available
+    if (omisePaymentResult == null) {
+      log('No payment'); // Logs if no payment was made
+    } else {
+      // Logs token ID if available
+      if (omisePaymentResult.token != null) {
+        log(omisePaymentResult.token!.id);
       }
     }
   }
@@ -125,6 +165,22 @@ class _MyHomePageState extends State<MyHomePage> {
                     horizontal: 32.0, vertical: 12.0),
               ),
               child: const Text('Choose payment method'),
+            ),
+            const SizedBox(
+              height: 20, // Space between buttons
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _openGooglePayPage(); // Button triggers google pay page
+              },
+              style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0, vertical: 12.0),
+              ),
+              child: const Text('Open Google Pay'),
             ),
             const SizedBox(
               height: 20, // Space between buttons

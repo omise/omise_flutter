@@ -31,8 +31,33 @@ class PaymentMethodsPage extends StatefulWidget {
   /// If null, all supported payment methods will be shown.
   final List<PaymentMethodName>? selectedPaymentMethods;
 
+  /// A list of selected tokenization methods that should be displayed in the UI.
+  /// If null, all supported tokenization methods will be shown.
+  final List<TokenizationMethod>? selectedTokenizationMethods;
+
   /// The custom locale passed by the merchant.
   final OmiseLocale? locale;
+
+  /// The custom list of card brands
+  final List<String>? cardBrands;
+
+  /// The google merchant id.
+  final String? googlePlayMerchantId;
+
+  /// If the billing address should be requested.
+  final bool requestBillingAddress;
+
+  /// If the phone number should be requested.
+  final bool requestPhoneNumber;
+
+  /// The environment for google pay.
+  final String? googlePayEnvironment;
+
+  /// The pkey required for google pay.
+  final String pkey;
+
+  /// The description of the item being purchased.
+  final String? googlePayItemDescription;
 
   /// Constructor for creating a [PaymentMethodsPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
@@ -41,9 +66,17 @@ class PaymentMethodsPage extends StatefulWidget {
     required this.omiseApiService,
     required this.amount,
     required this.currency,
+    required this.pkey,
     this.selectedPaymentMethods,
+    this.selectedTokenizationMethods,
     this.paymentMethodSelectorController,
     this.locale,
+    this.cardBrands,
+    this.requestBillingAddress = false,
+    this.requestPhoneNumber = false,
+    this.googlePlayMerchantId,
+    this.googlePayEnvironment,
+    this.googlePayItemDescription,
   });
 
   @override
@@ -56,7 +89,9 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
       widget.paymentMethodSelectorController ??
           PaymentMethodsController(
               omiseApiService: widget.omiseApiService,
-              selectedPaymentMethods: widget.selectedPaymentMethods);
+              selectedPaymentMethods: widget.selectedPaymentMethods,
+              selectedTokenizationMethods: widget.selectedTokenizationMethods,
+              pkey: widget.pkey);
 
   /// Initializes the state and loads the payment methods on page load.
   @override
@@ -76,7 +111,15 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
       }
     });
     paymentMethodSelectorController.setSourceCreationParams(
-        amount: widget.amount, currency: widget.currency);
+      amount: widget.amount,
+      currency: widget.currency,
+      googlePlayMerchantId: widget.googlePlayMerchantId,
+      requestBillingAddress: widget.requestBillingAddress,
+      requestPhoneNumber: widget.requestPhoneNumber,
+      cardBrands: widget.cardBrands,
+      googlePayEnvironment: widget.googlePayEnvironment,
+      googlePayItemDescription: widget.googlePayItemDescription,
+    );
     paymentMethodSelectorController.loadCapabilities();
   }
 

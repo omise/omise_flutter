@@ -6,6 +6,7 @@ import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/bank_selector_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/fpx_email_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/google_pay_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/truemoney_wallet_page.dart';
@@ -21,11 +22,21 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
   /// If null, all supported payment methods will be shown.
   final List<PaymentMethodName>? selectedPaymentMethods;
 
+  /// List of selected payment methods specified by the user.
+  /// If null, all supported tokenization methods will be shown.
+  final List<TokenizationMethod>? selectedTokenizationMethods;
+
+  /// THe pkey required for google pay.
+  final String pkey;
+
   /// Constructor for initializing [PaymentMethodsController].
   /// Takes in a required [omiseApiService] and optional [selectedPaymentMethods].
-  PaymentMethodsController(
-      {required this.omiseApiService, this.selectedPaymentMethods})
-      : super(PaymentMethodsState(
+  PaymentMethodsController({
+    required this.omiseApiService,
+    required this.pkey,
+    this.selectedPaymentMethods,
+    this.selectedTokenizationMethods,
+  }) : super(PaymentMethodsState(
             capabilityLoadingStatus: Status.idle,
             sourceLoadingStatus: Status.idle));
 
@@ -78,6 +89,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.fpx,
     PaymentMethodName.duitnowObw,
   };
+  final supportedTokenizationMethods = {TokenizationMethod.googlepay};
   final alipayPartners = {PaymentMethodName.alipayCn};
   PaymentMethodParams getPaymentMethodParams(
       {required BuildContext context,
@@ -195,6 +207,26 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                           )),
                 );
               }
+              if (object == CustomPaymentMethod.googlePay.value) {
+                // open google pay screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => GooglePayPage(
+                            pkey: pkey,
+                            googlePlayMerchantId: value.googlePlayMerchantId!,
+                            requestBillingAddress: value.requestBillingAddress!,
+                            requestPhoneNumber: value.requestPhoneNumber!,
+                            cardBrands: value.cardBrands,
+                            amount: value.amount!,
+                            currency: value.currency!,
+                            omiseApiService: omiseApiService,
+                            locale: locale,
+                            environment: value.googlePayEnvironment,
+                            itemDescription: value.googlePayItemDescription,
+                          )),
+                );
+              }
             });
 
       default:
@@ -208,20 +240,34 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     }
   }
 
-  void setSourceCreationParams(
-      {required int amount,
-      required Currency currency,
+  void setSourceCreationParams({
+    required int amount,
+    required Currency currency,
 
-      /// The selected payment method should only passed here for testing purposes
-      PaymentMethodName? selectedPaymentMethod}) {
+    /// The selected payment method should only passed here for testing purposes
+    PaymentMethodName? selectedPaymentMethod,
+    String? googlePlayMerchantId,
+    bool? requestBillingAddress,
+    bool? requestPhoneNumber,
+    List<String>? cardBrands,
+    String? googlePayEnvironment,
+    String? googlePayItemDescription,
+  }) {
     _setValue(value.copyWith(
-        amount: amount,
-        currency: currency,
-        selectedPaymentMethod: selectedPaymentMethod));
+      amount: amount,
+      currency: currency,
+      selectedPaymentMethod: selectedPaymentMethod,
+      googlePlayMerchantId: googlePlayMerchantId,
+      requestBillingAddress: requestBillingAddress,
+      requestPhoneNumber: requestPhoneNumber,
+      cardBrands: cardBrands,
+      googlePayEnvironment: googlePayEnvironment,
+      googlePayItemDescription: googlePayItemDescription,
+    ));
   }
 
   /// Loads the capabilities from Omise API and filters the payment methods
-  /// based on the [selectedPaymentMethods] and [supportedPaymentMethods].
+  /// based on the [selectedPaymentMethods], [supportedPaymentMethods], [selectedTokenizationMethods] and [supportedTokenizationMethods].
   Future<void> loadCapabilities() async {
     try {
       // Set the status to loading while fetching capabilities
@@ -302,6 +348,36 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
       if (bothTruemoneyMethodsExist) {
         filteredMethods.removeWhere(
             (method) => method.name == PaymentMethodName.truemoney);
+      }
+      // filter tokenization methods
+      final tokenizationMethods = capabilities.tokenizationMethods;
+      for (int i = 0; i < tokenizationMethods.length; i++) {
+        if (supportedTokenizationMethods.contains(tokenizationMethods[i])) {
+          if (selectedTokenizationMethods != null &&
+              selectedTokenizationMethods!.contains(tokenizationMethods[i])) {
+            filteredMethods.add(PaymentMethod(
+              object: CustomPaymentMethodNameExtension.fromString(
+                      tokenizationMethods[i].value)
+                  .value,
+              name: PaymentMethodName.unknown,
+              currencies: [],
+              banks: [],
+            ));
+          } else {
+            if (selectedTokenizationMethods != null) {
+              continue;
+            }
+            // No user-specified selection, use all supported methods
+            filteredMethods.add(PaymentMethod(
+              object: CustomPaymentMethodNameExtension.fromString(
+                      tokenizationMethods[i].value)
+                  .value,
+              name: PaymentMethodName.unknown,
+              currencies: [],
+              banks: [],
+            ));
+          }
+        }
       }
       // Update the state with the filtered methods and success status
       _setValue(value.copyWith(
@@ -396,19 +472,44 @@ class PaymentMethodsState {
 
   final List<PaymentMethod>? installmentPaymentMethods;
 
+  /// The google play merchant id
+  final String? googlePlayMerchantId;
+
+  /// The parameter to force request the billing address in google pay
+  final bool? requestBillingAddress;
+
+  /// The parameter to force request the phone number in google pay
+  final bool? requestPhoneNumber;
+
+  /// The list of card brands in google pay
+  final List<String>? cardBrands;
+
+  /// The environment for google pay
+  final String? googlePayEnvironment;
+
+  /// The google play description of the item being purchased.
+  String? googlePayItemDescription;
+
   /// Constructor for creating a [PaymentMethodsState].
-  PaymentMethodsState(
-      {required this.capabilityLoadingStatus,
-      required this.sourceLoadingStatus,
-      this.capabilityErrorMessage,
-      this.capability,
-      this.source,
-      this.amount,
-      this.currency,
-      this.sourceErrorMessage,
-      this.selectedPaymentMethod,
-      this.viewablePaymentMethods,
-      this.installmentPaymentMethods});
+  PaymentMethodsState({
+    required this.capabilityLoadingStatus,
+    required this.sourceLoadingStatus,
+    this.capabilityErrorMessage,
+    this.capability,
+    this.source,
+    this.amount,
+    this.currency,
+    this.sourceErrorMessage,
+    this.selectedPaymentMethod,
+    this.viewablePaymentMethods,
+    this.installmentPaymentMethods,
+    this.googlePlayMerchantId,
+    this.requestBillingAddress,
+    this.requestPhoneNumber,
+    this.cardBrands,
+    this.googlePayEnvironment,
+    this.googlePayItemDescription,
+  });
 
   /// Creates a copy of the current state while allowing overriding of
   /// specific fields. This is needed since in order to trigger a rebuild on the value notifier level, we need a new instance to be created for non primitive types.
@@ -424,24 +525,39 @@ class PaymentMethodsState {
     PaymentMethodName? selectedPaymentMethod,
     List<PaymentMethod>? viewablePaymentMethods,
     List<PaymentMethod>? installmentPaymentMethods,
+    String? googlePlayMerchantId,
+    bool? requestBillingAddress,
+    bool? requestPhoneNumber,
+    List<String>? cardBrands,
+    String? googlePayEnvironment,
+    String? googlePayItemDescription,
   }) {
     return PaymentMethodsState(
-        capabilityLoadingStatus: capabilityLoadingStatus ??
-            this.capabilityLoadingStatus, // Use current value if null
-        capabilityErrorMessage: capabilityErrorMessage ??
-            this.capabilityErrorMessage, // Use current value if null
-        capability: capability ?? this.capability, // Use current value if null
-        source: source ?? this.source,
-        sourceLoadingStatus: sourceLoadingStatus ?? this.sourceLoadingStatus,
-        amount: amount ?? this.amount,
-        currency: currency ?? this.currency,
-        sourceErrorMessage: sourceErrorMessage ?? this.sourceErrorMessage,
-        selectedPaymentMethod:
-            selectedPaymentMethod ?? this.selectedPaymentMethod,
-        viewablePaymentMethods:
-            viewablePaymentMethods ?? this.viewablePaymentMethods,
-        installmentPaymentMethods:
-            installmentPaymentMethods ?? this.installmentPaymentMethods);
+      capabilityLoadingStatus: capabilityLoadingStatus ??
+          this.capabilityLoadingStatus, // Use current value if null
+      capabilityErrorMessage: capabilityErrorMessage ??
+          this.capabilityErrorMessage, // Use current value if null
+      capability: capability ?? this.capability, // Use current value if null
+      source: source ?? this.source,
+      sourceLoadingStatus: sourceLoadingStatus ?? this.sourceLoadingStatus,
+      amount: amount ?? this.amount,
+      currency: currency ?? this.currency,
+      sourceErrorMessage: sourceErrorMessage ?? this.sourceErrorMessage,
+      selectedPaymentMethod:
+          selectedPaymentMethod ?? this.selectedPaymentMethod,
+      viewablePaymentMethods:
+          viewablePaymentMethods ?? this.viewablePaymentMethods,
+      installmentPaymentMethods:
+          installmentPaymentMethods ?? this.installmentPaymentMethods,
+      googlePlayMerchantId: googlePlayMerchantId ?? this.googlePlayMerchantId,
+      requestBillingAddress:
+          requestBillingAddress ?? this.requestBillingAddress,
+      requestPhoneNumber: requestPhoneNumber ?? this.requestPhoneNumber,
+      cardBrands: cardBrands ?? this.cardBrands,
+      googlePayEnvironment: googlePayEnvironment ?? this.googlePayEnvironment,
+      googlePayItemDescription:
+          googlePayItemDescription ?? this.googlePayItemDescription,
+    );
   }
 }
 
