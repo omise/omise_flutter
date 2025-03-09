@@ -8,9 +8,6 @@
 - Direct integration with Omise's payment gateway in Flutter apps.
 - Easy-to-use tokenization and authorization flows.
 - Easy-to-use source creation flows.
-  - Supported sources:
-    - `promptpay`
-    - `mobile_banking`
 - Built-in support for common error handling in payment processing.
 - Internationalization support for : en, th and ja.
 
@@ -49,7 +46,7 @@ You will also need an Omise account and public/private keys, which you can obtai
 
 ## Usage
 
-Here's an example of how to create a token using **omise_flutter**:
+Here's an example of how to create a token or source using **omise_flutter**:
 
 ```dart
 import 'package:flutter/material.dart';
@@ -91,9 +88,19 @@ class _MyHomePageState extends State<MyHomePage> {
       context,
       MaterialPageRoute(
           builder: (context) =>
-              omisePayment.selectPaymentMethod(selectedPaymentMethods: [
-                PaymentMethodName.card, // Only showing card as payment method
-              ])),
+              omisePayment.selectPaymentMethod(
+               selectedPaymentMethods: [PaymentMethodName.card],
+               selectedTokenizationMethod:[TokenizationMethod.googlepay],
+                amount: 1000,
+                currency: Currency.thb,
+                // Google pay parameters
+                googleMerchantId: 'googleMerchantId',
+                requestBillingAddress: true,
+                requestPhoneNumber: true,
+                googlePayCardBrands: ['VISA'],
+                googlePayEnvironment: 'TEST',
+                googlePayItemDescription: "test description",
+              )),
     );
 
     // Check if payment result is available
@@ -140,11 +147,49 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
+### Google Pay
+
+To start using google pay you must first obtain your google merchant id. If you are just planning to use test mode
+you can skip this step until your integration is complete.
+You can access the google pay screen from the main `selectPaymentMethod` widget or you can directly open the google pay screen using the following widget:
+
+```dart
+Future<void> _openGooglePayPage() async {
+    final OmisePaymentResult? omisePaymentResult =
+        await Navigator.push<OmisePaymentResult>(
+      context,
+      MaterialPageRoute(
+          builder: (context) => omisePayment.buildGooglePayPage(
+                amount: 1000,
+                currency: Currency.thb,
+                googleMerchantId: 'googleMerchantId',
+                requestBillingAddress: true,
+                requestPhoneNumber: true,
+                googlePayCardBrands: ['VISA'],
+                googlePayEnvironment: 'TEST',
+                googlePayItemDescription: "test description",
+              )),
+    );
+
+    // Check if payment result is available
+    if (omisePaymentResult == null) {
+      log('No payment'); // Logs if no payment was made
+    } else {
+      // Logs token ID if available
+      if (omisePaymentResult.token != null) {
+        log(omisePaymentResult.token!.id);
+      }
+    }
+  }
+
+```
+
 ## Example
 
 In the `example/` folder, you will find more comprehensive examples showing various use cases, such as:
 
 - Creating a token
+- Creating a source
 - Authorizing a payment
 
 To run the examples:

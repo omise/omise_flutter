@@ -65,6 +65,7 @@ class Translations {
       "truemoneyJumpapp": "TrueMoney",
       "fpx": "FPX",
       "duitnowObw": "DuitNow Online Banking/Wallets",
+      "googlePay": "Google Pay",
       "fpxInfoText":
           "(Optional) Please input your email to receive transaction confirmation from FPX",
       "trueMoneyWalletInfoText":
@@ -93,7 +94,8 @@ class Translations {
       "expiryFormat": "MM/YY format",
       "cvvRequired": "CVV is required",
       "onlyDigits": "Only digits are allowed",
-      "cvvDigits": "CVV must be 3 or 4 digits"
+      "cvvDigits": "CVV must be 3 or 4 digits",
+      "invalidEmail": "Email is invalid",
     },
     OmiseLocale.th: {
       "cardNumber": "หมายเลขบัตร",
@@ -154,6 +156,7 @@ class Translations {
       "truemoneyJumpapp": "ทรูมันนี่",
       "fpx": "FPX",
       "duitnowObw": "DuitNow Online Banking/Wallets",
+      "googlePay": "Google Pay",
       "fpxInfoText":
           "กรุณากรอกอีเมลเพื่อรับการยืนยันการรับชำระจากเอฟพีเอ็กซ์ (ถ้ามี)",
       "trueMoneyWalletInfoText":
@@ -182,7 +185,8 @@ class Translations {
       "expiryFormat": "รูปแบบเดือน/ปี (MM/YY)",
       "cvvRequired": "จำเป็นต้องกรอกรหัส CVV",
       "onlyDigits": "สามารถกรอกได้เฉพาะตัวเลขเท่านั้น",
-      "cvvDigits": "รหัส CVV ต้องมี 3 หรือ 4 หลัก"
+      "cvvDigits": "รหัส CVV ต้องมี 3 หรือ 4 หลัก",
+      "invalidEmail": "อีเมล์ไม่ถูกต้อง",
     },
     OmiseLocale.ja: {
       "cardNumber": "カード番号",
@@ -243,6 +247,7 @@ class Translations {
       "truemoneyJumpapp": "TrueMoney",
       "fpx": "FPX",
       "duitnowObw": "DuitNow Online Banking/Wallets",
+      "googlePay": "Google Pay",
       "fpxInfoText": "(任意) メールアドレスを入力し、FPXからの取引確認メールを受信します",
       "trueMoneyWalletInfoText": "TrueMoney ウォレットアカウントに登録されている携帯電話番号を入力してください",
       "phone": "電話",
@@ -268,7 +273,8 @@ class Translations {
       "expiryFormat": "月/年 形式です",
       "cvvRequired": "CVVは必須です",
       "onlyDigits": "数字のみをご入力ください",
-      "cvvDigits": "CVVは3桁または4桁の数字です"
+      "cvvDigits": "CVVは3桁または4桁の数字です",
+      "invalidEmail": "メールが無効です"
     },
   };
   static OmiseLocale detectLocale(OmiseLocale? locale, BuildContext context) {
