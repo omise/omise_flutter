@@ -18,6 +18,7 @@ void main() {
   });
   const amount = 1000;
   const currency = Currency.thb;
+  const pkey = 'pkey';
   const paymentMethod = PaymentMethodName.card;
   final mockSource = Source(
       object: 'source',
@@ -70,8 +71,9 @@ void main() {
         omiseApiService: mockOmiseApiService,
         selectedPaymentMethods: [
           PaymentMethodName.card,
-          PaymentMethodName.alipay
+          PaymentMethodName.alipay,
         ],
+        pkey: pkey,
       );
 
       // Listen for value changes
@@ -101,6 +103,7 @@ void main() {
       // Initialize the controller
       controller = PaymentMethodsController(
         omiseApiService: mockOmiseApiService,
+        pkey: pkey,
       );
 
       // Listen for value changes
@@ -132,6 +135,7 @@ void main() {
         PaymentMethodName.card,
         PaymentMethodName.promptpay
       ],
+      pkey: pkey,
     );
     controller.setSourceCreationParams(
         amount: amount,
@@ -169,6 +173,7 @@ void main() {
         PaymentMethodName.card,
         PaymentMethodName.promptpay
       ],
+      pkey: pkey,
     );
 
     // Listen for value changes

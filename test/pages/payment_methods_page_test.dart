@@ -42,6 +42,7 @@ void main() {
   const amount = 1000000;
   const currency = omise_dart.Currency.thb;
   const paymentMethod = omise_dart.PaymentMethodName.promptpay;
+  const pkey = 'pkey';
 
   final mockSource = omise_dart.Source(
       object: 'source',
@@ -70,6 +71,7 @@ void main() {
           paymentMethodSelectorController: mockController,
           amount: amount,
           currency: currency,
+          pkey: pkey,
         ),
       ),
     );
@@ -94,6 +96,7 @@ void main() {
           paymentMethodSelectorController: mockController,
           amount: amount,
           currency: currency,
+          pkey: pkey,
         ),
       ),
     );
@@ -167,6 +170,7 @@ void main() {
           paymentMethodSelectorController: mockController,
           amount: amount,
           currency: currency,
+          pkey: pkey,
         ),
       ),
     );
@@ -203,6 +207,7 @@ void main() {
           paymentMethodSelectorController: mockController,
           amount: amount,
           currency: currency,
+          pkey: pkey,
         ),
       ),
     );
@@ -218,6 +223,7 @@ void main() {
           capturedResult; // To capture the result from the navigator pop
       final controller = PaymentMethodsController(
         omiseApiService: mockOmiseApiService,
+        pkey: pkey,
       );
       final mockCapability = omise_dart.Capability(
         object: 'capability',
@@ -273,6 +279,7 @@ void main() {
                         paymentMethodSelectorController: controller,
                         amount: amount,
                         currency: currency,
+                        pkey: pkey,
                       ),
                     ),
                   );
@@ -313,6 +320,7 @@ void main() {
     (WidgetTester tester) async {
       final controller = PaymentMethodsController(
         omiseApiService: mockOmiseApiService,
+        pkey: pkey,
       );
       final mockCapability = omise_dart.Capability(
         object: 'capability',
@@ -346,6 +354,7 @@ void main() {
             paymentMethodSelectorController: controller,
             amount: amount,
             currency: currency,
+            pkey: pkey,
           ),
         ),
       );
@@ -369,6 +378,7 @@ void main() {
     (WidgetTester tester) async {
       final controller = PaymentMethodsController(
         omiseApiService: mockOmiseApiService,
+        pkey: pkey,
       );
       final mockCapability = omise_dart.Capability(
         object: 'capability',
@@ -402,6 +412,7 @@ void main() {
             paymentMethodSelectorController: controller,
             amount: amount,
             currency: currency,
+            pkey: pkey,
           ),
         ),
       );

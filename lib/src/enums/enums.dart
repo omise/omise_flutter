@@ -21,6 +21,7 @@ enum ValidationType {
 enum CustomPaymentMethod {
   mobileBanking("mobile_banking"),
   installments("installment"),
+  googlePay("googlepay"),
   unknown("unknown");
 
   final String value;

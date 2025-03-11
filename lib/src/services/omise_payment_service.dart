@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/google_pay_page.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
@@ -12,6 +13,7 @@ import 'package:omise_flutter/src/services/omise_api_service.dart';
 class OmisePayment {
   final bool? enableDebug;
   final OmiseLocale? locale;
+  final String publicKey;
 
   /// Creates an instance of [OmisePayment].
   ///
@@ -22,7 +24,7 @@ class OmisePayment {
   /// An optional [locale] parameter that can be used to set the locale
   /// of the text. By default the SDK will use the `Localizations.localeOf(context)`.
   OmisePayment({
-    required String publicKey,
+    required this.publicKey,
     this.enableDebug = false,
     this.locale,
   }) {
@@ -47,20 +49,87 @@ class OmisePayment {
   /// [amount] Represents the amount that will be used in the source creation. Should follow the amount format supported by the omise API.
   ///
   /// [currency] Represents the currency that will be used in the source creation.
+  /// [requestBillingAddress] - Determines if the billing address should be requested in google pay
+  ///
+  /// [requestPhoneNumber] - Determines if the phone number should be requested in google pay.
+  ///
+  /// [googleMerchantId] - The Google Merchant ID.
+  ///
+  /// [googlePayCardBrands] - Allowed card brands for Google Pay (e.g., ['VISA', 'MASTERCARD']).
+  ///
+  /// [googlePayEnvironment] - The environment for Google Pay ('TEST' or 'PRODUCTION'). If not provided the environment will determined based on the pkey of the merchant.
+  ///
+  /// [googlePayItemDescription] - The description of the item being purchased for Google Pay.
   ///
   /// Returns a [Widget] that represents the payment method selection page.
-  Widget selectPaymentMethod({
-    List<PaymentMethodName>? selectedPaymentMethods,
-    required int amount,
-    required Currency currency,
-  }) {
+  Widget selectPaymentMethod(
+      {List<PaymentMethodName>? selectedPaymentMethods,
+      List<TokenizationMethod>? selectedTokenizationMethods,
+      required int amount,
+      required Currency currency,
+      bool? requestBillingAddress = false,
+      bool? requestPhoneNumber = false,
+      String? googleMerchantId,
+      List<String>? googlePayCardBrands,
+      String? googlePayEnvironment,
+      String? googlePayItemDescription}) {
     return PaymentMethodsPage(
       omiseApiService: omiseApiService, // Pass the Omise API service
       amount: amount,
       currency: currency,
       selectedPaymentMethods:
           selectedPaymentMethods, // Pass any pre-selected methods
-      locale: locale,
+      selectedTokenizationMethods: selectedTokenizationMethods,
+      locale: locale, requestBillingAddress: requestBillingAddress!,
+      requestPhoneNumber: requestPhoneNumber!,
+      googlePlayMerchantId: googleMerchantId,
+      cardBrands: googlePayCardBrands,
+      googlePayEnvironment: googlePayEnvironment, pkey: publicKey,
+      googlePayItemDescription: googlePayItemDescription,
+    );
+  }
+
+  /// Builds and returns a [GooglePayPage] widget.
+  ///
+  /// This method directly presents the Google Pay payment page.
+  ///
+  /// [amount] - The transaction amount, following Omise API format.
+  ///
+  /// [currency] - The transaction currency.
+  ///
+  /// [googleMerchantId] - The Google Merchant ID.
+  ///
+  /// [requestBillingAddress] - Determines if billing address is requested in google pay
+  ///
+  /// [requestPhoneNumber] - Determines if phone number is requested in google pay
+  ///
+  /// [googlePayCardBrands] - Allowed card brands for Google Pay (e.g., ['VISA']).
+  ///
+  /// [googlePayEnvironment] - The environment for Google Pay ('TEST' or 'PRODUCTION'). If not provided the environment will determined based on the pkey of the merchant.
+  ///
+  /// [googlePayItemDescription] - The description of the item being purchased for Google Pay.
+  ///
+  /// Returns a [Widget] for the Google Pay payment page.
+  Widget buildGooglePayPage(
+      {required int amount,
+      required Currency currency,
+      required String googleMerchantId,
+      bool? requestBillingAddress = false,
+      bool? requestPhoneNumber = false,
+      List<String>? googlePayCardBrands,
+      String? googlePayEnvironment,
+      String? googlePayItemDescription}) {
+    return GooglePayPage(
+      omiseApiService: omiseApiService, // Pass the Omise API service
+      amount: amount,
+      currency: currency,
+      locale: locale, requestBillingAddress: requestBillingAddress!,
+      requestPhoneNumber: requestPhoneNumber!,
+      googlePlayMerchantId: googleMerchantId,
+      cardBrands: googlePayCardBrands,
+      environment: googlePayEnvironment,
+      pkey: publicKey,
+      itemDescription: googlePayItemDescription,
     );
   }
 
