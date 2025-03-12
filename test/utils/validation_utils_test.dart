@@ -61,19 +61,25 @@ void main() {
     group('ValidationUtils - Name', () {
       test('Name is required', () {
         final result = ValidationUtils.validateName(null,
-            fieldName: 'Full Name', context: mockBuildContext);
+            fieldName: 'Full Name',
+            context: mockBuildContext,
+            isOptional: false);
         expect(result, 'Full Name is required');
       });
 
       test('Empty name returns error', () {
         final result = ValidationUtils.validateName('',
-            fieldName: 'Full Name', context: mockBuildContext);
+            fieldName: 'Full Name',
+            context: mockBuildContext,
+            isOptional: false);
         expect(result, 'Full Name is required');
       });
 
       test('Valid name passes', () {
         final result = ValidationUtils.validateName('John Doe',
-            context: mockBuildContext, fieldName: 'Full Name');
+            context: mockBuildContext,
+            fieldName: 'Full Name',
+            isOptional: false);
         expect(result, null);
       });
     });

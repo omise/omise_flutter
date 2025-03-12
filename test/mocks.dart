@@ -4,6 +4,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_dart/src/services/capability_api.dart';
 import 'package:omise_dart/src/services/tokens_api.dart';
 import 'package:omise_dart/src/services/sources_api.dart';
+import 'package:omise_flutter/src/controllers/atome_controller.dart';
 import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
 import 'package:omise_flutter/src/controllers/bank_selector_controller.dart';
 import 'package:omise_flutter/src/controllers/google_pay_controller.dart';
@@ -54,6 +55,8 @@ class MockCreateSourceRequest extends Mock implements CreateSourceRequest {}
 class MockBuildContext extends Mock implements BuildContext {}
 
 class MockGooglePayController extends Mock implements GooglePayController {}
+
+class MockCAtomeController extends Mock implements AtomeController {}
 
 // Mock class for callback
 class MockCallback extends Mock {

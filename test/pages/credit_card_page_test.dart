@@ -60,7 +60,7 @@ void main() {
     'name': true,
   };
 
-  group("description", () {
+  group("Credit Card Page Tests", () {
     testWidgets(
         'displays loading spinner when capabilityLoadingStatus is loading',
         (WidgetTester tester) async {
