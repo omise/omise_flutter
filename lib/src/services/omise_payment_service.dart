@@ -61,18 +61,22 @@ class OmisePayment {
   ///
   /// [googlePayItemDescription] - The description of the item being purchased for Google Pay.
   ///
+  /// [atomeItems] - The list of items being purchased when using the atome payment method.
+  ///
   /// Returns a [Widget] that represents the payment method selection page.
-  Widget selectPaymentMethod(
-      {List<PaymentMethodName>? selectedPaymentMethods,
-      List<TokenizationMethod>? selectedTokenizationMethods,
-      required int amount,
-      required Currency currency,
-      bool? requestBillingAddress = false,
-      bool? requestPhoneNumber = false,
-      String? googleMerchantId,
-      List<String>? googlePayCardBrands,
-      String? googlePayEnvironment,
-      String? googlePayItemDescription}) {
+  Widget selectPaymentMethod({
+    List<PaymentMethodName>? selectedPaymentMethods,
+    List<TokenizationMethod>? selectedTokenizationMethods,
+    required int amount,
+    required Currency currency,
+    bool? requestBillingAddress = false,
+    bool? requestPhoneNumber = false,
+    String? googleMerchantId,
+    List<String>? googlePayCardBrands,
+    String? googlePayEnvironment,
+    String? googlePayItemDescription,
+    List<Item>? atomeItems,
+  }) {
     return PaymentMethodsPage(
       omiseApiService: omiseApiService, // Pass the Omise API service
       amount: amount,
@@ -82,10 +86,11 @@ class OmisePayment {
       selectedTokenizationMethods: selectedTokenizationMethods,
       locale: locale, requestBillingAddress: requestBillingAddress!,
       requestPhoneNumber: requestPhoneNumber!,
-      googlePlayMerchantId: googleMerchantId,
+      googlePayMerchantId: googleMerchantId,
       cardBrands: googlePayCardBrands,
       googlePayEnvironment: googlePayEnvironment, pkey: publicKey,
       googlePayItemDescription: googlePayItemDescription,
+      atomeItems: atomeItems,
     );
   }
 
@@ -125,7 +130,7 @@ class OmisePayment {
       currency: currency,
       locale: locale, requestBillingAddress: requestBillingAddress!,
       requestPhoneNumber: requestPhoneNumber!,
-      googlePlayMerchantId: googleMerchantId,
+      googlePayMerchantId: googleMerchantId,
       cardBrands: googlePayCardBrands,
       environment: googlePayEnvironment,
       pkey: publicKey,

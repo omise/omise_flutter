@@ -42,7 +42,7 @@ class PaymentMethodsPage extends StatefulWidget {
   final List<String>? cardBrands;
 
   /// The google merchant id.
-  final String? googlePlayMerchantId;
+  final String? googlePayMerchantId;
 
   /// If the billing address should be requested.
   final bool requestBillingAddress;
@@ -59,6 +59,9 @@ class PaymentMethodsPage extends StatefulWidget {
   /// The description of the item being purchased.
   final String? googlePayItemDescription;
 
+  /// The list of atome items.
+  final List<Item>? atomeItems;
+
   /// Constructor for creating a [PaymentMethodsPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
   const PaymentMethodsPage({
@@ -74,9 +77,10 @@ class PaymentMethodsPage extends StatefulWidget {
     this.cardBrands,
     this.requestBillingAddress = false,
     this.requestPhoneNumber = false,
-    this.googlePlayMerchantId,
+    this.googlePayMerchantId,
     this.googlePayEnvironment,
     this.googlePayItemDescription,
+    this.atomeItems,
   });
 
   @override
@@ -113,12 +117,13 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
     paymentMethodSelectorController.setSourceCreationParams(
       amount: widget.amount,
       currency: widget.currency,
-      googlePlayMerchantId: widget.googlePlayMerchantId,
+      googlePayMerchantId: widget.googlePayMerchantId,
       requestBillingAddress: widget.requestBillingAddress,
       requestPhoneNumber: widget.requestPhoneNumber,
       cardBrands: widget.cardBrands,
       googlePayEnvironment: widget.googlePayEnvironment,
       googlePayItemDescription: widget.googlePayItemDescription,
+      atomeItems: widget.atomeItems,
     );
     paymentMethodSelectorController.loadCapabilities();
   }

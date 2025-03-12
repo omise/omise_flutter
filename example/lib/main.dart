@@ -61,18 +61,21 @@ class _MyHomePageState extends State<MyHomePage> {
       context,
       MaterialPageRoute(
           builder: (context) => omisePayment.selectPaymentMethod(
-                selectedPaymentMethods: [PaymentMethodName.card],
-                selectedTokenizationMethods: [TokenizationMethod.googlepay],
-                amount: 1000,
-                currency: Currency.thb,
-                // Google pay parameters
-                googleMerchantId: 'googleMerchantId',
-                requestBillingAddress: true,
-                requestPhoneNumber: true,
-                googlePayCardBrands: ['VISA'],
-                googlePayEnvironment: 'TEST',
-                googlePayItemDescription: "test description",
-              )),
+              selectedPaymentMethods: [PaymentMethodName.card],
+              selectedTokenizationMethods: [TokenizationMethod.googlepay],
+              amount: 2000,
+              currency: Currency.thb,
+              // Google pay parameters
+              googleMerchantId: 'googleMerchantId',
+              requestBillingAddress: true,
+              requestPhoneNumber: true,
+              googlePayCardBrands: ['VISA'],
+              googlePayEnvironment: 'TEST',
+              googlePayItemDescription: "test description",
+              // Atome parameters
+              atomeItems: [
+                Item(amount: 1000, sku: 'sku', name: 'name', quantity: 1)
+              ])),
     );
 
     // Check if payment result is available

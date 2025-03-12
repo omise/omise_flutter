@@ -51,7 +51,7 @@ void main() {
 
     test('setTokenCreationParams updates state correctly', () {
       googlePayController.setTokenCreationParams(
-        googlePlayMerchantId: 'merchant_123',
+        googlePayMerchantId: 'merchant_123',
         requestBillingAddress: true,
         requestPhoneNumber: true,
         amount: 1000,
@@ -59,7 +59,7 @@ void main() {
         itemDescription: 'Test Item',
       );
 
-      expect(googlePayController.value.googlePlayMerchantId, 'merchant_123');
+      expect(googlePayController.value.googlePayMerchantId, 'merchant_123');
       expect(googlePayController.value.requestBillingAddress, true);
       expect(googlePayController.value.requestPhoneNumber, true);
       expect(googlePayController.value.amount, 1000);
@@ -69,7 +69,7 @@ void main() {
 
     test('setGooglePayParameters sets request JSON correctly', () {
       googlePayController.setTokenCreationParams(
-        googlePlayMerchantId: 'merchant_123',
+        googlePayMerchantId: 'merchant_123',
         requestBillingAddress: true,
         requestPhoneNumber: true,
         amount: 1000,
@@ -93,7 +93,7 @@ void main() {
       when(() => mockOmiseApiService.createToken(any(),
           isTokenizationMethod: true)).thenAnswer((_) async => mockToken);
       googlePayController.setTokenCreationParams(
-        googlePlayMerchantId: 'merchant_123',
+        googlePayMerchantId: 'merchant_123',
         requestBillingAddress: true,
         requestPhoneNumber: true,
         amount: 1000,
