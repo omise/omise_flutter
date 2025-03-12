@@ -41,13 +41,12 @@ class _FpxEmailPageState extends State<FpxEmailPage> {
   @override
   Widget build(BuildContext context) {
     // email is optional so null is allowed
-    bool isNextButtonEnabled = fpxEmail == null ||
-        ValidationUtils.validateEmail(
-                context: context,
-                locale: widget.locale,
-                email: fpxEmail,
-                isOptional: true) ==
-            null;
+    bool isNextButtonEnabled = ValidationUtils.validateEmail(
+            context: context,
+            locale: widget.locale,
+            email: fpxEmail,
+            isOptional: true) ==
+        null;
     return Scaffold(
       appBar: AppBar(
         title: Text(

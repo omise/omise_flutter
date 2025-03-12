@@ -72,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
               googlePayCardBrands: ['VISA'],
               googlePayEnvironment: 'TEST',
               googlePayItemDescription: "test description",
-              // atome parameters
+              // Atome parameters
               atomeItems: [
                 Item(amount: 1000, sku: 'sku', name: 'name', quantity: 1)
               ])),

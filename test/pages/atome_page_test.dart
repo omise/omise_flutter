@@ -14,7 +14,7 @@ void main() {
 
   setUp(() {
     mockOmiseApiService = MockOmiseApiService();
-    mockController = MockCAtomeController();
+    mockController = MockAtomeController();
   });
   setUpAll(() {
     registerFallbackValue(MockCreateSourceRequest());

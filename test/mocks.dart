@@ -56,7 +56,7 @@ class MockBuildContext extends Mock implements BuildContext {}
 
 class MockGooglePayController extends Mock implements GooglePayController {}
 
-class MockCAtomeController extends Mock implements AtomeController {}
+class MockAtomeController extends Mock implements AtomeController {}
 
 // Mock class for callback
 class MockCallback extends Mock {
