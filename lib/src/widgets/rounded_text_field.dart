@@ -27,6 +27,7 @@ class RoundedTextField extends StatefulWidget {
     this.inputFormatters,
     this.updateValidationList,
     this.useValidationTypeAsKey = false,
+    this.isOptional = false,
   });
 
   /// An optional controller for controlling the text being edited.
@@ -61,6 +62,9 @@ class RoundedTextField extends StatefulWidget {
 
   /// If true, the [validationType] will be used as the key for error validation.
   final bool? useValidationTypeAsKey;
+
+  /// Is the field optional
+  final bool? isOptional;
 
   @override
   State<RoundedTextField> createState() => _RoundedTextFieldState();
@@ -122,9 +126,11 @@ class _RoundedTextFieldState extends State<RoundedTextField> {
             setState(() {
               // Validate input and set error message if any
               _errorMessage = ValidationUtils.validateInput(
-                  validationType: widget.validationType,
-                  value: value,
-                  context: context);
+                validationType: widget.validationType,
+                value: value,
+                context: context,
+                isOptional: widget.isOptional,
+              );
             });
             // Update validation status in parent widget
             if (widget.updateValidationList != null) {

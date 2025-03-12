@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/atome_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/bank_selector_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/fpx_email_page.dart';
@@ -88,6 +89,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.truemoneyJumpapp,
     PaymentMethodName.fpx,
     PaymentMethodName.duitnowObw,
+    PaymentMethodName.atome,
   };
   final supportedTokenizationMethods = {TokenizationMethod.googlepay};
   final alipayPartners = {PaymentMethodName.alipayCn};
@@ -165,6 +167,23 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                         ? value.capability!.paymentMethods[index].banks
                         : [],
                     paymentMethod: paymentMethodName,
+                  ),
+                ),
+              );
+            });
+      case PaymentMethodName.atome:
+        return PaymentMethodParams(
+            isNextPage: true,
+            function: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => AtomePage(
+                    omiseApiService: omiseApiService,
+                    amount: value.amount!,
+                    currency: value.currency!,
+                    locale: locale,
+                    items: value.atomeItems ?? [],
                   ),
                 ),
               );
@@ -252,18 +271,22 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     List<String>? cardBrands,
     String? googlePayEnvironment,
     String? googlePayItemDescription,
+    List<Item>? atomeItems,
   }) {
-    _setValue(value.copyWith(
-      amount: amount,
-      currency: currency,
-      selectedPaymentMethod: selectedPaymentMethod,
-      googlePlayMerchantId: googlePlayMerchantId,
-      requestBillingAddress: requestBillingAddress,
-      requestPhoneNumber: requestPhoneNumber,
-      cardBrands: cardBrands,
-      googlePayEnvironment: googlePayEnvironment,
-      googlePayItemDescription: googlePayItemDescription,
-    ));
+    _setValue(
+      value.copyWith(
+        amount: amount,
+        currency: currency,
+        selectedPaymentMethod: selectedPaymentMethod,
+        googlePlayMerchantId: googlePlayMerchantId,
+        requestBillingAddress: requestBillingAddress,
+        requestPhoneNumber: requestPhoneNumber,
+        cardBrands: cardBrands,
+        googlePayEnvironment: googlePayEnvironment,
+        googlePayItemDescription: googlePayItemDescription,
+        atomeItems: atomeItems,
+      ),
+    );
   }
 
   /// Loads the capabilities from Omise API and filters the payment methods
@@ -490,6 +513,9 @@ class PaymentMethodsState {
   /// The google play description of the item being purchased.
   String? googlePayItemDescription;
 
+  /// The atome list of items.
+  final List<Item>? atomeItems;
+
   /// Constructor for creating a [PaymentMethodsState].
   PaymentMethodsState({
     required this.capabilityLoadingStatus,
@@ -509,6 +535,7 @@ class PaymentMethodsState {
     this.cardBrands,
     this.googlePayEnvironment,
     this.googlePayItemDescription,
+    this.atomeItems,
   });
 
   /// Creates a copy of the current state while allowing overriding of
@@ -531,6 +558,7 @@ class PaymentMethodsState {
     List<String>? cardBrands,
     String? googlePayEnvironment,
     String? googlePayItemDescription,
+    List<Item>? atomeItems,
   }) {
     return PaymentMethodsState(
       capabilityLoadingStatus: capabilityLoadingStatus ??
@@ -557,6 +585,7 @@ class PaymentMethodsState {
       googlePayEnvironment: googlePayEnvironment ?? this.googlePayEnvironment,
       googlePayItemDescription:
           googlePayItemDescription ?? this.googlePayItemDescription,
+      atomeItems: atomeItems ?? this.atomeItems,
     );
   }
 }

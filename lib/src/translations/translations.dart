@@ -9,6 +9,7 @@ class Translations {
     OmiseLocale.en: {
       "cardNumber": "Card Number",
       "name": "Name",
+      "nameOptional": "Name (optional)",
       "expiryDate": "Expiry Date",
       "cvv": "CVV",
       "address": "Address",
@@ -66,10 +67,13 @@ class Translations {
       "fpx": "FPX",
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
+      "atome": "Atome",
       "fpxInfoText":
           "(Optional) Please input your email to receive transaction confirmation from FPX",
       "trueMoneyWalletInfoText":
           "Please input the mobile number connected to your TrueMoney Wallet account",
+      "atomeInfoText":
+          "Please input below information to complete the charge creation with Atome",
       "phone": "Phone",
       "invalidPhoneNumber": "Phone number is invalid",
       "next": "Next",
@@ -87,6 +91,7 @@ class Translations {
       "countryRegion": "Country or region",
       "pay": "Pay",
       "email": "Email",
+      "emailOptional": "Email (optional)",
       "cardNumberRequired": "Card number is required",
       "invalidCardNumber": "Invalid card number",
       "isRequired": "is required",
@@ -96,10 +101,18 @@ class Translations {
       "onlyDigits": "Only digits are allowed",
       "cvvDigits": "CVV must be 3 or 4 digits",
       "invalidEmail": "Email is invalid",
+      "shippingAddress": "Shipping address",
+      "street": "Street",
+      "countryCode": "Country Code",
+      "billingAddressOptional": "Billing address (optional)",
+      "sameBillingAndShipping": "My billing and shipping address are the same",
+      "invalidCountryCode":
+          "Address cannot be empty or country code is invalid",
     },
     OmiseLocale.th: {
       "cardNumber": "หมายเลขบัตร",
       "name": "ชื่อ",
+      "nameOptional": "ชื่อ (ไม่จำเป็น)",
       "expiryDate": "วันหมดอายุ",
       "cvv": "รหัส CVV",
       "address": "ที่อยู่",
@@ -157,10 +170,12 @@ class Translations {
       "fpx": "FPX",
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
+      "atome": "Atome",
       "fpxInfoText":
           "กรุณากรอกอีเมลเพื่อรับการยืนยันการรับชำระจากเอฟพีเอ็กซ์ (ถ้ามี)",
       "trueMoneyWalletInfoText":
           "กรุณากรอกหมายเลขโทรศัพท์ที่ผูกกับบัญชีทรูมันนี่วอลเล็ท",
+      "atomeInfoText": "กรุณากรอกข้อมูลที่จำเป็นเพื่อยืนยันการรับชำระจาก Atome",
       "phone": "โทร.",
       "invalidPhoneNumber": "หมายเลขโทรศัพท์ไม่ถูกต้อง",
       "next": "ถัดไป",
@@ -178,6 +193,7 @@ class Translations {
       "countryRegion": "ประเทศหรือภูมิภาค",
       "pay": "ชำระเงิน",
       "email": "อีเมล์",
+      "emailOptional": "อีเมล (ไม่จำเป็น)",
       "cardNumberRequired": "จำเป็นต้องกรอกหมายเลขบัตร",
       "invalidCardNumber": "หมายเลขบัตรไม่ถูกต้อง",
       "isRequired": "จำเป็นต้องกรอก",
@@ -187,10 +203,18 @@ class Translations {
       "onlyDigits": "สามารถกรอกได้เฉพาะตัวเลขเท่านั้น",
       "cvvDigits": "รหัส CVV ต้องมี 3 หรือ 4 หลัก",
       "invalidEmail": "อีเมล์ไม่ถูกต้อง",
+      "shippingAddress": "ที่อยู่ในการจัดส่ง",
+      "street": "ที่อยู่",
+      "countryCode": "รหัสประเทศ",
+      "billingAddressOptional": "Billing address (optional)",
+      "sameBillingAndShipping":
+          "ใช้ที่อยู่เดียวกันสำหรับจัดส่งสินค้าและใบแจ้งหนี้",
+      "invalidCountryCode": "กรุณากรอกข้อมูลที่อยู่ให้ถูกต้อง",
     },
     OmiseLocale.ja: {
       "cardNumber": "カード番号",
       "name": "氏名",
+      "nameOptional": "Name (optional)",
       "expiryDate": "有効期限",
       "cvv": "CVV",
       "address": "住所",
@@ -248,8 +272,11 @@ class Translations {
       "fpx": "FPX",
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
+      "atome": "Atome",
       "fpxInfoText": "(任意) メールアドレスを入力し、FPXからの取引確認メールを受信します",
       "trueMoneyWalletInfoText": "TrueMoney ウォレットアカウントに登録されている携帯電話番号を入力してください",
+      "atomeInfoText":
+          "Please input below information to complete the charge creation with Atome",
       "phone": "電話",
       "invalidPhoneNumber": "電話番号が無効です",
       "next": "次",
@@ -266,6 +293,7 @@ class Translations {
       "countryRegion": "国または地域",
       "pay": "支払う",
       "email": "メール",
+      "emailOptional": "Email (optional)",
       "cardNumberRequired": "カード番号は必須です",
       "invalidCardNumber": "無効なカード番号です",
       "isRequired": "は必須です",
@@ -274,7 +302,14 @@ class Translations {
       "cvvRequired": "CVVは必須です",
       "onlyDigits": "数字のみをご入力ください",
       "cvvDigits": "CVVは3桁または4桁の数字です",
-      "invalidEmail": "メールが無効です"
+      "invalidEmail": "メールが無効です",
+      "shippingAddress": "Shipping address",
+      "street": "Street",
+      "countryCode": "Country Code",
+      "billingAddressOptional": "Billing address (optional)",
+      "sameBillingAndShipping": "My billing and shipping address are the same",
+      "invalidCountryCode":
+          "Address cannot be empty or country code is invalid",
     },
   };
   static OmiseLocale detectLocale(OmiseLocale? locale, BuildContext context) {

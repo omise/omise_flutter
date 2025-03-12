@@ -1,3 +1,4 @@
+import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
@@ -50,8 +51,12 @@ class ValidationUtils {
   static String? validateName(String? value,
       {required String fieldName,
       required BuildContext context,
+      required bool isOptional,
       OmiseLocale? locale}) {
     final currentLocale = Translations.detectLocale(locale, context);
+    if (isOptional && (value == null || value.isEmpty)) {
+      return null;
+    }
     if (value == null || value.trim().isEmpty) {
       return '$fieldName${currentLocale == OmiseLocale.en ? ' ' : ''}${Translations.get('isRequired', locale, context)}';
     }
@@ -111,8 +116,15 @@ class ValidationUtils {
     return null; // Valid phone number
   }
 
-  static String? validateEmail(
-      {required BuildContext context, OmiseLocale? locale, String? email}) {
+  static String? validateEmail({
+    required BuildContext context,
+    required bool isOptional,
+    OmiseLocale? locale,
+    String? email,
+  }) {
+    if (isOptional && (email == null || email.isEmpty)) {
+      return null;
+    }
     if (email == null || email.isEmpty) {
       return 'Invalid email'; // There is no text actually displayed for the user when the email is invalid, the button is disabled so no need for translation.
     }
@@ -128,9 +140,23 @@ class ValidationUtils {
     return null; // Valid email
   }
 
+  static String? validateCountryCode(
+      {required BuildContext context,
+      OmiseLocale? locale,
+      String? countryCode}) {
+    if (countryCode == null ||
+        countryCode.isEmpty ||
+        CountryCode.fromCode(countryCode) == null) {
+      return Translations.get('invalidCountryCode', locale, context);
+    }
+
+    return null;
+  }
+
   static String? validateInput(
       {required ValidationType validationType,
       required BuildContext context,
+      bool? isOptional = false,
       OmiseLocale? locale,
       String? value}) {
     switch (validationType) {
@@ -149,7 +175,8 @@ class ValidationUtils {
               context,
             ),
             locale: locale,
-            context: context);
+            context: context,
+            isOptional: isOptional!);
       case ValidationType.expiryDate:
         return validateExpiryDate(
             value: value, locale: locale, context: context);
@@ -159,7 +186,14 @@ class ValidationUtils {
         return validatePhoneNumber(
             phoneNumber: value, locale: locale, context: context);
       case ValidationType.email:
-        return validateEmail(email: value, locale: locale, context: context);
+        return validateEmail(
+            email: value,
+            locale: locale,
+            context: context,
+            isOptional: isOptional!);
+      case ValidationType.countryCode:
+        return validateCountryCode(
+            countryCode: value, locale: locale, context: context);
       case ValidationType.none:
         return null;
     }

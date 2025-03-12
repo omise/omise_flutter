@@ -15,6 +15,7 @@ enum ValidationType {
   postalCode,
   phoneNumber,
   email,
+  countryCode,
   none;
 }
 

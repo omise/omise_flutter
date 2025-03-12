@@ -59,6 +59,9 @@ class PaymentMethodsPage extends StatefulWidget {
   /// The description of the item being purchased.
   final String? googlePayItemDescription;
 
+  /// The list of atome items.
+  final List<Item>? atomeItems;
+
   /// Constructor for creating a [PaymentMethodsPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
   const PaymentMethodsPage({
@@ -77,6 +80,7 @@ class PaymentMethodsPage extends StatefulWidget {
     this.googlePlayMerchantId,
     this.googlePayEnvironment,
     this.googlePayItemDescription,
+    this.atomeItems,
   });
 
   @override
@@ -119,6 +123,7 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
       cardBrands: widget.cardBrands,
       googlePayEnvironment: widget.googlePayEnvironment,
       googlePayItemDescription: widget.googlePayItemDescription,
+      atomeItems: widget.atomeItems,
     );
     paymentMethodSelectorController.loadCapabilities();
   }

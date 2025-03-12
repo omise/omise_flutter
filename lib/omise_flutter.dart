@@ -10,4 +10,5 @@ export 'package:omise_dart/omise_dart.dart'
         Currency,
         CurrencyExtension,
         BankCode,
-        TokenizationMethod;
+        TokenizationMethod,
+        Item;
