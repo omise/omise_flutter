@@ -17,7 +17,7 @@ class GooglePayPage extends StatefulWidget {
   final List<String>? cardBrands;
 
   /// The google merchant id.
-  final String googlePlayMerchantId;
+  final String googlePayMerchantId;
 
   /// If the billing address should be requested.
   final bool requestBillingAddress;
@@ -48,7 +48,7 @@ class GooglePayPage extends StatefulWidget {
 
   const GooglePayPage({
     super.key,
-    required this.googlePlayMerchantId,
+    required this.googlePayMerchantId,
     required this.requestBillingAddress,
     required this.requestPhoneNumber,
     required this.omiseApiService,
@@ -90,7 +90,7 @@ class _GooglePayPageState extends State<GooglePayPage> {
       }
     });
     googlePayController.setTokenCreationParams(
-        googlePlayMerchantId: widget.googlePlayMerchantId,
+        googlePayMerchantId: widget.googlePayMerchantId,
         requestBillingAddress: widget.requestBillingAddress,
         requestPhoneNumber: widget.requestPhoneNumber,
         amount: widget.amount,

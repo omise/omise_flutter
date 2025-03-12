@@ -22,7 +22,7 @@ class GooglePayController extends ValueNotifier<GooglePayPageState> {
   }) : super(GooglePayPageState(tokenLoadingStatus: Status.idle));
 
   void setTokenCreationParams({
-    required String googlePlayMerchantId,
+    required String googlePayMerchantId,
     required bool requestBillingAddress,
     required bool requestPhoneNumber,
     required int amount,
@@ -30,7 +30,7 @@ class GooglePayController extends ValueNotifier<GooglePayPageState> {
     String? itemDescription,
   }) {
     _setValue(value.copyWith(
-      googlePlayMerchantId: googlePlayMerchantId,
+      googlePayMerchantId: googlePayMerchantId,
       requestBillingAddress: requestBillingAddress,
       requestPhoneNumber: requestPhoneNumber,
       amount: amount,
@@ -47,7 +47,7 @@ class GooglePayController extends ValueNotifier<GooglePayPageState> {
             (pkey.contains('pkey_test_') ? 'TEST' : 'PRODUCTION'),
         apiVersion: 2,
         apiVersionMinor: 0,
-        merchantInfo: MerchantInfo(merchantId: value.googlePlayMerchantId!),
+        merchantInfo: MerchantInfo(merchantId: value.googlePayMerchantId!),
         allowedPaymentMethods: [
           AllowedPaymentMethod(
               type: "CARD",
@@ -147,7 +147,7 @@ class GooglePayPageState {
   final String? tokenErrorMessage;
 
   /// The google play merchant id
-  final String? googlePlayMerchantId;
+  final String? googlePayMerchantId;
 
   /// The parameter to force request the billing address
   final bool? requestBillingAddress;
@@ -175,7 +175,7 @@ class GooglePayPageState {
       {required this.tokenLoadingStatus,
       this.token,
       this.tokenErrorMessage,
-      this.googlePlayMerchantId,
+      this.googlePayMerchantId,
       this.requestBillingAddress,
       this.requestPhoneNumber,
       this.googlePaymentResult,
@@ -190,7 +190,7 @@ class GooglePayPageState {
     Token? token,
     Status? tokenLoadingStatus,
     String? tokenErrorMessage,
-    String? googlePlayMerchantId,
+    String? googlePayMerchantId,
     bool? requestBillingAddress,
     bool? requestPhoneNumber,
     Map<String, dynamic>? googlePaymentResult,
@@ -203,7 +203,7 @@ class GooglePayPageState {
       token: token ?? this.token,
       tokenLoadingStatus: tokenLoadingStatus ?? this.tokenLoadingStatus,
       tokenErrorMessage: tokenErrorMessage ?? this.tokenErrorMessage,
-      googlePlayMerchantId: googlePlayMerchantId ?? this.googlePlayMerchantId,
+      googlePayMerchantId: googlePayMerchantId ?? this.googlePayMerchantId,
       requestBillingAddress:
           requestBillingAddress ?? this.requestBillingAddress,
       requestPhoneNumber: requestPhoneNumber ?? this.requestPhoneNumber,

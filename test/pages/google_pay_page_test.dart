@@ -28,7 +28,7 @@ void main() {
 
   const amount = 1000;
   const currency = Currency.thb;
-  const googlePlayMerchantId = "merchant_123";
+  const googlePayMerchantId = "merchant_123";
   const pkey = "pkey_test";
 
   group("GooglePayPage Tests", () {
@@ -36,7 +36,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: GooglePayPage(
-            googlePlayMerchantId: googlePlayMerchantId,
+            googlePayMerchantId: googlePayMerchantId,
             requestBillingAddress: true,
             requestPhoneNumber: false,
             omiseApiService: mockOmiseApiService,

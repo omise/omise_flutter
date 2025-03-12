@@ -233,7 +233,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                   MaterialPageRoute(
                       builder: (context) => GooglePayPage(
                             pkey: pkey,
-                            googlePlayMerchantId: value.googlePlayMerchantId!,
+                            googlePayMerchantId: value.googlePayMerchantId!,
                             requestBillingAddress: value.requestBillingAddress!,
                             requestPhoneNumber: value.requestPhoneNumber!,
                             cardBrands: value.cardBrands,
@@ -265,7 +265,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
 
     /// The selected payment method should only passed here for testing purposes
     PaymentMethodName? selectedPaymentMethod,
-    String? googlePlayMerchantId,
+    String? googlePayMerchantId,
     bool? requestBillingAddress,
     bool? requestPhoneNumber,
     List<String>? cardBrands,
@@ -278,7 +278,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
         amount: amount,
         currency: currency,
         selectedPaymentMethod: selectedPaymentMethod,
-        googlePlayMerchantId: googlePlayMerchantId,
+        googlePayMerchantId: googlePayMerchantId,
         requestBillingAddress: requestBillingAddress,
         requestPhoneNumber: requestPhoneNumber,
         cardBrands: cardBrands,
@@ -496,7 +496,7 @@ class PaymentMethodsState {
   final List<PaymentMethod>? installmentPaymentMethods;
 
   /// The google play merchant id
-  final String? googlePlayMerchantId;
+  final String? googlePayMerchantId;
 
   /// The parameter to force request the billing address in google pay
   final bool? requestBillingAddress;
@@ -529,7 +529,7 @@ class PaymentMethodsState {
     this.selectedPaymentMethod,
     this.viewablePaymentMethods,
     this.installmentPaymentMethods,
-    this.googlePlayMerchantId,
+    this.googlePayMerchantId,
     this.requestBillingAddress,
     this.requestPhoneNumber,
     this.cardBrands,
@@ -552,7 +552,7 @@ class PaymentMethodsState {
     PaymentMethodName? selectedPaymentMethod,
     List<PaymentMethod>? viewablePaymentMethods,
     List<PaymentMethod>? installmentPaymentMethods,
-    String? googlePlayMerchantId,
+    String? googlePayMerchantId,
     bool? requestBillingAddress,
     bool? requestPhoneNumber,
     List<String>? cardBrands,
@@ -577,7 +577,7 @@ class PaymentMethodsState {
           viewablePaymentMethods ?? this.viewablePaymentMethods,
       installmentPaymentMethods:
           installmentPaymentMethods ?? this.installmentPaymentMethods,
-      googlePlayMerchantId: googlePlayMerchantId ?? this.googlePlayMerchantId,
+      googlePayMerchantId: googlePayMerchantId ?? this.googlePayMerchantId,
       requestBillingAddress:
           requestBillingAddress ?? this.requestBillingAddress,
       requestPhoneNumber: requestPhoneNumber ?? this.requestPhoneNumber,
