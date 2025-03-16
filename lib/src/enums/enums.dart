@@ -23,6 +23,9 @@ enum CustomPaymentMethod {
   mobileBanking("mobile_banking"),
   installments("installment"),
   googlePay("googlepay"),
+  convenienceStore('convenience_store'), // konbini
+  payeasy('payeasy'),
+  netBank('net_bank'),
   unknown("unknown");
 
   final String value;

@@ -6,6 +6,7 @@ import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/atome_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/bank_selector_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/econtext_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/fpx_email_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/google_pay_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
@@ -90,6 +91,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.fpx,
     PaymentMethodName.duitnowObw,
     PaymentMethodName.atome,
+    PaymentMethodName.econtext,
   };
   final supportedTokenizationMethods = {TokenizationMethod.googlepay};
   final alipayPartners = {PaymentMethodName.alipayCn};
@@ -246,6 +248,26 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                           )),
                 );
               }
+              if ([
+                CustomPaymentMethod.convenienceStore.value,
+                CustomPaymentMethod.payeasy.value,
+                CustomPaymentMethod.netBank.value
+              ].contains(object)) {
+                // open econtext page
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EcontextPage(
+                      amount: value.amount!,
+                      currency: value.currency!,
+                      omiseApiService: omiseApiService,
+                      locale: locale,
+                      econtextMethod:
+                          CustomPaymentMethodNameExtension.fromString(object),
+                    ),
+                  ),
+                );
+              }
             });
 
       default:
@@ -371,6 +393,35 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
       if (bothTruemoneyMethodsExist) {
         filteredMethods.removeWhere(
             (method) => method.name == PaymentMethodName.truemoney);
+      }
+      // check econtext and add the connected payment methods to the list of payment methods
+      if (filteredMethods
+          .any((element) => element.name == PaymentMethodName.econtext)) {
+        filteredMethods.removeWhere((element) {
+          // remove econtext
+          return element.name == PaymentMethodName.econtext;
+        });
+        // Add three payment methods manually, Convenience store, pay easy and Net Bank
+        filteredMethods.addAll([
+          PaymentMethod(
+            object: CustomPaymentMethod.convenienceStore.value,
+            name: PaymentMethodName.unknown,
+            currencies: [],
+            banks: [],
+          ),
+          PaymentMethod(
+            object: CustomPaymentMethod.payeasy.value,
+            name: PaymentMethodName.unknown,
+            currencies: [],
+            banks: [],
+          ),
+          PaymentMethod(
+            object: CustomPaymentMethod.netBank.value,
+            name: PaymentMethodName.unknown,
+            currencies: [],
+            banks: [],
+          )
+        ]);
       }
       // filter tokenization methods
       final tokenizationMethods = capabilities.tokenizationMethods;

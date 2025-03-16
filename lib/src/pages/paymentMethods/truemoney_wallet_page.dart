@@ -50,6 +50,9 @@ class _TrueMoneyWalletPageState extends State<TrueMoneyWalletPage> {
       if (trueMoneyWalletController.value.sourceLoadingStatus == Status.error) {
         MessageDisplayUtils.showSnackBar(
             context, trueMoneyWalletController.value.sourceErrorMessage!);
+        // reset the status so that the snackbar does not appear every time the user types
+        trueMoneyWalletController.updateState(trueMoneyWalletController.value
+            .copyWith(sourceLoadingStatus: Status.idle));
       } else if (trueMoneyWalletController.value.sourceLoadingStatus ==
           Status.success) {
         while (Navigator.of(context).canPop()) {
