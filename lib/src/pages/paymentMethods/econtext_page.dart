@@ -99,6 +99,7 @@ class _EcontextPageState extends State<EcontextPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: RoundedTextField(
+                        useValidationTypeAsKey: true,
                         title: Translations.get('name', widget.locale, context),
                         validationType: ValidationType.name,
                         keyboardType: TextInputType.name,
@@ -121,6 +122,7 @@ class _EcontextPageState extends State<EcontextPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: RoundedTextField(
+                        useValidationTypeAsKey: true,
                         title:
                             Translations.get('email', widget.locale, context),
                         validationType: ValidationType.email,
@@ -144,6 +146,7 @@ class _EcontextPageState extends State<EcontextPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20),
                       child: RoundedTextField(
+                        useValidationTypeAsKey: true,
                         title:
                             Translations.get('phone', widget.locale, context),
                         validationType: ValidationType.phoneNumber,
