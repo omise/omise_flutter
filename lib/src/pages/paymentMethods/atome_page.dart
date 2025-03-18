@@ -56,6 +56,9 @@ class _AtomePageState extends State<AtomePage> {
       if (atomeController.value.sourceLoadingStatus == Status.error) {
         MessageDisplayUtils.showSnackBar(
             context, atomeController.value.sourceErrorMessage!);
+        // reset the status so that the snackbar does not appear every time the user types
+        atomeController.updateState(
+            atomeController.value.copyWith(sourceLoadingStatus: Status.idle));
       } else if (atomeController.value.sourceLoadingStatus == Status.success) {
         while (Navigator.of(context).canPop()) {
           Navigator.of(context)

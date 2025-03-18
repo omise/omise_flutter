@@ -68,6 +68,9 @@ class Translations {
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
       "atome": "Atome",
+      "convenienceStore": "Convenience Store",
+      "payeasy": "Pay-easy",
+      "netBank": "Net Bank",
       "fpxInfoText":
           "(Optional) Please input your email to receive transaction confirmation from FPX",
       "trueMoneyWalletInfoText":
@@ -168,6 +171,9 @@ class Translations {
       "truemoney": "ทรูมันนี่",
       "truemoneyJumpapp": "ทรูมันนี่",
       "fpx": "FPX",
+      "convenienceStore": "ร้านสะดวกซื้อ",
+      "payeasy": "เพย์อีซี",
+      "netBank": "เน็ตแบงก์",
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
       "atome": "Atome",
@@ -273,6 +279,9 @@ class Translations {
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
       "atome": "Atome",
+      "convenienceStore": "コンビニエンスストア",
+      "payeasy": "ペイジー",
+      "netBank": "ネットバンク",
       "fpxInfoText": "(任意) メールアドレスを入力し、FPXからの取引確認メールを受信します",
       "trueMoneyWalletInfoText": "TrueMoney ウォレットアカウントに登録されている携帯電話番号を入力してください",
       "atomeInfoText":
