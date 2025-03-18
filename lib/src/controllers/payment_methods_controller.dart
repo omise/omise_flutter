@@ -10,6 +10,7 @@ import 'package:omise_flutter/src/pages/paymentMethods/econtext_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/fpx_email_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/google_pay_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/installments/installments_page.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/internet_banking_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/mobile_banking_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/truemoney_wallet_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
@@ -92,6 +93,8 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.duitnowObw,
     PaymentMethodName.atome,
     PaymentMethodName.econtext,
+    PaymentMethodName.internetBankingBay,
+    PaymentMethodName.internetBankingBbl,
   };
   final supportedTokenizationMethods = {TokenizationMethod.googlepay};
   final alipayPartners = {PaymentMethodName.alipayCn};
@@ -194,79 +197,98 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
         return PaymentMethodParams(
             isNextPage: true,
             function: () {
-              if (object == CustomPaymentMethod.mobileBanking.value) {
-                // open mobile banking screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
+              switch (CustomPaymentMethodNameExtension.fromString(object)) {
+                case CustomPaymentMethod.mobileBanking:
+                  // open mobile banking screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
                       builder: (context) => MobileBankingPage(
-                            mobileBankingPaymentMethods: value
-                                .capability!.paymentMethods
-                                .where((method) => method.name.value.contains(
-                                    CustomPaymentMethod.mobileBanking.value))
-                                .toList(),
-                            amount: value.amount!,
-                            currency: value.currency!,
-                            omiseApiService: omiseApiService,
-                            locale: locale,
-                          )),
-                );
-              }
-              if (object == CustomPaymentMethod.installments.value) {
-                // open installments screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => InstallmentsPage(
-                            installmentPaymentMethods:
-                                value.installmentPaymentMethods!,
-                            amount: value.amount!,
-                            currency: value.currency!,
-                            omiseApiService: omiseApiService,
-                            locale: locale,
-                            capability: value.capability!,
-                          )),
-                );
-              }
-              if (object == CustomPaymentMethod.googlePay.value) {
-                // open google pay screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => GooglePayPage(
-                            pkey: pkey,
-                            googlePayMerchantId: value.googlePayMerchantId!,
-                            requestBillingAddress: value.requestBillingAddress!,
-                            requestPhoneNumber: value.requestPhoneNumber!,
-                            cardBrands: value.cardBrands,
-                            amount: value.amount!,
-                            currency: value.currency!,
-                            omiseApiService: omiseApiService,
-                            locale: locale,
-                            environment: value.googlePayEnvironment,
-                            itemDescription: value.googlePayItemDescription,
-                          )),
-                );
-              }
-              if ([
-                CustomPaymentMethod.convenienceStore.value,
-                CustomPaymentMethod.payeasy.value,
-                CustomPaymentMethod.netBank.value
-              ].contains(object)) {
-                // open econtext page
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EcontextPage(
-                      amount: value.amount!,
-                      currency: value.currency!,
-                      omiseApiService: omiseApiService,
-                      locale: locale,
-                      econtextMethod:
-                          CustomPaymentMethodNameExtension.fromString(object),
+                        mobileBankingPaymentMethods: value
+                            .capability!.paymentMethods
+                            .where((method) => method.name.value.contains(
+                                CustomPaymentMethod.mobileBanking.value))
+                            .toList(),
+                        amount: value.amount!,
+                        currency: value.currency!,
+                        omiseApiService: omiseApiService,
+                        locale: locale,
+                      ),
                     ),
-                  ),
-                );
+                  );
+                case CustomPaymentMethod.installments:
+                  // open installments screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InstallmentsPage(
+                        installmentPaymentMethods:
+                            value.installmentPaymentMethods!,
+                        amount: value.amount!,
+                        currency: value.currency!,
+                        omiseApiService: omiseApiService,
+                        locale: locale,
+                        capability: value.capability!,
+                      ),
+                    ),
+                  );
+                case CustomPaymentMethod.googlePay:
+                  // open google pay screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => GooglePayPage(
+                        pkey: pkey,
+                        googlePayMerchantId: value.googlePayMerchantId!,
+                        requestBillingAddress: value.requestBillingAddress!,
+                        requestPhoneNumber: value.requestPhoneNumber!,
+                        cardBrands: value.cardBrands,
+                        amount: value.amount!,
+                        currency: value.currency!,
+                        omiseApiService: omiseApiService,
+                        locale: locale,
+                        environment: value.googlePayEnvironment,
+                        itemDescription: value.googlePayItemDescription,
+                      ),
+                    ),
+                  );
+                case CustomPaymentMethod.convenienceStore:
+                case CustomPaymentMethod.payeasy:
+                case CustomPaymentMethod.netBank:
+                  // open econtext page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EcontextPage(
+                        amount: value.amount!,
+                        currency: value.currency!,
+                        omiseApiService: omiseApiService,
+                        locale: locale,
+                        econtextMethod:
+                            CustomPaymentMethodNameExtension.fromString(object),
+                      ),
+                    ),
+                  );
+                case CustomPaymentMethod.internetBanking:
+                  // open mobile banking screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => InternetBankingPage(
+                        internetBankingPaymentMethods: value
+                            .capability!.paymentMethods
+                            .where((method) => method.name.value.contains(
+                                CustomPaymentMethod.internetBanking.value))
+                            .toList(),
+                        amount: value.amount!,
+                        currency: value.currency!,
+                        omiseApiService: omiseApiService,
+                        locale: locale,
+                      ),
+                    ),
+                  );
+                case CustomPaymentMethod.unknown:
+                  throw UnsupportedError("Unsupported payment method");
               }
             });
 
@@ -340,11 +362,13 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
         }
       }
 
-// Check if either `mobileBanking` or `installment` is found and replace by a single method holding all methods
+// Check if either `mobileBanking`, installment` or `internetBaking` is found and replace by a single method holding all methods
       bool mobileBanking = filteredMethods.any((method) =>
           method.name.value.contains(CustomPaymentMethod.mobileBanking.value));
       bool installment = filteredMethods.any((method) =>
           method.name.value.contains(CustomPaymentMethod.installments.value));
+      bool internetBanking = filteredMethods.any((method) => method.name.value
+          .contains(CustomPaymentMethod.internetBanking.value));
       if (mobileBanking) {
         filteredMethods.add(PaymentMethod(
           object: CustomPaymentMethod.mobileBanking.value,
@@ -356,6 +380,14 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
       if (installment) {
         filteredMethods.add(PaymentMethod(
           object: CustomPaymentMethod.installments.value,
+          name: PaymentMethodName.unknown,
+          currencies: [],
+          banks: [],
+        ));
+      }
+      if (internetBanking) {
+        filteredMethods.add(PaymentMethod(
+          object: CustomPaymentMethod.internetBanking.value,
           name: PaymentMethodName.unknown,
           currencies: [],
           banks: [],
@@ -376,7 +408,9 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                   method.name.value.replaceFirst('_', '_wlb_'))))));
       filteredMethods.removeWhere((method) =>
           method.name.value.contains(CustomPaymentMethod.mobileBanking.value) ||
-          method.name.value.contains(CustomPaymentMethod.installments.value));
+          method.name.value.contains(CustomPaymentMethod.installments.value) ||
+          method.name.value
+              .contains(CustomPaymentMethod.internetBanking.value));
       // if shopeePay and shopeePayJumpApp are both available, remove non jumpApp
       final methodNames = filteredMethods.map((method) => method.name).toList();
       final bothShopeePayMethodsExist =

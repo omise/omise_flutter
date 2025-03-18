@@ -10,11 +10,13 @@ class PaymentUtils {
   static Set<PaymentMethodName> sharedBblAssets = {
     PaymentMethodName.installmentBbl,
     PaymentMethodName.installmentWlbBbl,
+    PaymentMethodName.internetBankingBbl,
   };
 
   static Set<PaymentMethodName> sharedBayAssets = {
     PaymentMethodName.installmentBay,
     PaymentMethodName.installmentWlbBay,
+    PaymentMethodName.internetBankingBay,
   };
 
   static Set<PaymentMethodName> sharedShopeeAssets = {
@@ -53,10 +55,10 @@ class PaymentUtils {
       return 'assets/installment_scb.png';
     }
     if (sharedBblAssets.contains(paymentMethod)) {
-      return 'assets/installment_bbl.png';
+      return 'assets/payment_bbl.png';
     }
     if (sharedBayAssets.contains(paymentMethod)) {
-      return 'assets/installment_bay.png';
+      return 'assets/payment_bay.png';
     }
     if (sharedShopeeAssets.contains(paymentMethod)) {
       return 'assets/payment_shopeepay.png';
