@@ -38,26 +38,41 @@ class PaymentMethodsPage extends StatefulWidget {
   /// The custom locale passed by the merchant.
   final OmiseLocale? locale;
 
-  /// The custom list of card brands
-  final List<String>? cardBrands;
+  /// The custom list of card brands in google pay.
+  final List<String>? googlePayCardBrands;
 
   /// The google merchant id.
   final String? googlePayMerchantId;
 
-  /// If the billing address should be requested.
-  final bool requestBillingAddress;
+  /// If the billing address should be requested in google pay.
+  final bool googlePayRequestBillingAddress;
 
-  /// If the phone number should be requested.
-  final bool requestPhoneNumber;
+  /// If the phone number should be requested in google pay.
+  final bool googlePayRequestPhoneNumber;
 
   /// The environment for google pay.
   final String? googlePayEnvironment;
 
+  /// The custom list of card brands in apple pay.
+  final List<String>? applePayCardBrands;
+
+  /// The apple merchant id.
+  final String? applePayMerchantId;
+
+  /// The list of fields to be requested in shipping address in apple pay.
+  final List<String>? applePayRequiredShippingContactFields;
+
+  /// The list of fields to be requested in billing address in apple pay.
+  final List<String>? applePayRequiredBillingContactFields;
+
   /// The pkey required for google pay.
   final String pkey;
 
-  /// The description of the item being purchased.
+  /// The description of the item being purchased in google pay.
   final String? googlePayItemDescription;
+
+  /// The description of the item being purchased in apple pay.
+  final String? applePayItemDescription;
 
   /// The list of atome items.
   final List<Item>? atomeItems;
@@ -74,12 +89,17 @@ class PaymentMethodsPage extends StatefulWidget {
     this.selectedTokenizationMethods,
     this.paymentMethodSelectorController,
     this.locale,
-    this.cardBrands,
-    this.requestBillingAddress = false,
-    this.requestPhoneNumber = false,
+    this.googlePayCardBrands,
+    this.googlePayRequestBillingAddress = false,
+    this.googlePayRequestPhoneNumber = false,
     this.googlePayMerchantId,
     this.googlePayEnvironment,
     this.googlePayItemDescription,
+    this.applePayCardBrands,
+    this.applePayRequiredBillingContactFields,
+    this.applePayRequiredShippingContactFields,
+    this.applePayMerchantId,
+    this.applePayItemDescription,
     this.atomeItems,
   });
 
@@ -118,11 +138,18 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
       amount: widget.amount,
       currency: widget.currency,
       googlePayMerchantId: widget.googlePayMerchantId,
-      requestBillingAddress: widget.requestBillingAddress,
-      requestPhoneNumber: widget.requestPhoneNumber,
-      cardBrands: widget.cardBrands,
+      googlePayRequestBillingAddress: widget.googlePayRequestBillingAddress,
+      googlePayRequestPhoneNumber: widget.googlePayRequestPhoneNumber,
+      googlePayCardBrands: widget.googlePayCardBrands,
       googlePayEnvironment: widget.googlePayEnvironment,
       googlePayItemDescription: widget.googlePayItemDescription,
+      applePayMerchantId: widget.applePayMerchantId,
+      applePayRequiredBillingContactFields:
+          widget.applePayRequiredBillingContactFields,
+      applePayRequiredShippingContactFields:
+          widget.applePayRequiredShippingContactFields,
+      applePayCardBrands: widget.applePayCardBrands,
+      applePayItemDescription: widget.applePayItemDescription,
       atomeItems: widget.atomeItems,
     );
     paymentMethodSelectorController.loadCapabilities();

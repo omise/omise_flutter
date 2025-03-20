@@ -67,6 +67,7 @@ class Translations {
       "fpx": "FPX",
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
+      "applePay": "Apple Pay",
       "atome": "Atome",
       "convenienceStore": "Convenience Store",
       "payeasy": "Pay-easy",
@@ -182,6 +183,7 @@ class Translations {
       "internetBanking": "อินเทอร์เน็ตแบงก์กิ้ง",
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
+      "applePay": "Apple Pay",
       "atome": "Atome",
       "fpxInfoText":
           "กรุณากรอกอีเมลเพื่อรับการยืนยันการรับชำระจากเอฟพีเอ็กซ์ (ถ้ามี)",
@@ -284,6 +286,7 @@ class Translations {
       "fpx": "FPX",
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
+      "applePay": "Apple Pay",
       "atome": "Atome",
       "convenienceStore": "コンビニエンスストア",
       "payeasy": "ペイジー",

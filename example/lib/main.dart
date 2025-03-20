@@ -66,12 +66,18 @@ class _MyHomePageState extends State<MyHomePage> {
               amount: 2000,
               currency: Currency.thb,
               // Google pay parameters
-              googleMerchantId: 'googleMerchantId',
-              requestBillingAddress: true,
-              requestPhoneNumber: true,
-              googlePayCardBrands: ['VISA'],
-              googlePayEnvironment: 'TEST',
+              googleMerchantId: 'googlePayMerchantId',
+              googlePayRequestBillingAddress: true,
+              googlePayRequestPhoneNumber: true,
+              //googlePayCardBrands: ['VISA'],
+              //googlePayEnvironment: 'TEST',
               googlePayItemDescription: "test description",
+              // Apple pay parameters
+              appleMerchantId: 'merchant.anas.omise',
+              //applePayRequiredBillingContactFields: ['name'],
+              //applePayRequiredShippingContactFields: ['name'],
+              //applePayCardBrands: ['visa'],
+              applePayItemDescription: "test description",
               // Atome parameters
               atomeItems: [
                 Item(amount: 1000, sku: 'sku', name: 'name', quantity: 1)

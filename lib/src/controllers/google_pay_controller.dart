@@ -52,9 +52,9 @@ class GooglePayController extends ValueNotifier<GooglePayPageState> {
           AllowedPaymentMethod(
               type: "CARD",
               parameters: PaymentParameters(
-                  allowedAuthMethods: ["PAN_ONLY"],
-                  allowedCardNetworks:
-                      cardBrands ?? ["AMEX", "JCB", "MASTERCARD", "VISA"],
+                  allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
+                  allowedCardNetworks: cardBrands ??
+                      ["AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA"],
                   billingAddressRequired: value.requestBillingAddress!,
                   billingAddressParameters: BillingAddressParameters(
                       format: "FULL",
@@ -92,6 +92,7 @@ class GooglePayController extends ValueNotifier<GooglePayPageState> {
         final googleBillingInfo =
             value.googlePaymentResult!['paymentMethodData']['info']
                 ['billingAddress'];
+        // any null value will be automatically removed when the request is sent
         tokenRequest.billingName = googleBillingInfo['name'];
         tokenRequest.billingCity = googleBillingInfo['locality'];
         tokenRequest.billingCountry = googleBillingInfo['countryCode'];

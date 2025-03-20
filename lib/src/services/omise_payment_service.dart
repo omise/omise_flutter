@@ -49,9 +49,9 @@ class OmisePayment {
   /// [amount] Represents the amount that will be used in the source creation. Should follow the amount format supported by the omise API.
   ///
   /// [currency] Represents the currency that will be used in the source creation.
-  /// [requestBillingAddress] - Determines if the billing address should be requested in google pay
+  /// [googlePayRequestBillingAddress] - Determines if the billing address should be requested in google pay
   ///
-  /// [requestPhoneNumber] - Determines if the phone number should be requested in google pay.
+  /// [googlePayRequestPhoneNumber] - Determines if the phone number should be requested in google pay.
   ///
   /// [googleMerchantId] - The Google Merchant ID.
   ///
@@ -69,12 +69,17 @@ class OmisePayment {
     List<TokenizationMethod>? selectedTokenizationMethods,
     required int amount,
     required Currency currency,
-    bool? requestBillingAddress = false,
-    bool? requestPhoneNumber = false,
+    bool? googlePayRequestBillingAddress = false,
+    bool? googlePayRequestPhoneNumber = false,
     String? googleMerchantId,
     List<String>? googlePayCardBrands,
     String? googlePayEnvironment,
     String? googlePayItemDescription,
+    List<String>? applePayRequiredShippingContactFields,
+    List<String>? applePayRequiredBillingContactFields,
+    String? appleMerchantId,
+    List<String>? applePayCardBrands,
+    String? applePayItemDescription,
     List<Item>? atomeItems,
   }) {
     return PaymentMethodsPage(
@@ -84,12 +89,20 @@ class OmisePayment {
       selectedPaymentMethods:
           selectedPaymentMethods, // Pass any pre-selected methods
       selectedTokenizationMethods: selectedTokenizationMethods,
-      locale: locale, requestBillingAddress: requestBillingAddress!,
-      requestPhoneNumber: requestPhoneNumber!,
+      locale: locale,
+      googlePayRequestBillingAddress: googlePayRequestBillingAddress!,
+      googlePayRequestPhoneNumber: googlePayRequestPhoneNumber!,
       googlePayMerchantId: googleMerchantId,
-      cardBrands: googlePayCardBrands,
+      googlePayCardBrands: googlePayCardBrands,
       googlePayEnvironment: googlePayEnvironment, pkey: publicKey,
       googlePayItemDescription: googlePayItemDescription,
+      applePayRequiredBillingContactFields:
+          applePayRequiredBillingContactFields,
+      applePayRequiredShippingContactFields:
+          applePayRequiredShippingContactFields,
+      applePayMerchantId: appleMerchantId,
+      applePayCardBrands: applePayCardBrands,
+      applePayItemDescription: applePayItemDescription,
       atomeItems: atomeItems,
     );
   }
