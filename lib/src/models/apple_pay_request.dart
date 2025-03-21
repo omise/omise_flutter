@@ -41,13 +41,15 @@ class ApplePayData {
   });
   factory ApplePayData.fromJson(Map<String, dynamic> json) {
     return ApplePayData(
-      supportedNetworks: json['supportedNetworks'],
-      merchantCapabilities: json['merchantCapabilities'],
+      supportedNetworks: List<String>.from(json['supportedNetworks']),
+      merchantCapabilities: List<String>.from(json['merchantCapabilities']),
       merchantIdentifier: json['merchantIdentifier'],
       countryCode: json['countryCode'],
       currencyCode: json['currencyCode'],
-      requiredShippingContactFields: json['requiredShippingContactFields'],
-      requiredBillingContactFields: json['requiredBillingContactFields'],
+      requiredShippingContactFields:
+          List<String>.from(json['requiredShippingContactFields']),
+      requiredBillingContactFields:
+          List<String>.from(json['requiredBillingContactFields']),
     );
   }
   Map<String, dynamic> toJson() {

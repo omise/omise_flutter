@@ -58,7 +58,6 @@ class ApplePayController extends ValueNotifier<ApplePayPageState> {
         requiredBillingContactFields: value.requiredBillingContactFields!,
       ),
     );
-    print(applePayRequest.toJson());
     _setValue(
         value.copyWith(applePayRequest: jsonEncode(applePayRequest.toJson())));
   }
@@ -67,7 +66,7 @@ class ApplePayController extends ValueNotifier<ApplePayPageState> {
     _setValue(value.copyWith(applePaymentResult: applePayResult));
   }
 
-  /// Creates a source based on the collected data from the user.
+  /// Creates a token based on the collected data from the user.
   Future<void> createToken() async {
     try {
       // Set the status to loading while creating the token
@@ -96,8 +95,7 @@ class ApplePayController extends ValueNotifier<ApplePayPageState> {
 
         tokenRequest.billingPhoneNumber = appleBillingInfo['phoneNumber'];
       }
-
-      // Create the source using Omise API
+      // Create the token using Omise API
       final token = await omiseApiService.createToken(tokenRequest,
           isTokenizationMethod: true);
 
