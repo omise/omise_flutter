@@ -88,12 +88,13 @@ class ApplePayController extends ValueNotifier<ApplePayPageState> {
 
         final postalAddress = appleBillingInfo['postalAddress'] ?? {};
         tokenRequest.billingCity = postalAddress['city'];
-        tokenRequest.billingCountry = postalAddress['country'];
+        tokenRequest.billingCountry = postalAddress['isoCountryCode'];
         tokenRequest.billingPostalCode = postalAddress['postalCode'];
         tokenRequest.billingState = postalAddress['state'];
         tokenRequest.billingStreet1 = postalAddress['street'];
 
         tokenRequest.billingPhoneNumber = appleBillingInfo['phoneNumber'];
+        tokenRequest.brand = value.applePaymentResult!['paymentMethod']['network'];
       }
       // Create the token using Omise API
       final token = await omiseApiService.createToken(tokenRequest,
