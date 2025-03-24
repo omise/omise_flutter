@@ -109,7 +109,8 @@ void main() {
             "state": "CA",
             "postalCode": "94105",
             "country": "US",
-            "countryCode": "US"
+            "countryCode": "US",
+            "isoCountryCode": "USA",
           }
         },
         "shippingContact": {
@@ -123,7 +124,8 @@ void main() {
             "state": "CA",
             "postalCode": "90001",
             "country": "US",
-            "countryCode": "US"
+            "countryCode": "US",
+            "isoCountryCode": "USA",
           }
         },
         "shippingMethod": {
@@ -131,7 +133,8 @@ void main() {
           "label": "Express Shipping",
           "detail": "Arrives in 2-3 days",
           "amount": "10.00"
-        }
+        },
+        "paymentMethod": {"network": "visa"}
       });
 
       expect(applePayController.value.tokenLoadingStatus, Status.idle);
@@ -164,7 +167,8 @@ void main() {
             "state": "CA",
             "postalCode": "94105",
             "country": "US",
-            "countryCode": "US"
+            "countryCode": "US",
+            "isoCountryCode": "USA",
           }
         },
         "shippingContact": {
@@ -178,7 +182,8 @@ void main() {
             "state": "CA",
             "postalCode": "90001",
             "country": "US",
-            "countryCode": "US"
+            "countryCode": "US",
+            "isoCountryCode": "USA",
           }
         },
         "shippingMethod": {
@@ -186,7 +191,8 @@ void main() {
           "label": "Express Shipping",
           "detail": "Arrives in 2-3 days",
           "amount": "10.00"
-        }
+        },
+        "paymentMethod": {"network": "visa"}
       });
 
       await applePayController.createToken();
