@@ -157,6 +157,12 @@ class _MyHomePageState extends State<MyHomePage> {
 }
 ```
 
+### Note on Amount
+
+When specifying the `amount` in payment requests, ensure that you follow Omise's subunits convention. The amount should be in the smallest currency unit (e.g., satangs for THB, cents for USD).
+
+For more details, refer to the [Omise API documentation on subunits](https://docs.omise.co/currency-and-amount).
+
 ### Google Pay
 
 To start using google pay you must first obtain your google merchant id. If you are just planning to use test mode
