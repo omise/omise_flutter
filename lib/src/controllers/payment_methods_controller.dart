@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/apple_pay_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/atome_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/bank_selector_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
@@ -96,7 +99,10 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     PaymentMethodName.internetBankingBay,
     PaymentMethodName.internetBankingBbl,
   };
-  final supportedTokenizationMethods = {TokenizationMethod.googlepay};
+  final supportedTokenizationMethods = {
+    TokenizationMethod.googlepay,
+    TokenizationMethod.applepay
+  };
   final alipayPartners = {PaymentMethodName.alipayCn};
   PaymentMethodParams getPaymentMethodParams(
       {required BuildContext context,
@@ -240,15 +246,38 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                       builder: (context) => GooglePayPage(
                         pkey: pkey,
                         googlePayMerchantId: value.googlePayMerchantId!,
-                        requestBillingAddress: value.requestBillingAddress!,
-                        requestPhoneNumber: value.requestPhoneNumber!,
-                        cardBrands: value.cardBrands,
+                        requestBillingAddress:
+                            value.googlePayRequestBillingAddress!,
+                        requestPhoneNumber: value.googlePayRequestPhoneNumber!,
+                        cardBrands: value.googlePayCardBrands,
                         amount: value.amount!,
                         currency: value.currency!,
                         omiseApiService: omiseApiService,
                         locale: locale,
                         environment: value.googlePayEnvironment,
                         itemDescription: value.googlePayItemDescription,
+                      ),
+                    ),
+                  );
+                case CustomPaymentMethod.applePay:
+                  // open google pay screen
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ApplePayPage(
+                        pkey: pkey,
+                        applePayMerchantId: value.applePayMerchantId!,
+                        requiredBillingContactFields:
+                            value.applePayRequiredBillingContactFields,
+                        requiredShippingContactFields:
+                            value.applePayRequiredShippingContactFields,
+                        cardBrands: value.applePayCardBrands,
+                        amount: value.amount!,
+                        currency: value.currency!,
+                        country: value.capability!.country,
+                        omiseApiService: omiseApiService,
+                        locale: locale,
+                        itemDescription: value.applePayItemDescription,
                       ),
                     ),
                   );
@@ -310,11 +339,16 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
     /// The selected payment method should only passed here for testing purposes
     PaymentMethodName? selectedPaymentMethod,
     String? googlePayMerchantId,
-    bool? requestBillingAddress,
-    bool? requestPhoneNumber,
-    List<String>? cardBrands,
+    bool? googlePayRequestBillingAddress,
+    bool? googlePayRequestPhoneNumber,
+    List<String>? googlePayCardBrands,
     String? googlePayEnvironment,
     String? googlePayItemDescription,
+    String? applePayMerchantId,
+    List<String>? applePayRequiredBillingContactFields,
+    List<String>? applePayRequiredShippingContactFields,
+    List<String>? applePayCardBrands,
+    String? applePayItemDescription,
     List<Item>? atomeItems,
   }) {
     _setValue(
@@ -323,11 +357,18 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
         currency: currency,
         selectedPaymentMethod: selectedPaymentMethod,
         googlePayMerchantId: googlePayMerchantId,
-        requestBillingAddress: requestBillingAddress,
-        requestPhoneNumber: requestPhoneNumber,
-        cardBrands: cardBrands,
+        googlePayRequestBillingAddress: googlePayRequestBillingAddress,
+        googlePayRequestPhoneNumber: googlePayRequestPhoneNumber,
+        googlePayCardBrands: googlePayCardBrands,
         googlePayEnvironment: googlePayEnvironment,
         googlePayItemDescription: googlePayItemDescription,
+        applePayMerchantId: applePayMerchantId,
+        applePayRequiredBillingContactFields:
+            applePayRequiredBillingContactFields,
+        applePayRequiredShippingContactFields:
+            applePayRequiredShippingContactFields,
+        applePayCardBrands: applePayCardBrands,
+        applePayItemDescription: applePayItemDescription,
         atomeItems: atomeItems,
       ),
     );
@@ -487,6 +528,17 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
           }
         }
       }
+      // remove non supported tokenization methods based on the host platform
+      if (Platform.isAndroid && !kIsWeb) {
+        filteredMethods.removeWhere((value) {
+          return value.object == TokenizationMethod.applepay.value;
+        });
+      }
+      if ((Platform.isIOS || Platform.isMacOS) && !kIsWeb) {
+        filteredMethods.removeWhere((value) {
+          return value.object == TokenizationMethod.googlepay.value;
+        });
+      }
       // Update the state with the filtered methods and success status
       _setValue(value.copyWith(
           capability: capabilities,
@@ -584,19 +636,34 @@ class PaymentMethodsState {
   final String? googlePayMerchantId;
 
   /// The parameter to force request the billing address in google pay
-  final bool? requestBillingAddress;
+  final bool? googlePayRequestBillingAddress;
 
   /// The parameter to force request the phone number in google pay
-  final bool? requestPhoneNumber;
+  final bool? googlePayRequestPhoneNumber;
 
   /// The list of card brands in google pay
-  final List<String>? cardBrands;
+  final List<String>? googlePayCardBrands;
 
   /// The environment for google pay
   final String? googlePayEnvironment;
 
   /// The google play description of the item being purchased.
   String? googlePayItemDescription;
+
+  /// The apple play merchant id
+  final String? applePayMerchantId;
+
+  /// The list of fields to be requested in shipping address in apple pay.
+  final List<String>? applePayRequiredShippingContactFields;
+
+  /// The list of fields to be requested in billing address in apple pay.
+  final List<String>? applePayRequiredBillingContactFields;
+
+  /// The list of card brands in apple pay
+  final List<String>? applePayCardBrands;
+
+  /// The apple play description of the item being purchased.
+  String? applePayItemDescription;
 
   /// The atome list of items.
   final List<Item>? atomeItems;
@@ -615,11 +682,16 @@ class PaymentMethodsState {
     this.viewablePaymentMethods,
     this.installmentPaymentMethods,
     this.googlePayMerchantId,
-    this.requestBillingAddress,
-    this.requestPhoneNumber,
-    this.cardBrands,
+    this.googlePayRequestBillingAddress,
+    this.googlePayRequestPhoneNumber,
+    this.googlePayCardBrands,
     this.googlePayEnvironment,
     this.googlePayItemDescription,
+    this.applePayMerchantId,
+    this.applePayRequiredBillingContactFields,
+    this.applePayRequiredShippingContactFields,
+    this.applePayCardBrands,
+    this.applePayItemDescription,
     this.atomeItems,
   });
 
@@ -638,11 +710,16 @@ class PaymentMethodsState {
     List<PaymentMethod>? viewablePaymentMethods,
     List<PaymentMethod>? installmentPaymentMethods,
     String? googlePayMerchantId,
-    bool? requestBillingAddress,
-    bool? requestPhoneNumber,
-    List<String>? cardBrands,
+    bool? googlePayRequestBillingAddress,
+    bool? googlePayRequestPhoneNumber,
+    List<String>? googlePayCardBrands,
     String? googlePayEnvironment,
     String? googlePayItemDescription,
+    String? applePayMerchantId,
+    List<String>? applePayRequiredBillingContactFields,
+    List<String>? applePayRequiredShippingContactFields,
+    List<String>? applePayCardBrands,
+    String? applePayItemDescription,
     List<Item>? atomeItems,
   }) {
     return PaymentMethodsState(
@@ -663,13 +740,24 @@ class PaymentMethodsState {
       installmentPaymentMethods:
           installmentPaymentMethods ?? this.installmentPaymentMethods,
       googlePayMerchantId: googlePayMerchantId ?? this.googlePayMerchantId,
-      requestBillingAddress:
-          requestBillingAddress ?? this.requestBillingAddress,
-      requestPhoneNumber: requestPhoneNumber ?? this.requestPhoneNumber,
-      cardBrands: cardBrands ?? this.cardBrands,
+      googlePayRequestBillingAddress:
+          googlePayRequestBillingAddress ?? this.googlePayRequestBillingAddress,
+      googlePayRequestPhoneNumber:
+          googlePayRequestPhoneNumber ?? this.googlePayRequestPhoneNumber,
+      googlePayCardBrands: googlePayCardBrands ?? this.googlePayCardBrands,
       googlePayEnvironment: googlePayEnvironment ?? this.googlePayEnvironment,
       googlePayItemDescription:
           googlePayItemDescription ?? this.googlePayItemDescription,
+      applePayMerchantId: applePayMerchantId ?? this.applePayMerchantId,
+      applePayRequiredBillingContactFields:
+          applePayRequiredBillingContactFields ??
+              this.applePayRequiredBillingContactFields,
+      applePayRequiredShippingContactFields:
+          applePayRequiredShippingContactFields ??
+              this.applePayRequiredShippingContactFields,
+      applePayCardBrands: applePayCardBrands ?? this.applePayCardBrands,
+      applePayItemDescription:
+          applePayItemDescription ?? this.applePayItemDescription,
       atomeItems: atomeItems ?? this.atomeItems,
     );
   }

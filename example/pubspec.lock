@@ -177,10 +177,10 @@ packages:
     dependency: transitive
     description:
       name: omise_dart
-      sha256: "4e1dd08ece72e5729586b241e82fba43ea69618a5952a849f6bf8e64260ea401"
+      sha256: d1fa79b1dc4a6a32dce4db73a4e680bf1af39f9edcdbc55b23e008e9c36fe550
       url: "https://pub.dev"
     source: hosted
-    version: "0.5.0"
+    version: "0.6.0"
   omise_flutter:
     dependency: "direct main"
     description:

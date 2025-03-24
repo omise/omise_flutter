@@ -24,6 +24,7 @@ enum CustomPaymentMethod {
   installments("installment"),
   internetBanking("internet_banking"),
   googlePay("googlepay"),
+  applePay('applepay'),
   convenienceStore('convenience_store'), // konbini
   payeasy('payeasy'),
   netBank('net_bank'),

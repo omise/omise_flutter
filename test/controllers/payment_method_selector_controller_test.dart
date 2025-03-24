@@ -73,6 +73,7 @@ void main() {
           PaymentMethodName.card,
           PaymentMethodName.alipay,
         ],
+        selectedTokenizationMethods: [],
         pkey: pkey,
       );
 
