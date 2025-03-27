@@ -5,6 +5,7 @@ import 'package:omise_flutter/src/pages/paymentMethods/google_pay_page.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
+import 'package:screen_protector/screen_protector.dart';
 
 /// [OmisePayment] is the main class that users should interact with
 /// to utilize processing payments
@@ -14,6 +15,7 @@ class OmisePayment {
   final bool? enableDebug;
   final OmiseLocale? locale;
   final String publicKey;
+  final bool? securePaymentFlag;
 
   /// Creates an instance of [OmisePayment].
   ///
@@ -21,12 +23,17 @@ class OmisePayment {
   ///
   /// An optional [enableDebug] parameter can be set to enable debugging
   /// logs for API requests and responses.
+  ///
   /// An optional [locale] parameter that can be used to set the locale
   /// of the text. By default the SDK will use the `Localizations.localeOf(context)`.
+  ///
+  /// An optional [securePaymentFlag] parameter can be set to prevent screenshots
+  /// and video recording on card pages.
   OmisePayment({
     required this.publicKey,
     this.enableDebug = false,
     this.locale,
+    this.securePaymentFlag = true,
   }) {
     // Initialize the OmiseApiService with the provided public key
     // and debug settings.
@@ -34,6 +41,11 @@ class OmisePayment {
       publicKey: publicKey,
       enableDebug: enableDebug,
     );
+    if (securePaymentFlag == true) {
+      ScreenProtector.preventScreenshotOn();
+    } else {
+      ScreenProtector.preventScreenshotOff();
+    }
   }
 
   /// The instance of [OmiseApiService] used for making API calls
@@ -90,8 +102,8 @@ class OmisePayment {
           selectedPaymentMethods, // Pass any pre-selected methods
       selectedTokenizationMethods: selectedTokenizationMethods,
       locale: locale,
-      googlePayRequestBillingAddress: googlePayRequestBillingAddress!,
-      googlePayRequestPhoneNumber: googlePayRequestPhoneNumber!,
+      googlePayRequestBillingAddress: googlePayRequestBillingAddress,
+      googlePayRequestPhoneNumber: googlePayRequestPhoneNumber,
       googlePayMerchantId: googleMerchantId,
       googlePayCardBrands: googlePayCardBrands,
       googlePayEnvironment: googlePayEnvironment, pkey: publicKey,
@@ -117,9 +129,9 @@ class OmisePayment {
   ///
   /// [googleMerchantId] - The Google Merchant ID.
   ///
-  /// [requestBillingAddress] - Determines if billing address is requested in google pay
+  /// [googlePayRequestBillingAddress] - Determines if billing address is requested in google pay
   ///
-  /// [requestPhoneNumber] - Determines if phone number is requested in google pay
+  /// [googlePayRequestPhoneNumber] - Determines if phone number is requested in google pay
   ///
   /// [googlePayCardBrands] - Allowed card brands for Google Pay (e.g., ['VISA']).
   ///
@@ -132,8 +144,8 @@ class OmisePayment {
       {required int amount,
       required Currency currency,
       required String googleMerchantId,
-      bool? requestBillingAddress = false,
-      bool? requestPhoneNumber = false,
+      bool? googlePayRequestBillingAddress = false,
+      bool? googlePayRequestPhoneNumber = false,
       List<String>? googlePayCardBrands,
       String? googlePayEnvironment,
       String? googlePayItemDescription}) {
@@ -141,8 +153,8 @@ class OmisePayment {
       omiseApiService: omiseApiService, // Pass the Omise API service
       amount: amount,
       currency: currency,
-      locale: locale, requestBillingAddress: requestBillingAddress!,
-      requestPhoneNumber: requestPhoneNumber!,
+      locale: locale, requestBillingAddress: googlePayRequestBillingAddress!,
+      requestPhoneNumber: googlePayRequestPhoneNumber!,
       googlePayMerchantId: googleMerchantId,
       cardBrands: googlePayCardBrands,
       environment: googlePayEnvironment,

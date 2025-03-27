@@ -47,7 +47,61 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
           MaterialPageRoute(
               builder: (context) => omisePayment.selectPaymentMethod(
                   amount: methodChannelController.value.amount!,
-                  currency: methodChannelController.value.currency!)),
+                  currency: methodChannelController.value.currency!,
+                  selectedPaymentMethods:
+                      methodChannelController.value.selectedPaymentMethods,
+                  selectedTokenizationMethods:
+                      methodChannelController.value.selectedTokenizationMethods,
+                  googleMerchantId:
+                      methodChannelController.value.googlePayMerchantId,
+                  googlePayCardBrands:
+                      methodChannelController.value.googlePayCardBrands,
+                  googlePayEnvironment:
+                      methodChannelController.value.googlePayEnvironment,
+                  googlePayItemDescription:
+                      methodChannelController.value.googlePayItemDescription,
+                  googlePayRequestBillingAddress: methodChannelController
+                      .value.googlePayRequestBillingAddress,
+                  googlePayRequestPhoneNumber:
+                      methodChannelController.value.googlePayRequestPhoneNumber,
+                  appleMerchantId:
+                      methodChannelController.value.applePayMerchantId,
+                  applePayCardBrands:
+                      methodChannelController.value.applePayCardBrands,
+                  applePayItemDescription:
+                      methodChannelController.value.applePayItemDescription,
+                  applePayRequiredBillingContactFields: methodChannelController
+                      .value.applePayRequiredBillingContactFields,
+                  applePayRequiredShippingContactFields: methodChannelController
+                      .value.applePayRequiredShippingContactFields,
+                  atomeItems: methodChannelController.value.atomeItems)),
+        );
+        await MethodChannelService.sendResultToNative(
+            '${methodChannelController.value.methodName!.name}Result',
+            omisePaymentResult?.toJson());
+      case MethodNames.openGooglePay:
+        final OmisePayment omisePayment =
+            OmisePayment(publicKey: methodChannelController.value.pkey!);
+        final OmisePaymentResult? omisePaymentResult = await FlutterUIBridge
+            .navigatorKey.currentState
+            ?.push<OmisePaymentResult>(
+          MaterialPageRoute(
+              builder: (context) => omisePayment.buildGooglePayPage(
+                    amount: methodChannelController.value.amount!,
+                    currency: methodChannelController.value.currency!,
+                    googleMerchantId:
+                        methodChannelController.value.googlePayMerchantId!,
+                    googlePayCardBrands:
+                        methodChannelController.value.googlePayCardBrands,
+                    googlePayEnvironment:
+                        methodChannelController.value.googlePayEnvironment,
+                    googlePayItemDescription:
+                        methodChannelController.value.googlePayItemDescription,
+                    googlePayRequestBillingAddress: methodChannelController
+                        .value.googlePayRequestBillingAddress,
+                    googlePayRequestPhoneNumber: methodChannelController
+                        .value.googlePayRequestPhoneNumber,
+                  )),
         );
         await MethodChannelService.sendResultToNative(
             '${methodChannelController.value.methodName!.name}Result',
