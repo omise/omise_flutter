@@ -7,8 +7,10 @@ export 'src/enums/enums.dart' show OmiseLocale, OmiseLocaleFromLocaleExtension;
 export 'package:omise_dart/omise_dart.dart'
     show
         PaymentMethodName,
+        PaymentMethodNameExtension,
         Currency,
         CurrencyExtension,
         BankCode,
         TokenizationMethod,
+        TokenizationMethodExtension,
         Item;

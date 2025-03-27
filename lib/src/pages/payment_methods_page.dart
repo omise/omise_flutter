@@ -45,10 +45,10 @@ class PaymentMethodsPage extends StatefulWidget {
   final String? googlePayMerchantId;
 
   /// If the billing address should be requested in google pay.
-  final bool googlePayRequestBillingAddress;
+  final bool? googlePayRequestBillingAddress;
 
   /// If the phone number should be requested in google pay.
-  final bool googlePayRequestPhoneNumber;
+  final bool? googlePayRequestPhoneNumber;
 
   /// The environment for google pay.
   final String? googlePayEnvironment;

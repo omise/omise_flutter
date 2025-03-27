@@ -1,4 +1,9 @@
-enum MethodNames { selectPaymentMethod, authorizePayment, unknown }
+enum MethodNames {
+  selectPaymentMethod,
+  authorizePayment,
+  openGooglePay,
+  unknown
+}
 
 extension MethodNamesExtension on MethodNames {
   static MethodNames fromString(String? methodName) {

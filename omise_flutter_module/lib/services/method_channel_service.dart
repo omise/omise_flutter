@@ -11,24 +11,54 @@ class MethodChannelService {
       MethodChannelController methodChannelController) {
     methodChannel.setMethodCallHandler((MethodCall call) async {
       final parsedArgs = Map<String, dynamic>.from(call.arguments as Map);
-      final String pkey = parsedArgs['pkey'];
-      final int? amount = parsedArgs['amount'];
-      final Currency currency =
-          CurrencyExtension.fromString(parsedArgs['currency'] as String?);
-      final String? authUrl = parsedArgs['authUrl'];
-      final List<String>? expectedReturnUrls = parsedArgs['expectedReturnUrls'];
       methodChannelController.setMethodChannelArguments(
-          methodName: MethodNamesExtension.fromString(call.method),
-          pkey: pkey,
-          amount: amount,
-          currency: currency,
-          authUrl: authUrl,
-          expectedReturnUrls: expectedReturnUrls);
+        methodName: MethodNamesExtension.fromString(call.method),
+        pkey: parsedArgs['pkey'],
+        amount: parsedArgs['amount'],
+        currency:
+            CurrencyExtension.fromString(parsedArgs['currency'] as String?),
+        authUrl: parsedArgs['authUrl'],
+        expectedReturnUrls: parsedArgs['expectedReturnUrls'],
+        selectedPaymentMethods: (parsedArgs['selectedPaymentMethods'] as List?)
+            ?.map((e) => PaymentMethodNameExtension.fromString(e))
+            .toList(),
+        selectedTokenizationMethods:
+            (parsedArgs['selectedTokenizationMethods'] as List?)
+                ?.map((e) => TokenizationMethodExtension.fromString(e))
+                .toList(),
+        googlePayMerchantId: parsedArgs['googlePayMerchantId'],
+        googlePayRequestBillingAddress:
+            parsedArgs['googlePayRequestBillingAddress'],
+        googlePayRequestPhoneNumber: parsedArgs['googlePayRequestPhoneNumber'],
+        googlePayCardBrands: (parsedArgs['googlePayCardBrands'] as List?)
+            ?.map((e) => e.toString())
+            .toList(),
+        googlePayEnvironment: parsedArgs['googlePayEnvironment'],
+        googlePayItemDescription: parsedArgs['googlePayItemDescription'],
+        applePayMerchantId: parsedArgs['applePayMerchantId'],
+        applePayRequiredBillingContactFields:
+            (parsedArgs['applePayRequiredBillingContactFields'] as List?)
+                ?.map((e) => e.toString())
+                .toList(),
+        applePayRequiredShippingContactFields:
+            (parsedArgs['applePayRequiredShippingContactFields'] as List?)
+                ?.map((e) => e.toString())
+                .toList(),
+        applePayCardBrands: (parsedArgs['applePayCardBrands'] as List?)
+            ?.map((e) => e.toString())
+            .toList(),
+        applePayItemDescription: parsedArgs['applePayItemDescription'],
+        atomeItems: parsedArgs['atomeItems'] != null
+            ? (parsedArgs['atomeItems'] as List)
+                .map((e) => Item.fromJson(e))
+                .toList()
+            : null,
+      );
     });
   }
 
   static Future<void> sendResultToNative(
-      String nativeResultMethodName, Map<String, dynamic> result) async {
+      String nativeResultMethodName, Map<String, dynamic>? result) async {
     await methodChannel.invokeMethod(nativeResultMethodName, result);
   }
 }
