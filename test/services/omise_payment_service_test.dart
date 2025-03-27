@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
@@ -11,13 +12,24 @@ void main() {
   late OmisePayment omisePayment;
   const amount = 1000;
   const currency = Currency.thb;
-
+  const MethodChannel channel = MethodChannel('screen_protector');
   setUp(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+      channel,
+      (MethodCall call) async {
+        return null;
+      },
+    );
     omisePayment = OmisePayment(
       publicKey: 'test_public_key',
       enableDebug: true,
     );
     WebViewPlatform.instance = AndroidWebViewPlatform();
+  });
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(channel, null);
   });
 
   test('OmisePayment instance is created successfully', () {
