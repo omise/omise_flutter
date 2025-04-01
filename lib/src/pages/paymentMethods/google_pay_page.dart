@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:omise_flutter/omise_flutter.dart';
 import 'package:omise_flutter/src/controllers/google_pay_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
@@ -46,6 +47,9 @@ class GooglePayPage extends StatefulWidget {
   /// The description of the item being purchased.
   final String? itemDescription;
 
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
   const GooglePayPage({
     super.key,
     required this.googlePayMerchantId,
@@ -60,6 +64,7 @@ class GooglePayPage extends StatefulWidget {
     this.environment,
     required this.pkey,
     this.itemDescription,
+    this.nativeResultMethodName,
   });
 
   @override
@@ -83,9 +88,15 @@ class _GooglePayPageState extends State<GooglePayPage> {
             context, googlePayController.value.tokenErrorMessage!);
       } else if (googlePayController.value.tokenLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context)
-              .pop(OmisePaymentResult(token: googlePayController.value.token));
+        final omisePaymentResult =
+            OmisePaymentResult(token: googlePayController.value.token);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+              widget.nativeResultMethodName!, omisePaymentResult.toJson());
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });

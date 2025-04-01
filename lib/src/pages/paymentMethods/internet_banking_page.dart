@@ -4,6 +4,7 @@ import 'package:omise_flutter/src/controllers/internet_banking_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
@@ -25,24 +26,28 @@ class InternetBankingPage extends StatefulWidget {
   /// The custom locale passed by the merchant.
   final OmiseLocale? locale;
 
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
   /// Allow passing an instance of the controller to facilitate testing
   final InternetBankingController? internetBankingController;
-  const InternetBankingPage(
-      {super.key,
-      required this.internetBankingPaymentMethods,
-      required this.omiseApiService,
-      required this.amount,
-      required this.currency,
-      this.internetBankingController,
-      this.locale});
+  const InternetBankingPage({
+    super.key,
+    required this.internetBankingPaymentMethods,
+    required this.omiseApiService,
+    required this.amount,
+    required this.currency,
+    this.internetBankingController,
+    this.locale,
+    this.nativeResultMethodName,
+  });
 
   @override
   State<InternetBankingPage> createState() => _InternetBankingPageState();
 }
 
 class _InternetBankingPageState extends State<InternetBankingPage> {
-  late final InternetBankingController
-      internetBankingPaymentMethodSelectorController =
+  late final InternetBankingController internetBankingController =
       widget.internetBankingController ??
           InternetBankingController(
             omiseApiService: widget.omiseApiService,
@@ -50,25 +55,25 @@ class _InternetBankingPageState extends State<InternetBankingPage> {
   @override
   void initState() {
     super.initState();
-    internetBankingPaymentMethodSelectorController.addListener(() {
-      if (internetBankingPaymentMethodSelectorController
-              .value.sourceLoadingStatus ==
-          Status.error) {
+    internetBankingController.addListener(() {
+      if (internetBankingController.value.sourceLoadingStatus == Status.error) {
         MessageDisplayUtils.showSnackBar(
-            context,
-            internetBankingPaymentMethodSelectorController
-                .value.sourceErrorMessage!);
-      } else if (internetBankingPaymentMethodSelectorController
-              .value.sourceLoadingStatus ==
+            context, internetBankingController.value.sourceErrorMessage!);
+      } else if (internetBankingController.value.sourceLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(OmisePaymentResult(
-              source:
-                  internetBankingPaymentMethodSelectorController.value.source));
+        final omisePaymentResult =
+            OmisePaymentResult(source: internetBankingController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+              widget.nativeResultMethodName!, omisePaymentResult.toJson());
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });
-    internetBankingPaymentMethodSelectorController.setSourceCreationParams(
+    internetBankingController.setSourceCreationParams(
         amount: widget.amount, currency: widget.currency);
   }
 
@@ -80,7 +85,7 @@ class _InternetBankingPageState extends State<InternetBankingPage> {
               .title(context: context, locale: widget.locale)),
         ),
         body: ValueListenableBuilder(
-            valueListenable: internetBankingPaymentMethodSelectorController,
+            valueListenable: internetBankingController,
             builder: (context, state, _) {
               final isSourceLoading =
                   state.sourceLoadingStatus == Status.loading;
@@ -113,7 +118,7 @@ class _InternetBankingPageState extends State<InternetBankingPage> {
                                       ),
                             trailingIcon: Icons.arrow_forward_ios,
                             onTap: () {
-                              internetBankingPaymentMethodSelectorController
+                              internetBankingController
                                   .createSource(paymentMethod.name);
                             },
                           ),

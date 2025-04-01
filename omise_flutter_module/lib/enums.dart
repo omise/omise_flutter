@@ -2,6 +2,7 @@ enum MethodNames {
   selectPaymentMethod,
   authorizePayment,
   openGooglePay,
+  openCardPage,
   unknown
 }
 

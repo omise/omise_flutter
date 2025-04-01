@@ -3,6 +3,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/bank_selector_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
@@ -30,25 +31,30 @@ class BankSelectorPage extends StatefulWidget {
   /// The payment method the is connected to the list of banks.
   final PaymentMethodName paymentMethod;
 
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
   /// Allow passing an instance of the controller to facilitate testing
   final BankSelectorController? fpxBankSelectorController;
-  const BankSelectorPage(
-      {super.key,
-      required this.fpxBanks,
-      required this.omiseApiService,
-      required this.amount,
-      required this.currency,
-      required this.paymentMethod,
-      this.fpxBankSelectorController,
-      this.locale,
-      this.email});
+  const BankSelectorPage({
+    super.key,
+    required this.fpxBanks,
+    required this.omiseApiService,
+    required this.amount,
+    required this.currency,
+    required this.paymentMethod,
+    this.fpxBankSelectorController,
+    this.locale,
+    this.email,
+    this.nativeResultMethodName,
+  });
 
   @override
   State<BankSelectorPage> createState() => _BankSelectorPageState();
 }
 
 class _BankSelectorPageState extends State<BankSelectorPage> {
-  late final BankSelectorController fpxBankSelectorController =
+  late final BankSelectorController bankSelectorController =
       widget.fpxBankSelectorController ??
           BankSelectorController(
             omiseApiService: widget.omiseApiService,
@@ -56,19 +62,27 @@ class _BankSelectorPageState extends State<BankSelectorPage> {
   @override
   void initState() {
     super.initState();
-    fpxBankSelectorController.addListener(() {
-      if (fpxBankSelectorController.value.sourceLoadingStatus == Status.error) {
+    bankSelectorController.addListener(() {
+      if (bankSelectorController.value.sourceLoadingStatus == Status.error) {
         MessageDisplayUtils.showSnackBar(
-            context, fpxBankSelectorController.value.sourceErrorMessage!);
-      } else if (fpxBankSelectorController.value.sourceLoadingStatus ==
+            context, bankSelectorController.value.sourceErrorMessage!);
+      } else if (bankSelectorController.value.sourceLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(OmisePaymentResult(
-              source: fpxBankSelectorController.value.source));
+        final omisePaymentResult =
+            OmisePaymentResult(source: bankSelectorController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+            widget.nativeResultMethodName!,
+            omisePaymentResult.toJson(),
+          );
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });
-    fpxBankSelectorController.setSourceCreationParams(
+    bankSelectorController.setSourceCreationParams(
         amount: widget.amount,
         currency: widget.currency,
         email: widget.email,
@@ -83,7 +97,7 @@ class _BankSelectorPageState extends State<BankSelectorPage> {
               widget.paymentMethod.name, widget.locale, context)),
         ),
         body: ValueListenableBuilder(
-            valueListenable: fpxBankSelectorController,
+            valueListenable: bankSelectorController,
             builder: (context, state, _) {
               final isSourceLoading =
                   state.sourceLoadingStatus == Status.loading;
@@ -133,8 +147,7 @@ class _BankSelectorPageState extends State<BankSelectorPage> {
                               ? const Icon(Icons.arrow_forward_ios)
                               : null,
                           onTap: () {
-                            fpxBankSelectorController
-                                .createSource(fpxBank.code);
+                            bankSelectorController.createSource(fpxBank.code);
                           },
                         ),
                       );

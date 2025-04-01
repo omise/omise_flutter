@@ -28,102 +28,83 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
   void initState() {
     super.initState();
     MethodChannelService.setupMethodChannel(methodChannelController);
-    methodChannelController.addListener(() {
-      if (methodChannelController.value.methodName != null) {
-        selectedPage();
-      }
-    });
   }
 
-  Future<void> selectedPage() async {
+  Widget selectedPage() {
     final methodName = methodChannelController.value.methodName;
     switch (methodName) {
       case MethodNames.selectPaymentMethod:
         final OmisePayment omisePayment =
             OmisePayment(publicKey: methodChannelController.value.pkey!);
-        final OmisePaymentResult? omisePaymentResult = await FlutterUIBridge
-            .navigatorKey.currentState
-            ?.push<OmisePaymentResult>(
-          MaterialPageRoute(
-              builder: (context) => omisePayment.selectPaymentMethod(
-                  amount: methodChannelController.value.amount!,
-                  currency: methodChannelController.value.currency!,
-                  selectedPaymentMethods:
-                      methodChannelController.value.selectedPaymentMethods,
-                  selectedTokenizationMethods:
-                      methodChannelController.value.selectedTokenizationMethods,
-                  googleMerchantId:
-                      methodChannelController.value.googlePayMerchantId,
-                  googlePayCardBrands:
-                      methodChannelController.value.googlePayCardBrands,
-                  googlePayEnvironment:
-                      methodChannelController.value.googlePayEnvironment,
-                  googlePayItemDescription:
-                      methodChannelController.value.googlePayItemDescription,
-                  googlePayRequestBillingAddress: methodChannelController
-                      .value.googlePayRequestBillingAddress,
-                  googlePayRequestPhoneNumber:
-                      methodChannelController.value.googlePayRequestPhoneNumber,
-                  appleMerchantId:
-                      methodChannelController.value.applePayMerchantId,
-                  applePayCardBrands:
-                      methodChannelController.value.applePayCardBrands,
-                  applePayItemDescription:
-                      methodChannelController.value.applePayItemDescription,
-                  applePayRequiredBillingContactFields: methodChannelController
-                      .value.applePayRequiredBillingContactFields,
-                  applePayRequiredShippingContactFields: methodChannelController
-                      .value.applePayRequiredShippingContactFields,
-                  atomeItems: methodChannelController.value.atomeItems)),
+
+        return omisePayment.selectPaymentMethod(
+          amount: methodChannelController.value.amount!,
+          currency: methodChannelController.value.currency!,
+          selectedPaymentMethods:
+              methodChannelController.value.selectedPaymentMethods,
+          selectedTokenizationMethods:
+              methodChannelController.value.selectedTokenizationMethods,
+          googleMerchantId: methodChannelController.value.googlePayMerchantId,
+          googlePayCardBrands:
+              methodChannelController.value.googlePayCardBrands,
+          googlePayEnvironment:
+              methodChannelController.value.googlePayEnvironment,
+          googlePayItemDescription:
+              methodChannelController.value.googlePayItemDescription,
+          googlePayRequestBillingAddress:
+              methodChannelController.value.googlePayRequestBillingAddress,
+          googlePayRequestPhoneNumber:
+              methodChannelController.value.googlePayRequestPhoneNumber,
+          appleMerchantId: methodChannelController.value.applePayMerchantId,
+          applePayCardBrands: methodChannelController.value.applePayCardBrands,
+          applePayItemDescription:
+              methodChannelController.value.applePayItemDescription,
+          applePayRequiredBillingContactFields: methodChannelController
+              .value.applePayRequiredBillingContactFields,
+          applePayRequiredShippingContactFields: methodChannelController
+              .value.applePayRequiredShippingContactFields,
+          atomeItems: methodChannelController.value.atomeItems,
+          nativeResultMethodName:
+              '${methodChannelController.value.methodName!.name}Result',
         );
-        await MethodChannelService.sendResultToNative(
-            '${methodChannelController.value.methodName!.name}Result',
-            omisePaymentResult?.toJson());
+
       case MethodNames.openGooglePay:
         final OmisePayment omisePayment =
             OmisePayment(publicKey: methodChannelController.value.pkey!);
-        final OmisePaymentResult? omisePaymentResult = await FlutterUIBridge
-            .navigatorKey.currentState
-            ?.push<OmisePaymentResult>(
-          MaterialPageRoute(
-              builder: (context) => omisePayment.buildGooglePayPage(
-                    amount: methodChannelController.value.amount!,
-                    currency: methodChannelController.value.currency!,
-                    googleMerchantId:
-                        methodChannelController.value.googlePayMerchantId!,
-                    googlePayCardBrands:
-                        methodChannelController.value.googlePayCardBrands,
-                    googlePayEnvironment:
-                        methodChannelController.value.googlePayEnvironment,
-                    googlePayItemDescription:
-                        methodChannelController.value.googlePayItemDescription,
-                    googlePayRequestBillingAddress: methodChannelController
-                        .value.googlePayRequestBillingAddress,
-                    googlePayRequestPhoneNumber: methodChannelController
-                        .value.googlePayRequestPhoneNumber,
-                  )),
+        return omisePayment.buildGooglePayPage(
+          amount: methodChannelController.value.amount!,
+          currency: methodChannelController.value.currency!,
+          googleMerchantId: methodChannelController.value.googlePayMerchantId!,
+          googlePayCardBrands:
+              methodChannelController.value.googlePayCardBrands,
+          googlePayEnvironment:
+              methodChannelController.value.googlePayEnvironment,
+          googlePayItemDescription:
+              methodChannelController.value.googlePayItemDescription,
+          googlePayRequestBillingAddress:
+              methodChannelController.value.googlePayRequestBillingAddress,
+          googlePayRequestPhoneNumber:
+              methodChannelController.value.googlePayRequestPhoneNumber,
+          nativeResultMethodName:
+              '${methodChannelController.value.methodName!.name}Result',
         );
-        await MethodChannelService.sendResultToNative(
-            '${methodChannelController.value.methodName!.name}Result',
-            omisePaymentResult!.toJson());
+      case MethodNames.openCardPage:
+        final OmisePayment omisePayment =
+            OmisePayment(publicKey: methodChannelController.value.pkey!);
+        return omisePayment.buildCardPage(
+          nativeResultMethodName:
+              '${methodChannelController.value.methodName!.name}Result',
+        );
+
       // Not used in our native SDKs as we support Netcetera in native but flutter does not support it(No Netcetera package yet).
       case MethodNames.authorizePayment:
         final OmisePayment omisePayment =
             OmisePayment(publicKey: methodChannelController.value.pkey!);
-        final OmiseAuthorizationResult? omiseAuthorizationResult =
-            await Navigator.push<OmiseAuthorizationResult>(
-          context,
-          MaterialPageRoute(
-              builder: (context) => omisePayment.authorizePayment(
-                    authorizeUri:
-                        Uri.parse(methodChannelController.value.authUrl!),
-                    expectedReturnUrls:
-                        methodChannelController.value.expectedReturnUrls,
-                  )),
+        return omisePayment.authorizePayment(
+          authorizeUri: Uri.parse(methodChannelController.value.authUrl!),
+          expectedReturnUrls: methodChannelController.value.expectedReturnUrls,
         );
-        MethodChannelService.sendResultToNative(
-            '${methodChannelController.value.methodName!.name}Result',
-            omiseAuthorizationResult!.toJson());
+
       case null:
       case MethodNames.unknown:
         throw PlatformException(
@@ -141,10 +122,7 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
       home: ValueListenableBuilder(
         valueListenable: methodChannelController,
         builder: (context, state, _) {
-          return const Scaffold(
-            backgroundColor: Colors.transparent, // Fully transparent background
-            body: SizedBox.shrink(), // No UI elements displayed
-          );
+          return selectedPage();
         },
       ),
     );

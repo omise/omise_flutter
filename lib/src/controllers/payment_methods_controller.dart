@@ -260,7 +260,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                     ),
                   );
                 case CustomPaymentMethod.applePay:
-                  // open google pay screen
+                  // open apple pay screen
                   Navigator.push(
                     context,
                     MaterialPageRoute(

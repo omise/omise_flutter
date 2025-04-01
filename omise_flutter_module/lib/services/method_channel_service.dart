@@ -50,15 +50,10 @@ class MethodChannelService {
         applePayItemDescription: parsedArgs['applePayItemDescription'],
         atomeItems: parsedArgs['atomeItems'] != null
             ? (parsedArgs['atomeItems'] as List)
-                .map((e) => Item.fromJson(e))
+                .map((e) => Item.fromJson(Map<String, dynamic>.from(e)))
                 .toList()
             : null,
       );
     });
-  }
-
-  static Future<void> sendResultToNative(
-      String nativeResultMethodName, Map<String, dynamic>? result) async {
-    await methodChannel.invokeMethod(nativeResultMethodName, result);
   }
 }

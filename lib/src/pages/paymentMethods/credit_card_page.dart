@@ -4,6 +4,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/expiry_date_formatter.dart';
@@ -44,17 +45,22 @@ class CreditCardPage extends StatefulWidget {
   /// The term if coming from wlb installments screen
   final int? term;
 
-  const CreditCardPage(
-      {super.key,
-      this.automaticallyImplyLeading = true,
-      required this.omiseApiService,
-      this.creditCardPaymentMethodController,
-      this.capability,
-      this.paymentMethod,
-      this.locale,
-      this.currency,
-      this.amount,
-      this.term});
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
+  const CreditCardPage({
+    super.key,
+    this.automaticallyImplyLeading = true,
+    required this.omiseApiService,
+    this.creditCardPaymentMethodController,
+    this.capability,
+    this.paymentMethod,
+    this.locale,
+    this.currency,
+    this.amount,
+    this.term,
+    this.nativeResultMethodName,
+  });
 
   @override
   State<CreditCardPage> createState() => _CreditCardPageState();
@@ -64,7 +70,7 @@ class _CreditCardPageState extends State<CreditCardPage> {
   final countryPicker = const FlCountryCodePicker();
 
   /// The controller responsible for fetching and filtering payment methods.
-  late final CreditCardController creditCardPaymentMethodController =
+  late final CreditCardController creditCardController =
       widget.creditCardPaymentMethodController ??
           CreditCardController(
             omiseApiService: widget.omiseApiService,
@@ -74,33 +80,36 @@ class _CreditCardPageState extends State<CreditCardPage> {
   void initState() {
     super.initState();
     // set the source parameters when dealing with wlb installments
-    creditCardPaymentMethodController.setInstallmentsSourceParameters(
+    creditCardController.setInstallmentsSourceParameters(
         amount: widget.amount,
         currency: widget.currency,
         paymentMethod: widget.paymentMethod,
         term: widget.term);
 
     // Load capabilities and set up listeners for token loading status.
-    creditCardPaymentMethodController.loadCapabilities(
-        capability: widget.capability);
-    creditCardPaymentMethodController.addListener(() {
-      if (creditCardPaymentMethodController.value.tokenAndSourceLoadingStatus ==
+    creditCardController.loadCapabilities(capability: widget.capability);
+    creditCardController.addListener(() {
+      if (creditCardController.value.tokenAndSourceLoadingStatus ==
           Status.error) {
         MessageDisplayUtils.showSnackBar(
-            context,
-            creditCardPaymentMethodController
-                .value.tokenAndSourceErrorMessage!);
+            context, creditCardController.value.tokenAndSourceErrorMessage!);
         // reset the status so that the snackbar does not appear every time the user types
-        creditCardPaymentMethodController.updateState(
-            creditCardPaymentMethodController.value
-                .copyWith(tokenAndSourceLoadingStatus: Status.idle));
-      } else if (creditCardPaymentMethodController
-              .value.tokenAndSourceLoadingStatus ==
+        creditCardController.updateState(creditCardController.value
+            .copyWith(tokenAndSourceLoadingStatus: Status.idle));
+      } else if (creditCardController.value.tokenAndSourceLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(OmisePaymentResult(
-              token: creditCardPaymentMethodController.value.token,
-              source: creditCardPaymentMethodController.value.source));
+        final omisePaymentResult = OmisePaymentResult(
+            token: creditCardController.value.token,
+            source: creditCardController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+            widget.nativeResultMethodName!,
+            omisePaymentResult.toJson(),
+          );
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });
@@ -115,7 +124,7 @@ class _CreditCardPageState extends State<CreditCardPage> {
         centerTitle: false,
       ),
       body: ValueListenableBuilder(
-        valueListenable: creditCardPaymentMethodController,
+        valueListenable: creditCardController,
         builder: (context, state, _) {
           // Display a loading indicator or an error message if necessary.
           if ([Status.loading, Status.idle]
@@ -146,11 +155,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                   onChange: (cardNumber) {
                     var newState = state.copyWith();
                     newState.createTokenRequest.number = cardNumber;
-                    creditCardPaymentMethodController.updateState(newState);
+                    creditCardController.updateState(newState);
                   },
                   updateValidationList: (fieldKey, isValid) {
-                    creditCardPaymentMethodController
-                        .setTextFieldValidityStatuses(fieldKey, isValid);
+                    creditCardController.setTextFieldValidityStatuses(
+                        fieldKey, isValid);
                   },
                 ),
               ),
@@ -166,11 +175,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                   onChange: (name) {
                     var newState = state.copyWith();
                     newState.createTokenRequest.name = name;
-                    creditCardPaymentMethodController.updateState(newState);
+                    creditCardController.updateState(newState);
                   },
                   updateValidationList: (fieldKey, isValid) {
-                    creditCardPaymentMethodController
-                        .setTextFieldValidityStatuses(fieldKey, isValid);
+                    creditCardController.setTextFieldValidityStatuses(
+                        fieldKey, isValid);
                   },
                 ),
               ),
@@ -195,13 +204,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                           inputFormatters: [ExpiryDateFormatter()],
                           useValidationTypeAsKey: true,
                           onChange: (expiryDate) {
-                            creditCardPaymentMethodController
-                                .setExpiryDate(expiryDate);
+                            creditCardController.setExpiryDate(expiryDate);
                           },
                           updateValidationList: (fieldKey, isValid) {
-                            creditCardPaymentMethodController
-                                .setTextFieldValidityStatuses(
-                                    fieldKey, isValid);
+                            creditCardController.setTextFieldValidityStatuses(
+                                fieldKey, isValid);
                           },
                         ),
                       ),
@@ -221,13 +228,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                             var newState = state.copyWith();
                             newState.createTokenRequest.securityCode =
                                 securityCode;
-                            creditCardPaymentMethodController
-                                .updateState(newState);
+                            creditCardController.updateState(newState);
                           },
                           updateValidationList: (fieldKey, isValid) {
-                            creditCardPaymentMethodController
-                                .setTextFieldValidityStatuses(
-                                    fieldKey, isValid);
+                            creditCardController.setTextFieldValidityStatuses(
+                                fieldKey, isValid);
                           },
                         ),
                       ),
@@ -258,8 +263,7 @@ class _CreditCardPageState extends State<CreditCardPage> {
                             if (picked != null) {
                               var newState = state.copyWith();
                               newState.createTokenRequest.country = picked.code;
-                              creditCardPaymentMethodController
-                                  .updateState(newState);
+                              creditCardController.updateState(newState);
                             }
                           },
                     child: Container(
@@ -301,12 +305,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                         onChange: (address) {
                           var newState = state.copyWith();
                           newState.createTokenRequest.street1 = address;
-                          creditCardPaymentMethodController
-                              .updateState(newState);
+                          creditCardController.updateState(newState);
                         },
                         updateValidationList: (fieldKey, isValid) {
-                          creditCardPaymentMethodController
-                              .setTextFieldValidityStatuses(fieldKey, isValid);
+                          creditCardController.setTextFieldValidityStatuses(
+                              fieldKey, isValid);
                         },
                       ),
                     ),
@@ -321,12 +324,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                         onChange: (city) {
                           var newState = state.copyWith();
                           newState.createTokenRequest.city = city;
-                          creditCardPaymentMethodController
-                              .updateState(newState);
+                          creditCardController.updateState(newState);
                         },
                         updateValidationList: (fieldKey, isValid) {
-                          creditCardPaymentMethodController
-                              .setTextFieldValidityStatuses(fieldKey, isValid);
+                          creditCardController.setTextFieldValidityStatuses(
+                              fieldKey, isValid);
                         },
                       ),
                     ),
@@ -341,12 +343,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                         onChange: (addressState) {
                           var newState = state.copyWith();
                           newState.createTokenRequest.state = addressState;
-                          creditCardPaymentMethodController
-                              .updateState(newState);
+                          creditCardController.updateState(newState);
                         },
                         updateValidationList: (fieldKey, isValid) {
-                          creditCardPaymentMethodController
-                              .setTextFieldValidityStatuses(fieldKey, isValid);
+                          creditCardController.setTextFieldValidityStatuses(
+                              fieldKey, isValid);
                         },
                       ),
                     ),
@@ -360,12 +361,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                         onChange: (postalCode) {
                           var newState = state.copyWith();
                           newState.createTokenRequest.postalCode = postalCode;
-                          creditCardPaymentMethodController
-                              .updateState(newState);
+                          creditCardController.updateState(newState);
                         },
                         updateValidationList: (fieldKey, isValid) {
-                          creditCardPaymentMethodController
-                              .setTextFieldValidityStatuses(fieldKey, isValid);
+                          creditCardController.setTextFieldValidityStatuses(
+                              fieldKey, isValid);
                         },
                       ),
                     ),
@@ -385,8 +385,7 @@ class _CreditCardPageState extends State<CreditCardPage> {
                   onPressed: !isFormEnabled || !state.isFormValid
                       ? null
                       : () {
-                          creditCardPaymentMethodController
-                              .createSourceAndToken();
+                          creditCardController.createSourceAndToken();
                         },
                   child: Text(
                     Translations.get('pay', widget.locale, context),

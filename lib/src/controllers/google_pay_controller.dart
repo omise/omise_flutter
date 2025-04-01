@@ -53,8 +53,9 @@ class GooglePayController extends ValueNotifier<GooglePayPageState> {
               type: "CARD",
               parameters: PaymentParameters(
                   allowedAuthMethods: ["PAN_ONLY", "CRYPTOGRAM_3DS"],
-                  allowedCardNetworks: cardBrands ??
-                      ["AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA"],
+                  allowedCardNetworks:
+                      cardBrands?.map((e) => e.toUpperCase()).toList() ??
+                          ["AMEX", "DISCOVER", "JCB", "MASTERCARD", "VISA"],
                   billingAddressRequired: value.requestBillingAddress!,
                   billingAddressParameters: BillingAddressParameters(
                       format: "FULL",

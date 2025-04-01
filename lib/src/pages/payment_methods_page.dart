@@ -4,6 +4,7 @@ import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
@@ -77,6 +78,9 @@ class PaymentMethodsPage extends StatefulWidget {
   /// The list of atome items.
   final List<Item>? atomeItems;
 
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
   /// Constructor for creating a [PaymentMethodsPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
   const PaymentMethodsPage({
@@ -101,6 +105,7 @@ class PaymentMethodsPage extends StatefulWidget {
     this.applePayMerchantId,
     this.applePayItemDescription,
     this.atomeItems,
+    this.nativeResultMethodName,
   });
 
   @override
@@ -128,9 +133,17 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
             context, paymentMethodSelectorController.value.sourceErrorMessage!);
       } else if (paymentMethodSelectorController.value.sourceLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(OmisePaymentResult(
-              source: paymentMethodSelectorController.value.source));
+        final omisePaymentResult = OmisePaymentResult(
+            source: paymentMethodSelectorController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+            widget.nativeResultMethodName!,
+            omisePaymentResult.toJson(),
+          );
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });
@@ -167,7 +180,12 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
           IconButton(
             onPressed: () {
               // Close the page when the 'X' icon is pressed
-              Navigator.pop(context);
+              if (widget.nativeResultMethodName != null) {
+                MethodChannelService.sendResultToNative(
+                    widget.nativeResultMethodName!, null);
+              } else {
+                Navigator.of(context).pop();
+              }
             },
             icon: const Icon(Icons.close),
           )

@@ -3,6 +3,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/econtext_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
@@ -26,6 +27,9 @@ class EcontextPage extends StatefulWidget {
 
   final EcontextController? econtextController;
 
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
   const EcontextPage({
     super.key,
     this.locale,
@@ -34,6 +38,7 @@ class EcontextPage extends StatefulWidget {
     required this.amount,
     required this.currency,
     required this.econtextMethod,
+    this.nativeResultMethodName,
   });
 
   @override
@@ -62,9 +67,15 @@ class _EcontextPageState extends State<EcontextPage> {
             .copyWith(sourceLoadingStatus: Status.idle));
       } else if (econtextController.value.sourceLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context)
-              .pop(OmisePaymentResult(source: econtextController.value.source));
+        final omisePaymentResult =
+            OmisePaymentResult(source: econtextController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+              widget.nativeResultMethodName!, omisePaymentResult.toJson());
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });
