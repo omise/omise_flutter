@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
+import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/google_pay_page.dart';
 import 'package:omise_flutter/src/pages/payment_authorization_page.dart';
 import 'package:omise_flutter/src/pages/payment_methods_page.dart';
@@ -93,6 +94,7 @@ class OmisePayment {
     List<String>? applePayCardBrands,
     String? applePayItemDescription,
     List<Item>? atomeItems,
+    String? nativeResultMethodName,
   }) {
     return PaymentMethodsPage(
       omiseApiService: omiseApiService, // Pass the Omise API service
@@ -116,6 +118,7 @@ class OmisePayment {
       applePayCardBrands: applePayCardBrands,
       applePayItemDescription: applePayItemDescription,
       atomeItems: atomeItems,
+      nativeResultMethodName: nativeResultMethodName,
     );
   }
 
@@ -140,15 +143,17 @@ class OmisePayment {
   /// [googlePayItemDescription] - The description of the item being purchased for Google Pay.
   ///
   /// Returns a [Widget] for the Google Pay payment page.
-  Widget buildGooglePayPage(
-      {required int amount,
-      required Currency currency,
-      required String googleMerchantId,
-      bool? googlePayRequestBillingAddress = false,
-      bool? googlePayRequestPhoneNumber = false,
-      List<String>? googlePayCardBrands,
-      String? googlePayEnvironment,
-      String? googlePayItemDescription}) {
+  Widget buildGooglePayPage({
+    required int amount,
+    required Currency currency,
+    required String googleMerchantId,
+    bool? googlePayRequestBillingAddress = false,
+    bool? googlePayRequestPhoneNumber = false,
+    List<String>? googlePayCardBrands,
+    String? googlePayEnvironment,
+    String? googlePayItemDescription,
+    String? nativeResultMethodName,
+  }) {
     return GooglePayPage(
       omiseApiService: omiseApiService, // Pass the Omise API service
       amount: amount,
@@ -160,6 +165,26 @@ class OmisePayment {
       environment: googlePayEnvironment,
       pkey: publicKey,
       itemDescription: googlePayItemDescription,
+      nativeResultMethodName: nativeResultMethodName,
+    );
+  }
+
+  /// Builds and returns a [CreditCardPage] widget.
+  ///
+  /// This method directly presents the Google Pay payment page.
+  ///
+  /// [amount] - The transaction amount, following Omise API format.
+  ///
+  /// [currency] - The transaction currency.
+
+  /// Returns a [Widget] for the Credit Card payment page.
+  Widget buildCardPage({
+    String? nativeResultMethodName,
+  }) {
+    return CreditCardPage(
+      omiseApiService: omiseApiService,
+      locale: locale,
+      nativeResultMethodName: nativeResultMethodName,
     );
   }
 

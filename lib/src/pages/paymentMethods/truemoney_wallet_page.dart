@@ -3,6 +3,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/truemoney_wallet_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
@@ -25,13 +26,19 @@ class TrueMoneyWalletPage extends StatefulWidget {
 
   /// Allow passing an instance of the controller to facilitate testing
   final TrueMoneyWalletController? trueMoneyWalletController;
-  const TrueMoneyWalletPage(
-      {super.key,
-      this.locale,
-      required this.omiseApiService,
-      this.trueMoneyWalletController,
-      required this.amount,
-      required this.currency});
+
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
+  const TrueMoneyWalletPage({
+    super.key,
+    this.locale,
+    required this.omiseApiService,
+    this.trueMoneyWalletController,
+    required this.amount,
+    required this.currency,
+    this.nativeResultMethodName,
+  });
 
   @override
   State<TrueMoneyWalletPage> createState() => _TrueMoneyWalletPageState();
@@ -55,9 +62,15 @@ class _TrueMoneyWalletPageState extends State<TrueMoneyWalletPage> {
             .copyWith(sourceLoadingStatus: Status.idle));
       } else if (trueMoneyWalletController.value.sourceLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(OmisePaymentResult(
-              source: trueMoneyWalletController.value.source));
+        final omisePaymentResult =
+            OmisePaymentResult(source: trueMoneyWalletController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+              widget.nativeResultMethodName!, omisePaymentResult.toJson());
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });

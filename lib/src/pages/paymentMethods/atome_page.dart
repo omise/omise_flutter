@@ -3,6 +3,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/atome_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
@@ -28,6 +29,9 @@ class AtomePage extends StatefulWidget {
   /// The list of items in the atome payment.
   final List<Item> items;
 
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
   const AtomePage({
     super.key,
     required this.omiseApiService,
@@ -36,6 +40,7 @@ class AtomePage extends StatefulWidget {
     required this.items,
     this.atomeController,
     this.locale,
+    this.nativeResultMethodName,
   });
 
   @override
@@ -60,9 +65,17 @@ class _AtomePageState extends State<AtomePage> {
         atomeController.updateState(
             atomeController.value.copyWith(sourceLoadingStatus: Status.idle));
       } else if (atomeController.value.sourceLoadingStatus == Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context)
-              .pop(OmisePaymentResult(source: atomeController.value.source));
+        final omisePaymentResult =
+            OmisePaymentResult(source: atomeController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+            widget.nativeResultMethodName!,
+            omisePaymentResult.toJson(),
+          );
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });

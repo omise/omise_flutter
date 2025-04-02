@@ -3,6 +3,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/controllers/installments_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
@@ -30,6 +31,10 @@ class TermsPage extends StatefulWidget {
 
   /// Allow passing an instance of the controller to facilitate testing
   final InstallmentsController? installmentsPaymentMethodSelectorController;
+
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
   const TermsPage({
     super.key,
     required this.terms,
@@ -40,6 +45,7 @@ class TermsPage extends StatefulWidget {
     required this.capability,
     this.installmentsPaymentMethodSelectorController,
     this.locale,
+    this.nativeResultMethodName,
   });
 
   @override
@@ -47,8 +53,7 @@ class TermsPage extends StatefulWidget {
 }
 
 class _TermsPageState extends State<TermsPage> {
-  late final InstallmentsController
-      installmentsPaymentMethodSelectorController =
+  late final InstallmentsController installmentsController =
       widget.installmentsPaymentMethodSelectorController ??
           InstallmentsController(
             omiseApiService: widget.omiseApiService,
@@ -56,25 +61,25 @@ class _TermsPageState extends State<TermsPage> {
   @override
   void initState() {
     super.initState();
-    installmentsPaymentMethodSelectorController.addListener(() {
-      if (installmentsPaymentMethodSelectorController
-              .value.sourceLoadingStatus ==
-          Status.error) {
+    installmentsController.addListener(() {
+      if (installmentsController.value.sourceLoadingStatus == Status.error) {
         MessageDisplayUtils.showSnackBar(
-            context,
-            installmentsPaymentMethodSelectorController
-                .value.sourceErrorMessage!);
-      } else if (installmentsPaymentMethodSelectorController
-              .value.sourceLoadingStatus ==
+            context, installmentsController.value.sourceErrorMessage!);
+      } else if (installmentsController.value.sourceLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(OmisePaymentResult(
-              source:
-                  installmentsPaymentMethodSelectorController.value.source));
+        final omisePaymentResult =
+            OmisePaymentResult(source: installmentsController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+              widget.nativeResultMethodName!, omisePaymentResult.toJson());
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });
-    installmentsPaymentMethodSelectorController.setSourceCreationParams(
+    installmentsController.setSourceCreationParams(
         amount: widget.amount,
         currency: widget.currency,
         paymentMethod: widget.installmentPaymentMethod,
@@ -90,7 +95,7 @@ class _TermsPageState extends State<TermsPage> {
               widget.installmentPaymentMethod.name, widget.locale, context)),
         ),
         body: ValueListenableBuilder(
-            valueListenable: installmentsPaymentMethodSelectorController,
+            valueListenable: installmentsController,
             builder: (context, state, _) {
               final isSourceLoading =
                   state.sourceLoadingStatus == Status.loading;
@@ -106,9 +111,8 @@ class _TermsPageState extends State<TermsPage> {
                           title: Text(
                               '${widget.terms[index]} ${Translations.get('months', widget.locale, context)}'),
                           onTap: () {
-                            installmentsPaymentMethodSelectorController
-                                .processInstallment(
-                                    widget.terms[index], context);
+                            installmentsController.processInstallment(
+                                widget.terms[index], context);
                           },
                           trailing: Icon(widget.installmentPaymentMethod.value
                                   .contains(('_wlb_'))

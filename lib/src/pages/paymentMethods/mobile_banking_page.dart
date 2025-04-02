@@ -4,6 +4,7 @@ import 'package:omise_flutter/src/controllers/mobile_banking_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/models/payment_method.dart';
+import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
 import 'package:omise_flutter/src/utils/package_info.dart';
@@ -27,22 +28,27 @@ class MobileBankingPage extends StatefulWidget {
 
   /// Allow passing an instance of the controller to facilitate testing
   final MobileBankingController? mobileBankingPaymentMethodSelectorController;
-  const MobileBankingPage(
-      {super.key,
-      required this.mobileBankingPaymentMethods,
-      required this.omiseApiService,
-      required this.amount,
-      required this.currency,
-      this.mobileBankingPaymentMethodSelectorController,
-      this.locale});
+
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
+  const MobileBankingPage({
+    super.key,
+    required this.mobileBankingPaymentMethods,
+    required this.omiseApiService,
+    required this.amount,
+    required this.currency,
+    this.mobileBankingPaymentMethodSelectorController,
+    this.locale,
+    this.nativeResultMethodName,
+  });
 
   @override
   State<MobileBankingPage> createState() => _MobileBankingPageState();
 }
 
 class _MobileBankingPageState extends State<MobileBankingPage> {
-  late final MobileBankingController
-      mobileBankingPaymentMethodSelectorController =
+  late final MobileBankingController mobileBankingController =
       widget.mobileBankingPaymentMethodSelectorController ??
           MobileBankingController(
             omiseApiService: widget.omiseApiService,
@@ -50,25 +56,25 @@ class _MobileBankingPageState extends State<MobileBankingPage> {
   @override
   void initState() {
     super.initState();
-    mobileBankingPaymentMethodSelectorController.addListener(() {
-      if (mobileBankingPaymentMethodSelectorController
-              .value.sourceLoadingStatus ==
-          Status.error) {
+    mobileBankingController.addListener(() {
+      if (mobileBankingController.value.sourceLoadingStatus == Status.error) {
         MessageDisplayUtils.showSnackBar(
-            context,
-            mobileBankingPaymentMethodSelectorController
-                .value.sourceErrorMessage!);
-      } else if (mobileBankingPaymentMethodSelectorController
-              .value.sourceLoadingStatus ==
+            context, mobileBankingController.value.sourceErrorMessage!);
+      } else if (mobileBankingController.value.sourceLoadingStatus ==
           Status.success) {
-        while (Navigator.of(context).canPop()) {
-          Navigator.of(context).pop(OmisePaymentResult(
-              source:
-                  mobileBankingPaymentMethodSelectorController.value.source));
+        final omisePaymentResult =
+            OmisePaymentResult(source: mobileBankingController.value.source);
+        if (widget.nativeResultMethodName != null) {
+          MethodChannelService.sendResultToNative(
+              widget.nativeResultMethodName!, omisePaymentResult.toJson());
+        } else {
+          while (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop(omisePaymentResult);
+          }
         }
       }
     });
-    mobileBankingPaymentMethodSelectorController.setSourceCreationParams(
+    mobileBankingController.setSourceCreationParams(
         amount: widget.amount, currency: widget.currency);
   }
 
@@ -80,7 +86,7 @@ class _MobileBankingPageState extends State<MobileBankingPage> {
               .title(context: context, locale: widget.locale)),
         ),
         body: ValueListenableBuilder(
-            valueListenable: mobileBankingPaymentMethodSelectorController,
+            valueListenable: mobileBankingController,
             builder: (context, state, _) {
               final isSourceLoading =
                   state.sourceLoadingStatus == Status.loading;
@@ -114,7 +120,7 @@ class _MobileBankingPageState extends State<MobileBankingPage> {
                                       ),
                             trailingIcon: Icons.arrow_forward_ios,
                             onTap: () {
-                              mobileBankingPaymentMethodSelectorController
+                              mobileBankingController
                                   .createSource(paymentMethod.name);
                             },
                           ),
