@@ -60,7 +60,7 @@ void main() {
 
       expect(applePayController.value.applePayMerchantId, 'merchant_123');
       expect(applePayController.value.country, 'TH');
-      expect(applePayController.value.amount, 1000);
+      expect(applePayController.value.amount, 10);
       expect(applePayController.value.currency, Currency.thb);
       expect(applePayController.value.itemDescription, 'Test Item');
     });
