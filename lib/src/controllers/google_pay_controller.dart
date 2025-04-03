@@ -6,6 +6,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/google_pay_request.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
+import 'package:omise_flutter/src/utils/payment_utils.dart';
 
 /// The [GooglePayController] manages the state and logic for
 /// creating a mobile banking source from Omise API.
@@ -33,7 +34,7 @@ class GooglePayController extends ValueNotifier<GooglePayPageState> {
       googlePayMerchantId: googlePayMerchantId,
       requestBillingAddress: requestBillingAddress,
       requestPhoneNumber: requestPhoneNumber,
-      amount: amount,
+      amount: PaymentUtils.parseAmount(amount, currency),
       currency: currency,
       itemDescription: itemDescription ?? '',
     ));
@@ -161,7 +162,7 @@ class GooglePayPageState {
   final Map<String, dynamic>? googlePaymentResult;
 
   /// The amount used in source creation.
-  final int? amount;
+  final num? amount;
 
   /// The currency used in source creation.
   final Currency? currency;
@@ -196,7 +197,7 @@ class GooglePayPageState {
     bool? requestBillingAddress,
     bool? requestPhoneNumber,
     Map<String, dynamic>? googlePaymentResult,
-    int? amount,
+    num? amount,
     Currency? currency,
     String? googlePayRequest,
     String? itemDescription,

@@ -62,7 +62,7 @@ void main() {
       expect(googlePayController.value.googlePayMerchantId, 'merchant_123');
       expect(googlePayController.value.requestBillingAddress, true);
       expect(googlePayController.value.requestPhoneNumber, true);
-      expect(googlePayController.value.amount, 1000);
+      expect(googlePayController.value.amount, 10);
       expect(googlePayController.value.currency, Currency.thb);
       expect(googlePayController.value.itemDescription, 'Test Item');
     });
