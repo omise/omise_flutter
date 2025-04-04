@@ -85,4 +85,18 @@ class PaymentUtils {
     }
     return 'assets/fpxBanks/${bankName.value}.png';
   }
+
+  /// Parses the amount based on the currency.
+  ///
+  /// For currencies other than JPY, the amount is divided by 100.
+  ///
+  /// Args:
+  ///   amount: The amount to parse.
+  ///   currency: The currency of the amount.
+  ///
+  /// Returns:
+  ///   The parsed amount as a number.
+  static num parseAmount(num amount, Currency currency) {
+    return currency != Currency.jpy ? amount / 100 : amount;
+  }
 }

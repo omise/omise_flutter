@@ -6,6 +6,7 @@ import 'package:omise_dart/omise_dart.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/apple_pay_request.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
+import 'package:omise_flutter/src/utils/payment_utils.dart';
 
 /// The [ApplePayController] manages the state and logic for
 /// creating a mobile banking source from Omise API.
@@ -35,7 +36,7 @@ class ApplePayController extends ValueNotifier<ApplePayPageState> {
       requiredBillingContactFields:
           requiredBillingContactFields ?? ["name", "phone", "postalAddress"],
       requiredShippingContactFields: requiredShippingContactFields ?? [],
-      amount: amount,
+      amount: PaymentUtils.parseAmount(amount, currency),
       currency: currency,
       country: country,
       itemDescription: itemDescription ?? '',
@@ -94,7 +95,8 @@ class ApplePayController extends ValueNotifier<ApplePayPageState> {
         tokenRequest.billingStreet1 = postalAddress['street'];
 
         tokenRequest.billingPhoneNumber = appleBillingInfo['phoneNumber'];
-        tokenRequest.brand = value.applePaymentResult!['paymentMethod']['network'];
+        tokenRequest.brand =
+            value.applePaymentResult!['paymentMethod']['network'];
       }
       // Create the token using Omise API
       final token = await omiseApiService.createToken(tokenRequest,
@@ -146,7 +148,7 @@ class ApplePayPageState {
   final Map<String, dynamic>? applePaymentResult;
 
   /// The amount used in source creation.
-  final int? amount;
+  final num? amount;
 
   /// The currency used in source creation.
   final Currency? currency;
@@ -185,7 +187,7 @@ class ApplePayPageState {
     final List<String>? requiredShippingContactFields,
     final List<String>? requiredBillingContactFields,
     Map<String, dynamic>? applePaymentResult,
-    int? amount,
+    num? amount,
     Currency? currency,
     String? country,
     String? applePayRequest,

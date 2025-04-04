@@ -74,6 +74,16 @@ class OmisePayment {
   ///
   /// [googlePayItemDescription] - The description of the item being purchased for Google Pay.
   ///
+  /// [applePayRequiredShippingContactFields] - The list of required shipping contact fields for Apple Pay.
+  ///
+  /// [applePayRequiredBillingContactFields] - The list of required billing contact fields for Apple Pay.
+  ///
+  /// [appleMerchantId] - The Apple Merchant ID.
+  ///
+  /// [applePayCardBrands] - Allowed card brands for Apple Pay (e.g., ['visa', 'mastercard']).
+  ///
+  /// [applePayItemDescription] - The description of the item being purchased for Apple Pay.
+  ///
   /// [atomeItems] - The list of items being purchased when using the atome payment method.
   ///
   /// Returns a [Widget] that represents the payment method selection page.
