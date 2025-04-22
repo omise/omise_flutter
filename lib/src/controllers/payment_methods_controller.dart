@@ -108,7 +108,8 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
       {required BuildContext context,
       String? object,
       OmiseLocale? locale,
-      required PaymentMethodName paymentMethodName}) {
+      required PaymentMethodName paymentMethodName,
+      String? nativeResultMethodName}) {
     switch (paymentMethodName) {
       case PaymentMethodName.card:
         return PaymentMethodParams(
@@ -121,6 +122,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                           omiseApiService: omiseApiService,
                           capability: value.capability,
                           locale: locale,
+                          nativeResultMethodName: nativeResultMethodName,
                         )),
               );
             });
@@ -136,6 +138,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                           amount: value.amount!,
                           currency: value.currency!,
                           locale: locale,
+                          nativeResultMethodName: nativeResultMethodName,
                         )),
               );
             });
@@ -156,6 +159,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                     fpxBanks: index != -1
                         ? value.capability!.paymentMethods[index].banks
                         : [],
+                    nativeResultMethodName: nativeResultMethodName,
                   ),
                 ),
               );
@@ -174,10 +178,11 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                     amount: value.amount!,
                     currency: value.currency!,
                     locale: locale,
-                    fpxBanks: index != -1
+                    banks: index != -1
                         ? value.capability!.paymentMethods[index].banks
                         : [],
                     paymentMethod: paymentMethodName,
+                    nativeResultMethodName: nativeResultMethodName,
                   ),
                 ),
               );
@@ -195,6 +200,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                     currency: value.currency!,
                     locale: locale,
                     items: value.atomeItems ?? [],
+                    nativeResultMethodName: nativeResultMethodName,
                   ),
                 ),
               );
@@ -219,6 +225,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                         currency: value.currency!,
                         omiseApiService: omiseApiService,
                         locale: locale,
+                        nativeResultMethodName: nativeResultMethodName,
                       ),
                     ),
                   );
@@ -235,6 +242,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                         omiseApiService: omiseApiService,
                         locale: locale,
                         capability: value.capability!,
+                        nativeResultMethodName: nativeResultMethodName,
                       ),
                     ),
                   );
@@ -256,6 +264,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                         locale: locale,
                         environment: value.googlePayEnvironment,
                         itemDescription: value.googlePayItemDescription,
+                        nativeResultMethodName: nativeResultMethodName,
                       ),
                     ),
                   );
@@ -278,6 +287,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                         omiseApiService: omiseApiService,
                         locale: locale,
                         itemDescription: value.applePayItemDescription,
+                        nativeResultMethodName: nativeResultMethodName,
                       ),
                     ),
                   );
@@ -295,6 +305,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                         locale: locale,
                         econtextMethod:
                             CustomPaymentMethodNameExtension.fromString(object),
+                        nativeResultMethodName: nativeResultMethodName,
                       ),
                     ),
                   );
@@ -313,6 +324,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                         currency: value.currency!,
                         omiseApiService: omiseApiService,
                         locale: locale,
+                        nativeResultMethodName: nativeResultMethodName,
                       ),
                     ),
                   );

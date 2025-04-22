@@ -89,7 +89,10 @@ class InstallmentsController extends ValueNotifier<InstallmentsPageState> {
   }
 
   /// Creates a source based on the collected data from the user.
-  Future<void> processInstallment(int term, BuildContext context) async {
+  Future<void> processInstallment(
+      {required int term,
+      required BuildContext context,
+      String? nativeResultMethodName}) async {
     try {
       // if wlb installment then open the credit card page
       if (value.paymentMethod?.value.contains('_wlb_') == true) {
@@ -104,6 +107,7 @@ class InstallmentsController extends ValueNotifier<InstallmentsPageState> {
                     paymentMethod: value.paymentMethod,
                     locale: value.locale,
                     term: term,
+                    nativeResultMethodName: nativeResultMethodName,
                   )),
         );
         return;

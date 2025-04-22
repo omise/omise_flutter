@@ -24,13 +24,18 @@ class FpxEmailPage extends StatefulWidget {
   /// The list of FPX banks.
   final List<Bank> fpxBanks;
 
-  const FpxEmailPage(
-      {super.key,
-      this.locale,
-      required this.omiseApiService,
-      required this.amount,
-      required this.currency,
-      required this.fpxBanks});
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
+  const FpxEmailPage({
+    super.key,
+    this.locale,
+    required this.omiseApiService,
+    required this.amount,
+    required this.currency,
+    required this.fpxBanks,
+    this.nativeResultMethodName,
+  });
 
   @override
   State<FpxEmailPage> createState() => _FpxEmailPageState();
@@ -117,9 +122,11 @@ class _FpxEmailPageState extends State<FpxEmailPage> {
                                             currency: widget.currency,
                                             locale: widget.locale,
                                             email: fpxEmail,
-                                            fpxBanks: widget.fpxBanks,
+                                            banks: widget.fpxBanks,
                                             paymentMethod:
                                                 PaymentMethodName.fpx,
+                                            nativeResultMethodName:
+                                                widget.nativeResultMethodName,
                                           )),
                                 );
                               }

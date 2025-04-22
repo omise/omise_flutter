@@ -78,7 +78,8 @@ void main() {
         changes.add(controller.value);
       });
 
-      await controller.processInstallment(terms.first, mockBuildContext);
+      await controller.processInstallment(
+          term: terms.first, context: mockBuildContext);
 
       expect(changes.length, 2);
       expect(changes[0].sourceLoadingStatus, Status.loading);
@@ -108,7 +109,8 @@ void main() {
         changes.add(controller.value);
       });
 
-      await controller.processInstallment(terms.first, mockBuildContext);
+      await controller.processInstallment(
+          term: terms.first, context: mockBuildContext);
 
       expect(changes.length, 2);
       expect(changes[0].sourceLoadingStatus, Status.loading);

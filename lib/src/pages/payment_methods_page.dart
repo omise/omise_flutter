@@ -239,7 +239,9 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
                           paymentMethodName: paymentMethod.name,
                           context: context,
                           object: paymentMethod.object,
-                          locale: widget.locale);
+                          locale: widget.locale,
+                          nativeResultMethodName:
+                              widget.nativeResultMethodName);
                   // Render each payment method as a tile with an icon and arrow
                   return paymentMethodTile(
                     context: context,

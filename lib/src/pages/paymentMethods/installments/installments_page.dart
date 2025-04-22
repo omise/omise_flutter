@@ -27,6 +27,9 @@ class InstallmentsPage extends StatefulWidget {
   /// The capability to pass to the credit terms page
   final Capability capability;
 
+  /// The function name that is communicated through channels methods for native integrations.
+  final String? nativeResultMethodName;
+
   const InstallmentsPage({
     super.key,
     required this.installmentPaymentMethods,
@@ -35,6 +38,7 @@ class InstallmentsPage extends StatefulWidget {
     required this.currency,
     required this.capability,
     this.locale,
+    this.nativeResultMethodName,
   });
 
   @override
@@ -121,6 +125,8 @@ class _InstallmentsPageState extends State<InstallmentsPage> {
                                         terms: paymentMethod.installmentTerms ??
                                             [],
                                         capability: widget.capability,
+                                        nativeResultMethodName:
+                                            widget.nativeResultMethodName,
                                       )),
                             );
                           },
