@@ -112,7 +112,10 @@ class _TermsPageState extends State<TermsPage> {
                               '${widget.terms[index]} ${Translations.get('months', widget.locale, context)}'),
                           onTap: () {
                             installmentsController.processInstallment(
-                                widget.terms[index], context);
+                                term: widget.terms[index],
+                                context: context,
+                                nativeResultMethodName:
+                                    widget.nativeResultMethodName);
                           },
                           trailing: Icon(widget.installmentPaymentMethod.value
                                   .contains(('_wlb_'))

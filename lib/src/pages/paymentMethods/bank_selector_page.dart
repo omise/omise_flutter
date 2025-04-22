@@ -11,7 +11,7 @@ import 'package:omise_flutter/src/utils/package_info.dart';
 import 'package:omise_flutter/src/utils/payment_utils.dart';
 
 class BankSelectorPage extends StatefulWidget {
-  final List<Bank> fpxBanks;
+  final List<Bank> banks;
 
   /// An instance of [OmiseApiService] for interacting with the Omise API.
   final OmiseApiService omiseApiService;
@@ -35,15 +35,15 @@ class BankSelectorPage extends StatefulWidget {
   final String? nativeResultMethodName;
 
   /// Allow passing an instance of the controller to facilitate testing
-  final BankSelectorController? fpxBankSelectorController;
+  final BankSelectorController? bankSelectorController;
   const BankSelectorPage({
     super.key,
-    required this.fpxBanks,
+    required this.banks,
     required this.omiseApiService,
     required this.amount,
     required this.currency,
     required this.paymentMethod,
-    this.fpxBankSelectorController,
+    this.bankSelectorController,
     this.locale,
     this.email,
     this.nativeResultMethodName,
@@ -55,7 +55,7 @@ class BankSelectorPage extends StatefulWidget {
 
 class _BankSelectorPageState extends State<BankSelectorPage> {
   late final BankSelectorController bankSelectorController =
-      widget.fpxBankSelectorController ??
+      widget.bankSelectorController ??
           BankSelectorController(
             omiseApiService: widget.omiseApiService,
           );
@@ -106,26 +106,26 @@ class _BankSelectorPageState extends State<BankSelectorPage> {
                 child: Opacity(
                   opacity: isSourceLoading ? 0.5 : 1,
                   child: ListView.builder(
-                    itemCount: widget.fpxBanks.length,
+                    itemCount: widget.banks.length,
                     itemBuilder: (context, index) {
-                      final fpxBank = widget.fpxBanks[index];
+                      final bank = widget.banks[index];
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
                         child: ListTile(
-                          enabled: fpxBank.active,
-                          title: Text(fpxBank.name), // Name of the bank
+                          enabled: bank.active,
+                          title: Text(bank.name), // Name of the bank
                           leading:
                               // condition for testing as the image will not load in test mode
-                              widget.fpxBankSelectorController != null
+                              widget.bankSelectorController != null
                                   ? const SizedBox.shrink()
                                   : Opacity(
-                                      opacity: fpxBank.active ? 1 : 0.5,
+                                      opacity: bank.active ? 1 : 0.5,
                                       child: SizedBox(
                                         height: 50,
                                         width: 50,
                                         child: Image.asset(
                                           PaymentUtils.getBankImageName(
-                                              fpxBank.code), // Icon for bank
+                                              bank.code), // Icon for bank
                                           package: PackageInfo.packageName,
                                           alignment: Alignment.center,
                                           errorBuilder:
@@ -143,11 +143,11 @@ class _BankSelectorPageState extends State<BankSelectorPage> {
                                         ),
                                       ),
                                     ),
-                          trailing: fpxBank.active
+                          trailing: bank.active
                               ? const Icon(Icons.arrow_forward_ios)
                               : null,
                           onTap: () {
-                            bankSelectorController.createSource(fpxBank.code);
+                            bankSelectorController.createSource(bank.code);
                           },
                         ),
                       );
