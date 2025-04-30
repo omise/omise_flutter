@@ -47,18 +47,19 @@ jobs:
 
       - name: Clone Swift-PM Wrapper
         env:
-          GIT_PAT: ${{ secrets.GIT_PAT }}
+          GH_TOKEN: ${{ secrets.GIT_PAT }}
         run: |
           git clone \
-            https://x-access-token:${GIT_PAT}@github.com/${{ secrets.WRAPPER_REPO }}.git \
+            https://x-access-token:${GH_TOKEN}@github.com/${{ secrets.WRAPPER_REPO }}.git \
             wrapper_repo
             
-      - name: Distribute iOS XCFrameworks
+      - name: Build & Release iOS XCFrameworks
         env:
           VERSION:        ${{ env.VERSION }}
           AWS_S3_BUCKET:  ${{ secrets.AWS_S3_BUCKET }}
           AWS_REGION:     ${{ secrets.AWS_REGION }}
           AWS_DOMAIN:     ${{ secrets.AWS_DOMAIN }}
+          GH_TOKEN:       ${{ secrets.GIT_PAT }}
           WRAPPER_REPO_DIR: wrapper_repo
         run: |
           bash scripts/xc_release.sh
