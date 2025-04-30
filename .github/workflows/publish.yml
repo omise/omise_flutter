@@ -2,6 +2,8 @@ name: Test & Publish
 
 on:
   push:
+    branches:
+      - feature/distribute-xcframework-flow #delete this later
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+*"
 
@@ -49,9 +51,9 @@ jobs:
 
       - name: Install dependencies
         run: flutter pub get
-
-      - name: Publish - dry run
-        run: flutter pub publish --dry-run
-
-      - name: Publish to pub.dev
-        run: flutter pub publish -f
+# to delete the comment later. this is to prevent repo being published to the actual site.
+#      - name: Publish - dry run
+#        run: flutter pub publish --dry-run
+#
+#      - name: Publish to pub.dev
+#        run: flutter pub publish -f

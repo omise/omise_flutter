@@ -1,0 +1,64 @@
+name: Distribute iOS XCFrameworks
+
+on:
+  workflow_run:
+    workflows:
+      - Test & Publish
+    types:
+      - completed
+
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+  
+permissions:
+  id-token: write    # required by aws-actions/configure-aws-credentials for OIDC
+  contents: read
+  
+jobs:
+  distribute_xcframeworks:
+    # only run when Test & Publish succeeded
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          role-session-name: distribute-xcframeworks
+          aws-region: ${{ env.AWS_REGION }}
+      
+      - name: Extract VERSION from pubspec.yaml
+        id: extract_version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | head -1 | sed 's/version: *//')
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.27.2
+
+      - name: Clone Swift-PM Wrapper
+        env:
+          GIT_PAT: ${{ secrets.GIT_PAT }}
+        run: |
+          git clone \
+            https://x-access-token:${GIT_PAT}@github.com/${{ secrets.WRAPPER_REPO }}.git \
+            wrapper_repo
+            
+      - name: Distribute iOS XCFrameworks
+        env:
+          VERSION:        ${{ env.VERSION }}
+          AWS_S3_BUCKET:  ${{ secrets.AWS_S3_BUCKET }}
+          AWS_REGION:     ${{ secrets.AWS_REGION }}
+          AWS_DOMAIN:     ${{ secrets.AWS_DOMAIN }}
+          WRAPPER_REPO_DIR: wrapper_repo
+        run: |
+          bash scripts/xc_release.sh
