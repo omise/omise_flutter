@@ -25,9 +25,17 @@ jobs:
         run: flutter analyze
 
       - name: Run Tests
-        run: flutter test
+        run: |
+          flutter test --coverage
+          ls -l coverage/lcov.info
 
       - name: Analyze (Check if distributable for Flutter)
         run: |
           cd example/
           flutter analyze
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5.2.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
