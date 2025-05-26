@@ -17,6 +17,7 @@ class OmiseApiService {
   OmiseApiService({
     required String publicKey,
     bool? enableDebug,
+    Environment? environment,
   }) {
     // Initialize the OmiseApi instance with the provided public key
     // and other configurations.
@@ -24,7 +25,7 @@ class OmiseApiService {
         enableDebug: enableDebug,
         publicKey: publicKey,
         ignoreNullKeys: true, // Ignore null keys in requests
-
+        environment: environment,
         userAgent: getUserAgent()); // User agent for Flutter
   }
 

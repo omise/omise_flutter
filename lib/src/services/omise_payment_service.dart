@@ -17,6 +17,7 @@ class OmisePayment {
   final OmiseLocale? locale;
   final String publicKey;
   final bool? securePaymentFlag;
+  final Environment? environment;
 
   /// Creates an instance of [OmisePayment].
   ///
@@ -35,12 +36,14 @@ class OmisePayment {
     this.enableDebug = false,
     this.locale,
     this.securePaymentFlag = true,
+    this.environment,
   }) {
     // Initialize the OmiseApiService with the provided public key
     // and debug settings.
     omiseApiService = OmiseApiService(
       publicKey: publicKey,
       enableDebug: enableDebug,
+      environment: environment,
     );
     if (securePaymentFlag == true) {
       ScreenProtector.preventScreenshotOn();
