@@ -206,14 +206,24 @@ class CreditCardPaymentMethodState {
   final int nonAvsFields = 4;
 
   /// Gets the number of fields required based on the country.
-  int get numberOfFields =>
-      avsCountries.contains(CountryCode.fromCode(createTokenRequest.country))
-          ? avsFields
-          : nonAvsFields;
+  int get numberOfFields {
+    final baseFields =
+        avsCountries.contains(CountryCode.fromCode(createTokenRequest.country))
+            ? avsFields
+            : nonAvsFields;
+
+    return isLoanCard ? baseFields - 2 : baseFields;
+  }
 
   /// Determines whether to show address fields based on the country.
   bool get shouldShowAddressFields =>
       avsCountries.contains(CountryCode.fromCode(createTokenRequest.country));
+
+  bool get isLoanCard {
+    final bins = const String.fromEnvironment("LOAN_CARD_BIN").split(',');
+    return bins
+        .any((bin) => createTokenRequest.number?.startsWith(bin) ?? false);
+  }
 
   /// Checks if the form is valid based on text field validity statuses.
   bool get isFormValid =>
