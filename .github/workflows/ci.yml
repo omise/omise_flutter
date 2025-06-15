@@ -8,6 +8,8 @@ jobs:
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # required for SonarCloud
 
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
