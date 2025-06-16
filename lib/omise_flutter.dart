@@ -13,4 +13,6 @@ export 'package:omise_dart/omise_dart.dart'
         BankCode,
         TokenizationMethod,
         TokenizationMethodExtension,
-        Item;
+        Item,
+        Environment,
+        EnvironmentExtension;

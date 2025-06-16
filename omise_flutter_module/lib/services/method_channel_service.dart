@@ -53,6 +53,7 @@ class MethodChannelService {
                 .map((e) => Item.fromJson(Map<String, dynamic>.from(e)))
                 .toList()
             : null,
+        environment: EnvironmentExtension.fromString(parsedArgs['environment']),
       );
     });
   }
