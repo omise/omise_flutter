@@ -34,8 +34,10 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
     final methodName = methodChannelController.value.methodName;
     switch (methodName) {
       case MethodNames.selectPaymentMethod:
-        final OmisePayment omisePayment =
-            OmisePayment(publicKey: methodChannelController.value.pkey!);
+        final OmisePayment omisePayment = OmisePayment(
+          publicKey: methodChannelController.value.pkey!,
+          environment: methodChannelController.value.environment,
+        );
 
         return omisePayment.selectPaymentMethod(
           amount: methodChannelController.value.amount!,
@@ -69,8 +71,10 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
         );
 
       case MethodNames.openGooglePay:
-        final OmisePayment omisePayment =
-            OmisePayment(publicKey: methodChannelController.value.pkey!);
+        final OmisePayment omisePayment = OmisePayment(
+          publicKey: methodChannelController.value.pkey!,
+          environment: methodChannelController.value.environment,
+        );
         return omisePayment.buildGooglePayPage(
           amount: methodChannelController.value.amount!,
           currency: methodChannelController.value.currency!,
@@ -89,8 +93,10 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
               '${methodChannelController.value.methodName!.name}Result',
         );
       case MethodNames.openCardPage:
-        final OmisePayment omisePayment =
-            OmisePayment(publicKey: methodChannelController.value.pkey!);
+        final OmisePayment omisePayment = OmisePayment(
+          publicKey: methodChannelController.value.pkey!,
+          environment: methodChannelController.value.environment,
+        );
         return omisePayment.buildCardPage(
           nativeResultMethodName:
               '${methodChannelController.value.methodName!.name}Result',
@@ -98,8 +104,10 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
 
       // Not used in our native SDKs as we support Netcetera in native but flutter does not support it(No Netcetera package yet).
       case MethodNames.authorizePayment:
-        final OmisePayment omisePayment =
-            OmisePayment(publicKey: methodChannelController.value.pkey!);
+        final OmisePayment omisePayment = OmisePayment(
+          publicKey: methodChannelController.value.pkey!,
+          environment: methodChannelController.value.environment,
+        );
         return omisePayment.authorizePayment(
           authorizeUri: Uri.parse(methodChannelController.value.authUrl!),
           expectedReturnUrls: methodChannelController.value.expectedReturnUrls,
