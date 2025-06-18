@@ -118,6 +118,13 @@ class _CreditCardPageState extends State<CreditCardPage> {
   }
 
   @override
+  void dispose() {
+    expiryDateTextController.dispose();
+    securityCodeTextController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
