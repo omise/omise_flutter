@@ -206,14 +206,26 @@ class CreditCardPaymentMethodState {
   final int nonAvsFields = 4;
 
   /// Gets the number of fields required based on the country.
-  int get numberOfFields =>
-      avsCountries.contains(CountryCode.fromCode(createTokenRequest.country))
-          ? avsFields
-          : nonAvsFields;
+  int get numberOfFields {
+    final baseFields =
+        avsCountries.contains(CountryCode.fromCode(createTokenRequest.country))
+            ? avsFields
+            : nonAvsFields;
+
+    return isLoanCard ? baseFields - 2 : baseFields;
+  }
 
   /// Determines whether to show address fields based on the country.
   bool get shouldShowAddressFields =>
       avsCountries.contains(CountryCode.fromCode(createTokenRequest.country));
+
+  bool get isLoanCard {
+    // The bins cannot be put into env as flutter packages are published as source code and not compiled
+    // so the merchant will have to configure the load card on runtime if not embedded as plain text.
+    final bins = ["478445", "478449"];
+    return bins
+        .any((bin) => createTokenRequest.number?.startsWith(bin) ?? false);
+  }
 
   /// Checks if the form is valid based on text field validity statuses.
   bool get isFormValid =>
