@@ -75,6 +75,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
           CreditCardController(
             omiseApiService: widget.omiseApiService,
           );
+  final expiryDateTextController = TextEditingController();
+  final securityCodeTextController = TextEditingController();
 
   @override
   void initState() {
@@ -113,6 +115,13 @@ class _CreditCardPageState extends State<CreditCardPage> {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    expiryDateTextController.dispose();
+    securityCodeTextController.dispose();
+    super.dispose();
   }
 
   @override
@@ -155,6 +164,18 @@ class _CreditCardPageState extends State<CreditCardPage> {
                   onChange: (cardNumber) {
                     var newState = state.copyWith();
                     newState.createTokenRequest.number = cardNumber;
+                    if (state.isLoanCard) {
+                      expiryDateTextController.text = '';
+                      securityCodeTextController.text = '';
+                      newState = state.copyWith();
+                      newState.createTokenRequest.expirationMonth = null;
+                      newState.createTokenRequest.expirationYear = null;
+                      newState.createTokenRequest.securityCode = null;
+                      newState.textFieldValidityStatuses
+                          .remove(ValidationType.cvv.name);
+                      newState.textFieldValidityStatuses
+                          .remove(ValidationType.expiryDate.name);
+                    }
                     creditCardController.updateState(newState);
                   },
                   updateValidationList: (fieldKey, isValid) {
@@ -195,12 +216,13 @@ class _CreditCardPageState extends State<CreditCardPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 12.0),
                         child: RoundedTextField(
+                          controller: expiryDateTextController,
                           hintText: Translations.get(
                               'hintExpiry', widget.locale, context),
                           title: Translations.get(
                               'expiryDate', widget.locale, context),
                           validationType: ValidationType.expiryDate,
-                          enabled: isFormEnabled,
+                          enabled: state.isLoanCard ? false : isFormEnabled,
                           inputFormatters: [ExpiryDateFormatter()],
                           useValidationTypeAsKey: true,
                           onChange: (expiryDate) {
@@ -217,10 +239,11 @@ class _CreditCardPageState extends State<CreditCardPage> {
                       child: Padding(
                         padding: const EdgeInsets.only(left: 12.0),
                         child: RoundedTextField(
+                          controller: securityCodeTextController,
                           title: Translations.get(
                               'securityCode', widget.locale, context),
                           validationType: ValidationType.cvv,
-                          enabled: isFormEnabled,
+                          enabled: state.isLoanCard ? false : isFormEnabled,
                           keyboardType: TextInputType.number,
                           obscureText: true,
                           useValidationTypeAsKey: true,
