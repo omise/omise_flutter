@@ -221,7 +221,7 @@ class CreditCardPaymentMethodState {
 
   bool get isLoanCard {
     // The bins cannot be put into env as flutter packages are published as source code and not compiled
-    // so the merchant will have to configure the load card on runtime if not embedded as plain text.
+    // so the merchant will have to configure the loan card on runtime if not embedded as plain text.
     final bins = ["478445", "478449"];
     return bins
         .any((bin) => createTokenRequest.number?.startsWith(bin) ?? false);

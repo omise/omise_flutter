@@ -395,7 +395,6 @@ void main() {
     // Find the TextFields
     final cardNumberField = find.byKey(const Key('cardNumber'));
     final expiryDateField = find.byKey(const Key('expiryDate'));
-    final cvvField = find.byKey(const Key('cvv'));
 
     // Type into the text fields
     await tester.enterText(cardNumberField, '4784451119188786');
