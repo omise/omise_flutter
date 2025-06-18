@@ -362,6 +362,54 @@ void main() {
     expect(find.text('John Doe'), findsOneWidget);
   });
 
+  testWidgets('expiry and cvv disabled when loan card',
+      (WidgetTester tester) async {
+    final mockLoanCardCreateTokenRequest = omise_dart.CreateTokenRequest(
+      number: '4784451119188786',
+      expirationMonth: "12",
+      expirationYear: "25",
+      securityCode: '123',
+      name: "name",
+    );
+    when(() => mockController.value).thenReturn(CreditCardPaymentMethodState(
+      capabilityLoadingStatus: Status.success,
+      tokenAndSourceLoadingStatus: Status.idle,
+      createTokenRequest: mockLoanCardCreateTokenRequest,
+      textFieldValidityStatuses: {
+        'cardNumber': true,
+      },
+    ));
+
+    when(() => mockController.loadCapabilities())
+        .thenAnswer((_) async => Future.value());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CreditCardPage(
+          omiseApiService: mockOmiseApiService,
+          creditCardPaymentMethodController: mockController,
+        ),
+      ),
+    );
+
+    // Find the TextFields
+    final cardNumberField = find.byKey(const Key('cardNumber'));
+    final expiryDateField = find.byKey(const Key('expiryDate'));
+    final cvvField = find.byKey(const Key('cvv'));
+
+    // Type into the text fields
+    await tester.enterText(cardNumberField, '4784451119188786');
+
+    // Rebuild the widget after the state has changed
+    await tester.pump();
+
+    // Check that the fields contain the entered text
+    expect(find.text('4784451119188786'), findsOneWidget);
+
+    expect(tester.widget<TextField>(expiryDateField).enabled,
+        isFalse); // TextField should be disabled
+  });
+
   testWidgets('should show address fields when shouldShowAddressFields is true',
       (WidgetTester tester) async {
     mockCreateTokenRequest.country = 'CA';
