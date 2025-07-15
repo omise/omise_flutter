@@ -1,6 +1,6 @@
 name: omise_flutter
 description: "A Flutter SDK that serves as an API wrapper with UI components for the Omise API"
-version: 0.2.0
+version: 0.3.0
 repository: https://github.com/omise/omise_flutter
 
 environment:

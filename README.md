@@ -33,7 +33,7 @@ To use the package, add it to your project by including the following in your `p
 
 ```yaml
 dependencies:
-  omise_flutter: ^0.2.0
+  omise_flutter: ^0.3.0
 ```
 
 Run:
