@@ -37,6 +37,8 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write # Required for authentication using OIDC
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v4
