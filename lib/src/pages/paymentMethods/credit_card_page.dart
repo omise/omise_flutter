@@ -131,6 +131,21 @@ class _CreditCardPageState extends State<CreditCardPage> {
         title: Text(Translations.get('card', widget.locale, context)),
         automaticallyImplyLeading: widget.automaticallyImplyLeading,
         centerTitle: false,
+        actions: [
+          if (!widget.automaticallyImplyLeading)
+            IconButton(
+              onPressed: () {
+                // Close the page when the 'X' icon is pressed
+                if (widget.nativeResultMethodName != null) {
+                  MethodChannelService.sendResultToNative(
+                      widget.nativeResultMethodName!, null);
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+              icon: const Icon(Icons.close),
+            )
+        ],
       ),
       body: ValueListenableBuilder(
         valueListenable: creditCardController,
