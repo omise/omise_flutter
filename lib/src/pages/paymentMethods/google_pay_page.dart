@@ -32,6 +32,9 @@ class GooglePayPage extends StatefulWidget {
   /// Allows passing an instance of the controller to facilitate testing.
   final GooglePayController? googlePayController;
 
+  /// A flag to control whether the leading icon in the AppBar is automatically implied.
+  final bool automaticallyImplyLeading;
+
   /// The custom locale passed by the merchant.
   final OmiseLocale? locale;
 
@@ -57,6 +60,7 @@ class GooglePayPage extends StatefulWidget {
     required this.requestPhoneNumber,
     required this.omiseApiService,
     this.googlePayController,
+    this.automaticallyImplyLeading = true,
     required this.currency,
     required this.amount,
     this.locale,
@@ -115,9 +119,25 @@ class _GooglePayPageState extends State<GooglePayPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: widget.automaticallyImplyLeading,
         title: Text(
           Translations.get('googlePay', OmiseLocale.en, context),
         ),
+        actions: [
+          if (!widget.automaticallyImplyLeading)
+            IconButton(
+              onPressed: () {
+                // Close the page when the 'X' icon is pressed
+                if (widget.nativeResultMethodName != null) {
+                  MethodChannelService.sendResultToNative(
+                      widget.nativeResultMethodName!, null);
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+              icon: const Icon(Icons.close),
+            )
+        ],
       ),
       body: ValueListenableBuilder(
           valueListenable: googlePayController,
