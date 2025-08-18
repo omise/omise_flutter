@@ -9,13 +9,13 @@ VERSION=$(grep '^version:' pubspec.yaml | head -1 | sed 's/version: *//')
 export VERSION
 echo "📌 Using version: ${VERSION}"
 
-source scripts/install_flutter.sh
+# source scripts/install_flutter.sh
 
 echo "🚀 Flutter version information:"
 flutter --version
 
-bash scripts/install_gh.sh
-bash scripts/install_envsubst.sh
+# bash scripts/install_gh.sh
+# bash scripts/install_envsubst.sh
 
 if [[ -d "${WRAPPER_REPO_DIR}" ]]; then
   echo "ℹ️  Removing existing ${WRAPPER_REPO_DIR} directory…"

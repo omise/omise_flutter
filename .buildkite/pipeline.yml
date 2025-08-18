@@ -1,8 +1,16 @@
+env:
+  AWS_ROLE_ARN: ${AWS_ROLE_ARN}
+
+agents:
+  - queue=omise
+  - macos-builder=true
+
 steps:
   - label: "Distribute iOS XCFrameworks"
-    if: build.tag != null
+    # if: build.tag != null
     agents:
-      queue: "macos"
+      queue=omise
+      macos-builder=true
 
     plugins:
       - aws-assume-role-with-web-identity#v1.4.0:
@@ -12,8 +20,8 @@ steps:
 
     env:
       AWS_S3_BUCKET: "${AWS_S3_BUCKET}"
-      AWS_REGION: "${AWS_REGION}"
-      AWS_DOMAIN: "${AWS_DOMAIN}"
+      AWS_REGION: "ap-southeast-1"
+      AWS_DOMAIN: "https://cdn.omise.co/"
       GIT_PAT: "${GIT_PAT}"
       WRAPPER_REPO: "${WRAPPER_REPO}"
       WRAPPER_REPO_DIR: "wrapper_repo"
