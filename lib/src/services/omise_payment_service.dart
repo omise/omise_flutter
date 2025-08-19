@@ -179,6 +179,7 @@ class OmisePayment {
       pkey: publicKey,
       itemDescription: googlePayItemDescription,
       nativeResultMethodName: nativeResultMethodName,
+      automaticallyImplyLeading: false,
     );
   }
 
@@ -198,6 +199,7 @@ class OmisePayment {
       omiseApiService: omiseApiService,
       locale: locale,
       nativeResultMethodName: nativeResultMethodName,
+      automaticallyImplyLeading: false,
     );
   }
 
