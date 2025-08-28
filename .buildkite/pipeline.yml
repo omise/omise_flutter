@@ -2,8 +2,7 @@ env:
   AWS_ROLE_ARN: ${AWS_ROLE_ARN}
 
 agents:
-  - "queue=omise"
-  - "macos-builder=true"
+  - "queue=omise-macos-builder"
 
 steps:
   - label: "Distribute iOS XCFrameworks"
