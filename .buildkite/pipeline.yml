@@ -1,5 +1,5 @@
 env:
-  AWS_ROLE_ARN: ${AWS_ROLE_ARN}
+  AWS_REGION: ap-southeast-1
 
 agents:
   - "queue=omise-macos-builder"
@@ -15,13 +15,9 @@ steps:
           region: "${AWS_REGION}"
 
     env:
-      AWS_S3_BUCKET: "${AWS_S3_BUCKET}"
       AWS_REGION: "ap-southeast-1"
       AWS_DOMAIN: "https://cdn.omise.co/"
-      GIT_PAT: "${GIT_PAT}"
-      WRAPPER_REPO: "${WRAPPER_REPO}"
       WRAPPER_REPO_DIR: "wrapper_repo"
-      AWS_ROLE_ARN: "${AWS_ROLE_ARN}"
 
     command: |
       set -euo pipefail
