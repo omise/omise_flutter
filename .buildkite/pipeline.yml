@@ -8,11 +8,11 @@ steps:
   - label: "Distribute iOS XCFrameworks"
     # if: build.tag != null
 
-    plugins:
-      - aws-assume-role-with-web-identity#v1.4.0:
-          role-arn: "${AWS_ROLE_ARN}"
-          role-session-name: "distribute-xcframeworks"
-          region: "${AWS_REGION}"
+    # plugins:
+    #   - aws-assume-role-with-web-identity#v1.4.0:
+    #       role-arn: "${AWS_ROLE_ARN}"
+    #       role-session-name: "distribute-xcframeworks"
+    #       region: "${AWS_REGION}"
 
     env:
       AWS_REGION: "ap-southeast-1"
@@ -21,4 +21,5 @@ steps:
 
     command: |
       set -euo pipefail
-      bash scripts/setup_and_distribute_ios.sh
+      echo AWS_ROLE_ARN=$AWS_ROLE_ARN
+      # bash scripts/setup_and_distribute_ios.sh
