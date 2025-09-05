@@ -1,6 +1,6 @@
 env:
   AWS_REGION: ap-southeast-1
-  BUILDKITE_PLUGIN_AWS_ASSUME_ROLE_WITH_WEB_IDENTITY_ROLE_ARN: ${AWS_ROLE_ARN}
+  AWS_ROLE_ARN: arn:aws:iam::920252280240:role/S3CDNBucketUploader
 
 agents:
   - "queue=omise-macos-builder"
@@ -11,7 +11,7 @@ steps:
 
     plugins:
       - aws-assume-role-with-web-identity#v1.4.0:
-          # role-arn: "$${AWS_ROLE_ARN}"
+          role-arn: "${AWS_ROLE_ARN}"
           role-session-name: "distribute-xcframeworks"
           region: "${AWS_REGION}"
 
