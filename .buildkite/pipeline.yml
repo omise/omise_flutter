@@ -2,6 +2,8 @@ env:
   AWS_REGION: ap-southeast-1
   AWS_ROLE_ARN: arn:aws:iam::920252280240:role/S3CDNBucketUploader
 
+  PLUGIN_AWS_ASSUME_ROLE: "ssh://git@github.com/OmisePayments/aws-assume-role-buildkite-plugin.git#v0.2.0"
+
 agents:
   - "queue=omise-macos-builder"
 
@@ -10,13 +12,11 @@ steps:
     # if: build.tag != null
 
     plugins:
-      - aws-assume-role-with-web-identity#v1.4.0:
-          role-arn: "${AWS_ROLE_ARN}"
-          role-session-name: "distribute-xcframeworks"
-          region: "${AWS_REGION}"
+      - ${PLUGIN_AWS_ASSUME_ROLE}:
+          role: ${AWS_ROLE_ARN}
+          region: ${AWS_REGION}
 
     env:
-      AWS_REGION: "ap-southeast-1"
       AWS_DOMAIN: "https://cdn.omise.co/"
       WRAPPER_REPO_DIR: "wrapper_repo"
 
