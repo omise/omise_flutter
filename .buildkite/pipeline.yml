@@ -22,5 +22,4 @@ steps:
 
     command: |
       set -euo pipefail
-      echo AWS_ROLE_ARN=$$AWS_ROLE_ARN
-      # bash scripts/setup_and_distribute_ios.sh
+      bash scripts/setup_and_distribute_ios.sh
