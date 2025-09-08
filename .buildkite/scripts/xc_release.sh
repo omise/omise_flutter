@@ -68,7 +68,7 @@ done
 
 # Update SPM
 echo "✍️  Updating Package.swift"
-TEMPLATE="$GITHUB_WORKSPACE/scripts/Package.swift.template"
+TEMPLATE="$GITHUB_WORKSPACE/.buildkite/scripts/Package.swift.template"
 OUTPUT="$GITHUB_WORKSPACE/$WRAPPER_REPO_DIR/Package.swift"
 
 library_targets=$(

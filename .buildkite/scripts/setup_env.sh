@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-LOCAL_ENV_FILE="scripts/env.local.sh"
+LOCAL_ENV_FILE=".buildkite/scripts/env.local.sh"
 if [[ -f "${LOCAL_ENV_FILE}" ]]; then
   echo "🔧 Loading local environment overrides from ${LOCAL_ENV_FILE}"
   # shellcheck disable=SC1090

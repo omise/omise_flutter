@@ -22,4 +22,4 @@ steps:
 
     command: |
       set -euo pipefail
-      bash scripts/setup_and_distribute_ios.sh
+      bash .buildkite/scripts/setup_and_distribute_ios.sh
