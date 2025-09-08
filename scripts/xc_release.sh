@@ -103,15 +103,17 @@ git config user.email "actions@github.com"
 git add Package.swift
 
 if ! git diff --cached --quiet; then
-  git commit -m "release omise_flutter_spm $VERSION"
-  git tag    "$VERSION" -m "$VERSION"
-  git push origin HEAD:main
-  git push origin "$VERSION"
+  # git commit -m "release omise_flutter_spm $VERSION"
+  # git tag    "$VERSION" -m "$VERSION"
+  # git push origin HEAD:main
+  # git push origin "$VERSION"
   echo "✅  Distribution complete — wrapper tagged $VERSION"
   
   echo "🏷️  Creating GitHub Release $VERSION"
   # Requires GH CLI authenticated or GITHUB_TOKEN set
   if command -v gh >/dev/null 2>&1; then
+    echo "!!! GH_TOKEN"
+    echo $GH_TOKEN | cut -c 1-2
    gh release create "$VERSION" \
     --title "v$VERSION" \
     --notes "Automated release for v$VERSION"
