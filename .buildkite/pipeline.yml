@@ -19,6 +19,7 @@ steps:
     env:
       AWS_DOMAIN: "https://cdn.omise.co/"
       WRAPPER_REPO_DIR: "wrapper_repo"
+      GH_TOKEN: $$GIT_PAT
 
     command: |
       set -euo pipefail
