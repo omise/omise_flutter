@@ -114,11 +114,7 @@ if ! git diff --cached --quiet; then
   if command -v gh >/dev/null 2>&1; then
     echo "!!! GIT_PAT"
     echo $GIT_PAT | cut -c 1-2
-    echo "!!! GH_TOKEN"
-    echo $GH_TOKEN | cut -c 1-2
     export GH_TOKEN=$GIT_PAT
-    echo "!!! GIT_PAT"
-    echo $GIT_PAT | cut -c 1-2
     echo "!!! GH_TOKEN"
     echo $GH_TOKEN | cut -c 1-2
    gh release create "$VERSION" \
