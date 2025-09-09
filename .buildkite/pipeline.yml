@@ -9,7 +9,7 @@ agents:
 
 steps:
   - label: "Distribute iOS XCFrameworks"
-    if: build.tag != null
+    # if: build.tag != null
 
     plugins:
       - ${PLUGIN_AWS_ASSUME_ROLE}:
