@@ -18,7 +18,14 @@ if [[ -d "${WRAPPER_REPO_DIR}" ]]; then
 fi
 
 echo "🐙 Cloning Swift‑PM wrapper repository…"
-git clone "https://x-access-token:${GIT_PAT}@github.com/${WRAPPER_REPO}.git" "${WRAPPER_REPO_DIR}"
+# Set up a temporary git credentials file to avoid exposing the token in process lists
+GIT_CREDENTIALS_FILE=$(mktemp)
+echo "https://x-access-token:${GIT_PAT}@github.com" > "$GIT_CREDENTIALS_FILE"
+git config --global credential.helper "store --file=$GIT_CREDENTIALS_FILE"
+git clone "https://github.com/${WRAPPER_REPO}.git" "${WRAPPER_REPO_DIR}"
+# Clean up credentials after clone
+git config --global --unset credential.helper
+rm -f "$GIT_CREDENTIALS_FILE"
 
 echo "🏗️  Building and distributing XCFrameworks…"
 bash .buildkite/scripts/xc_release.sh

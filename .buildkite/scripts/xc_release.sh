@@ -112,7 +112,7 @@ if ! git diff --cached --quiet; then
   echo "🏷️  Creating GitHub Release $VERSION"
   # Requires GH CLI authenticated or GITHUB_TOKEN set
   if command -v gh >/dev/null 2>&1; then
-    export GH_TOKEN=$GIT_PAT
+    export GH_TOKEN="$GIT_PAT"
     gh release create "$VERSION" \
       --title "v$VERSION" \
       --notes "Automated release for v$VERSION"
