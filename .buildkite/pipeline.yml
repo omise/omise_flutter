@@ -1,0 +1,25 @@
+env:
+  AWS_REGION: ap-southeast-1
+  AWS_ROLE_ARN: arn:aws:iam::920252280240:role/S3CDNBucketUploader
+
+  PLUGIN_AWS_ASSUME_ROLE: "ssh://git@github.com/OmisePayments/aws-assume-role-buildkite-plugin.git#v0.2.0"
+
+agents:
+  - "queue=omise-macos-builder"
+
+steps:
+  - label: "Distribute iOS XCFrameworks"
+    if: build.tag != null
+
+    plugins:
+      - ${PLUGIN_AWS_ASSUME_ROLE}:
+          role: ${AWS_ROLE_ARN}
+          region: ${AWS_REGION}
+
+    env:
+      AWS_DOMAIN: "https://cdn.omise.co"
+      WRAPPER_REPO_DIR: "wrapper_repo"
+
+    command: |
+      set -euo pipefail
+      bash .buildkite/scripts/setup_and_distribute_ios.sh
