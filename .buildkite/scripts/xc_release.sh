@@ -100,6 +100,12 @@ envsubst < "$TEMPLATE" > "$OUTPUT"
 cd "$GITHUB_WORKSPACE/$WRAPPER_REPO_DIR"
 git config user.name  "github-actions"
 git config user.email "actions@github.com"
+
+# Set up git credentials for push operations
+GIT_CREDENTIALS_FILE=$(mktemp)
+echo "https://x-access-token:${GIT_PAT}@github.com" > "$GIT_CREDENTIALS_FILE"
+git config --global credential.helper "store --file=$GIT_CREDENTIALS_FILE"
+
 git add Package.swift
 
 if ! git diff --cached --quiet; then
@@ -122,3 +128,7 @@ if ! git diff --cached --quiet; then
 else
   echo "ℹ️  No changes in Package.swift; skipping commit/tag."
 fi
+
+# Clean up credentials
+git config --global --unset credential.helper
+rm -f "$GIT_CREDENTIALS_FILE"
