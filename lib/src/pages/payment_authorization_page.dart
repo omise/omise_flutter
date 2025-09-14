@@ -60,69 +60,76 @@ class _PaymentAuthorizationPageState extends State<PaymentAuthorizationPage> {
     // Initialize the payment authorization controller, or use the provided one.
     paymentAuthorizationController = widget.paymentAuthorizationController ??
         PaymentAuthorizationController(enableDebug: widget.enableDebug);
-
     // Update the controller's state to include expected return URLs.
-    paymentAuthorizationController.updateState(paymentAuthorizationController
-        .value
-        .copyWith(expectedReturnUrls: widget.expectedReturnUrls));
+    paymentAuthorizationController.updateState(
+        paymentAuthorizationController.value.copyWith(
+            expectedReturnUrls: widget.expectedReturnUrls,
+            authorizeUri: widget.authorizeUri));
 
-    // Set up the WebView controller with initial settings and navigation handling.
-    webViewController = widget.customWebViewController ?? WebViewController()
-      ..setBackgroundColor(Colors.white)
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          // Handles navigation requests within the WebView.
-          onNavigationRequest: (NavigationRequest request) {
-            paymentAuthorizationController.updateState(
-                paymentAuthorizationController.value
-                    .copyWith(currentWebViewUrl: request.url));
+    if (paymentAuthorizationController.value.isPassKeyUrl) {
+      // open external browser app
+      paymentAuthorizationController.openInExternalBrowser();
+      // close the auth page
+      Navigator.pop(context);
+    } else {
+      // Set up the WebView controller with initial settings and navigation handling.
+      webViewController = widget.customWebViewController ?? WebViewController()
+        ..setBackgroundColor(Colors.white)
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            // Handles navigation requests within the WebView.
+            onNavigationRequest: (NavigationRequest request) {
+              paymentAuthorizationController.updateState(
+                  paymentAuthorizationController.value
+                      .copyWith(currentWebViewUrl: request.url));
 
-            // Detect if the URL matches an expected return URL and close the WebView if it does.
-            if (paymentAuthorizationController.value.isReturnUrl) {
-              Navigator.of(context)
-                  .pop(OmiseAuthorizationResult(isWebViewAuthorized: true));
-              // do not prevent the navigation on iOS as it will cause an error
-              if (!Platform.isIOS) {
+              // Detect if the URL matches an expected return URL and close the WebView if it does.
+              if (paymentAuthorizationController.value.isReturnUrl) {
+                Navigator.of(context)
+                    .pop(OmiseAuthorizationResult(isWebViewAuthorized: true));
+                // do not prevent the navigation on iOS as it will cause an error
+                if (!Platform.isIOS) {
+                  return NavigationDecision.prevent;
+                }
+              }
+
+              // Check if the URL is external and open it outside the WebView if true.
+              if (paymentAuthorizationController.value.isExternalURL) {
+                paymentAuthorizationController.openDeepLink();
                 return NavigationDecision.prevent;
               }
-            }
 
-            // Check if the URL is external and open it outside the WebView if true.
-            if (paymentAuthorizationController.value.isExternalURL) {
-              paymentAuthorizationController.openDeepLink();
-              return NavigationDecision.prevent;
-            }
-
-            // Allow WebView to navigate to the requested URL.
-            return NavigationDecision.navigate;
-          },
-          // Updates loading status when a new page starts loading.
-          onPageStarted: (_) {
-            paymentAuthorizationController.updateState(
-                paymentAuthorizationController.value
-                    .copyWith(webViewLoadingStatus: Status.loading));
-          },
-          // Updates loading status when a page finishes loading.
-          onPageFinished: (_) {
-            paymentAuthorizationController.updateState(
-                paymentAuthorizationController.value
-                    .copyWith(webViewLoadingStatus: Status.success));
-          },
-          // Handles any WebView resource errors.
-          onWebResourceError: (WebResourceError error) {
-            if (widget.enableDebug == true) {
-              log("Omise webview error", error: error.description);
-            }
-            paymentAuthorizationController.updateState(
-                paymentAuthorizationController.value.copyWith(
-                    webViewLoadingStatus: Status.error,
-                    currentWebViewUrl: error.description));
-          },
-        ),
-      )
-      // Load the initial authorization URL.
-      ..loadRequest(widget.authorizeUri);
+              // Allow WebView to navigate to the requested URL.
+              return NavigationDecision.navigate;
+            },
+            // Updates loading status when a new page starts loading.
+            onPageStarted: (_) {
+              paymentAuthorizationController.updateState(
+                  paymentAuthorizationController.value
+                      .copyWith(webViewLoadingStatus: Status.loading));
+            },
+            // Updates loading status when a page finishes loading.
+            onPageFinished: (_) {
+              paymentAuthorizationController.updateState(
+                  paymentAuthorizationController.value
+                      .copyWith(webViewLoadingStatus: Status.success));
+            },
+            // Handles any WebView resource errors.
+            onWebResourceError: (WebResourceError error) {
+              if (widget.enableDebug == true) {
+                log("Omise webview error", error: error.description);
+              }
+              paymentAuthorizationController.updateState(
+                  paymentAuthorizationController.value.copyWith(
+                      webViewLoadingStatus: Status.error,
+                      currentWebViewUrl: error.description));
+            },
+          ),
+        )
+        // Load the initial authorization URL.
+        ..loadRequest(widget.authorizeUri);
+    }
   }
 
   @override
@@ -149,7 +156,8 @@ class _PaymentAuthorizationPageState extends State<PaymentAuthorizationPage> {
         body: Stack(
           children: [
             // Display the WebView within the page.
-            WebViewWidget(controller: webViewController),
+            if (!paymentAuthorizationController.value.isPassKeyUrl)
+              WebViewWidget(controller: webViewController),
             // Show a loading indicator based on the WebView loading status.
             ValueListenableBuilder(
                 valueListenable: paymentAuthorizationController,

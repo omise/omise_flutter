@@ -77,3 +77,14 @@ extension OmiseLocaleFromLocaleExtension on OmiseLocale {
     );
   }
 }
+
+enum CardHolderData { email, phoneNumber, unknown }
+
+extension CardHolderDataExtension on CardHolderData {
+  static CardHolderData fromString(String? cardHolderData) {
+    return CardHolderData.values.firstWhere(
+      (method) => method.name.toLowerCase() == cardHolderData?.toLowerCase(),
+      orElse: () => CardHolderData.unknown,
+    );
+  }
+}

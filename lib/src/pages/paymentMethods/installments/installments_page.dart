@@ -30,6 +30,9 @@ class InstallmentsPage extends StatefulWidget {
   /// The function name that is communicated through channels methods for native integrations.
   final String? nativeResultMethodName;
 
+  ///
+  final List<CardHolderData>? cardHolderData;
+
   const InstallmentsPage({
     super.key,
     required this.installmentPaymentMethods,
@@ -39,6 +42,7 @@ class InstallmentsPage extends StatefulWidget {
     required this.capability,
     this.locale,
     this.nativeResultMethodName,
+    this.cardHolderData,
   });
 
   @override
@@ -127,6 +131,7 @@ class _InstallmentsPageState extends State<InstallmentsPage> {
                                         capability: widget.capability,
                                         nativeResultMethodName:
                                             widget.nativeResultMethodName,
+                                        cardHolderData: widget.cardHolderData,
                                       )),
                             );
                           },

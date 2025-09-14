@@ -36,6 +36,7 @@ void main() {
     flow: 'redirect',
     createdAt: DateTime.now(),
   );
+  final cardHolderData = [CardHolderData.email, CardHolderData.phoneNumber];
 
   group('InstallmentsController', () {
     test('setSourceCreationParams updates state correctly', () {
@@ -44,12 +45,12 @@ void main() {
       );
       when(() => mockCapability.zeroInterestInstallments).thenReturn(false);
       controller.setSourceCreationParams(
-        amount: amount,
-        currency: currency,
-        paymentMethod: paymentMethod,
-        capability: mockCapability,
-        terms: terms,
-      );
+          amount: amount,
+          currency: currency,
+          paymentMethod: paymentMethod,
+          capability: mockCapability,
+          terms: terms,
+          cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
 
       expect(controller.value.amount, amount);
       expect(controller.value.currency, currency);
@@ -71,6 +72,7 @@ void main() {
         paymentMethod: paymentMethod,
         capability: mockCapability,
         terms: terms,
+        cardHolderData: cardHolderData,
       );
 
       var changes = <InstallmentsPageState>[];
@@ -97,12 +99,12 @@ void main() {
       );
 
       controller.setSourceCreationParams(
-        amount: amount,
-        currency: currency,
-        paymentMethod: paymentMethod,
-        capability: mockCapability,
-        terms: terms,
-      );
+          amount: amount,
+          currency: currency,
+          paymentMethod: paymentMethod,
+          capability: mockCapability,
+          terms: terms,
+          cardHolderData: cardHolderData);
 
       var changes = <InstallmentsPageState>[];
       controller.addListener(() {

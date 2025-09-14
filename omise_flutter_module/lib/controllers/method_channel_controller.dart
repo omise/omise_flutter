@@ -29,6 +29,7 @@ class MethodChannelController extends ValueNotifier<MethodChannelState> {
     List<String>? applePayCardBrands,
     String? applePayItemDescription,
     List<Item>? atomeItems,
+    List<CardHolderData>? cardHolderData,
     final Environment? environment,
   }) {
     _setValue(value.copyWith(
@@ -54,6 +55,7 @@ class MethodChannelController extends ValueNotifier<MethodChannelState> {
       applePayCardBrands: applePayCardBrands,
       applePayItemDescription: applePayItemDescription,
       atomeItems: atomeItems,
+      cardHolderData: cardHolderData,
       environment: environment,
     ));
   }
@@ -127,6 +129,9 @@ class MethodChannelState {
   /// The atome list of items.
   final List<Item>? atomeItems;
 
+  ///
+  final List<CardHolderData>? cardHolderData;
+
   /// The environment of the api
   final Environment? environment;
 
@@ -152,6 +157,7 @@ class MethodChannelState {
     this.applePayCardBrands,
     this.applePayItemDescription,
     this.atomeItems,
+    this.cardHolderData,
     this.environment,
   });
 
@@ -178,6 +184,7 @@ class MethodChannelState {
     List<String>? applePayCardBrands,
     String? applePayItemDescription,
     List<Item>? atomeItems,
+    List<CardHolderData>? cardHolderData,
     final Environment? environment,
   }) {
     return MethodChannelState(
@@ -211,6 +218,7 @@ class MethodChannelState {
       applePayItemDescription:
           applePayItemDescription ?? this.applePayItemDescription,
       atomeItems: atomeItems ?? this.atomeItems,
+      cardHolderData: cardHolderData ?? this.cardHolderData,
       environment: environment ?? this.environment,
     );
   }

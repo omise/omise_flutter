@@ -76,6 +76,10 @@ class CreditCardController extends ValueNotifier<CreditCardPaymentMethodState> {
         term: term));
   }
 
+  void setCardHolderData({List<CardHolderData>? cardHolderData}) {
+    _setValue(value.copyWith(cardHolderData: cardHolderData));
+  }
+
   /// Creates a token and a source based on the collected data from the user.
   Future<void> createSourceAndToken() async {
     try {
@@ -138,9 +142,14 @@ class CreditCardController extends ValueNotifier<CreditCardPaymentMethodState> {
   ///
   /// Accepts a [key] representing the text field and a [validField]
   /// indicating whether the field is valid or not.
-  void setTextFieldValidityStatuses(String key, bool validField) {
+  void setTextFieldValidityStatuses(String key, bool validField,
+      {String? keyValue}) {
     var newMap = value.textFieldValidityStatuses;
     newMap[key] = validField;
+    if (CardHolderData.values.contains(key) &&
+        (keyValue == null || keyValue.isEmpty)) {
+      newMap.remove(key);
+    }
     var newState = value.copyWith(textFieldValidityStatuses: newMap);
     _setValue(newState);
   }
@@ -194,6 +203,9 @@ class CreditCardPaymentMethodState {
   /// Request object to create a token.
   CreateTokenRequest createTokenRequest;
 
+  /// The CardHolderData to support the passkey flow
+  List<CardHolderData>? cardHolderData;
+
   /// List of countries that support AVS (Address Verification Service).
   final avsCountries = [
     CountryCode.fromCode("US")!,
@@ -212,7 +224,9 @@ class CreditCardPaymentMethodState {
             ? avsFields
             : nonAvsFields;
 
-    return isLoanCard ? baseFields - 2 : baseFields;
+    return (isLoanCard ? baseFields - 2 : baseFields) +
+        (createTokenRequest.email != null ? 1 : 0) +
+        (createTokenRequest.phoneNumber != null ? 1 : 0);
   }
 
   /// Determines whether to show address fields based on the country.
@@ -248,6 +262,7 @@ class CreditCardPaymentMethodState {
     this.amount,
     this.term,
     this.source,
+    this.cardHolderData,
   });
 
   /// Creates a copy of the current state while allowing overriding of specific fields.
@@ -265,6 +280,7 @@ class CreditCardPaymentMethodState {
     int? amount,
     int? term,
     Source? source,
+    List<CardHolderData>? cardHolderData,
   }) {
     return CreditCardPaymentMethodState(
       capabilityLoadingStatus:
@@ -285,6 +301,7 @@ class CreditCardPaymentMethodState {
       paymentMethod: paymentMethod ?? this.paymentMethod,
       term: term ?? this.term,
       source: source ?? this.source,
+      cardHolderData: cardHolderData ?? this.cardHolderData,
     );
   }
 }
