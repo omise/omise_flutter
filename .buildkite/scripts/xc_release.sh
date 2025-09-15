@@ -68,7 +68,7 @@ done
 
 # Update SPM
 echo "✍️  Updating Package.swift"
-TEMPLATE="$GITHUB_WORKSPACE/scripts/Package.swift.template"
+TEMPLATE="$GITHUB_WORKSPACE/.buildkite/scripts/Package.swift.template"
 OUTPUT="$GITHUB_WORKSPACE/$WRAPPER_REPO_DIR/Package.swift"
 
 library_targets=$(
@@ -100,6 +100,12 @@ envsubst < "$TEMPLATE" > "$OUTPUT"
 cd "$GITHUB_WORKSPACE/$WRAPPER_REPO_DIR"
 git config user.name  "github-actions"
 git config user.email "actions@github.com"
+
+# Set up git credentials for push operations
+GIT_CREDENTIALS_FILE=$(mktemp)
+echo "https://x-access-token:${GIT_PAT}@github.com" > "$GIT_CREDENTIALS_FILE"
+git config --global credential.helper "store --file=$GIT_CREDENTIALS_FILE"
+
 git add Package.swift
 
 if ! git diff --cached --quiet; then
@@ -112,12 +118,17 @@ if ! git diff --cached --quiet; then
   echo "🏷️  Creating GitHub Release $VERSION"
   # Requires GH CLI authenticated or GITHUB_TOKEN set
   if command -v gh >/dev/null 2>&1; then
-   gh release create "$VERSION" \
-    --title "v$VERSION" \
-    --notes "Automated release for v$VERSION"
+    export GH_TOKEN="$GIT_PAT"
+    gh release create "$VERSION" \
+      --title "v$VERSION" \
+      --notes "Automated release for v$VERSION"
   else
-   echo "⚠️  GitHub CLI (gh) not installed; skipping release creation"
+    echo "⚠️  GitHub CLI (gh) not installed; skipping release creation"
   fi
 else
   echo "ℹ️  No changes in Package.swift; skipping commit/tag."
 fi
+
+# Clean up credentials
+git config --global --unset credential.helper
+rm -f "$GIT_CREDENTIALS_FILE"
