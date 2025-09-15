@@ -170,7 +170,7 @@ void main() {
 
       // Now remove it by passing null/empty value
       controller.setTextFieldValidityStatuses('email', true, keyValue: null);
-      expect(!controller.value.textFieldValidityStatuses.containsKey('email'),
+      expect(controller.value.textFieldValidityStatuses.containsKey('email'),
           false);
 
       // Test with empty string
@@ -183,8 +183,7 @@ void main() {
       controller.setTextFieldValidityStatuses('phoneNumber', true,
           keyValue: '');
       expect(
-          !controller.value.textFieldValidityStatuses
-              .containsKey('phoneNumber'),
+          controller.value.textFieldValidityStatuses.containsKey('phoneNumber'),
           false);
     });
 
@@ -242,8 +241,10 @@ void main() {
       controller.setTextFieldValidityStatuses('expiryDate', true);
       controller.setTextFieldValidityStatuses('cvv', true);
       controller.setTextFieldValidityStatuses('name', true);
-      controller.setTextFieldValidityStatuses('email', true);
-      controller.setTextFieldValidityStatuses('phoneNumber', true);
+      controller.setTextFieldValidityStatuses('email', true,
+          keyValue: "test@example.com");
+      controller.setTextFieldValidityStatuses('phoneNumber', true,
+          keyValue: "1234567890");
 
       expect(controller.value.isFormValid, true);
     });

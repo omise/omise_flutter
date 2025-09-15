@@ -146,8 +146,9 @@ class CreditCardController extends ValueNotifier<CreditCardPaymentMethodState> {
       {String? keyValue}) {
     var newMap = value.textFieldValidityStatuses;
     newMap[key] = validField;
-    if (CardHolderData.values
-            .contains(CardHolderDataExtension.fromString(key)) &&
+    final cardHolderValues = CardHolderData.values.toList();
+    cardHolderValues.remove(CardHolderData.unknown);
+    if (cardHolderValues.contains(CardHolderDataExtension.fromString(key)) &&
         (keyValue == null || keyValue.isEmpty)) {
       newMap.remove(key);
     }
