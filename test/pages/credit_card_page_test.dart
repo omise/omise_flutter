@@ -316,8 +316,7 @@ void main() {
       await tester.pump();
       final payButton = find.byType(ElevatedButton);
       expect(payButton, findsOneWidget);
-      expect(tester.widget<ElevatedButton>(payButton).enabled,
-          isFalse); // Button should be enabled
+      expect(tester.widget<ElevatedButton>(payButton).enabled, isFalse);
     });
     testWidgets('Pay button click disables fields and button',
         (WidgetTester tester) async {
