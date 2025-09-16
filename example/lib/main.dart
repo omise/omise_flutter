@@ -140,7 +140,7 @@ class _MyHomePageState extends State<MyHomePage> {
       MaterialPageRoute(
           builder: (context) => omisePayment.authorizePayment(
                 authorizeUri: Uri.parse(
-                    "https://passkeys-demo.appspot.com/reauth?signature=33333sedd"), // Replace with actual authorization URL
+                    "https://yourAuthUri"), // Replace with actual authorization URL
                 expectedReturnUrls: [
                   "https://www.example.com/complete"
                 ], // Expected return URL after authorization
