@@ -30,7 +30,7 @@ class InstallmentsPage extends StatefulWidget {
   /// The function name that is communicated through channels methods for native integrations.
   final String? nativeResultMethodName;
 
-  ///
+  /// Stores information about the cardholder required for passkey-based authentication flows.
   final List<CardHolderData>? cardHolderData;
 
   const InstallmentsPage({

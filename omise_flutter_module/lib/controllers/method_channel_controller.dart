@@ -129,7 +129,7 @@ class MethodChannelState {
   /// The atome list of items.
   final List<Item>? atomeItems;
 
-  ///
+  /// Stores information about the cardholder required for passkey-based authentication flows.
   final List<CardHolderData>? cardHolderData;
 
   /// The environment of the api

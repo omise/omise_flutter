@@ -53,7 +53,7 @@ class PaymentAuthorizationController
     }
   }
 
-  /// Opens the [currentWebViewUrl] in the external browser (default browser).
+  /// Opens the [authorizeUri] in the external browser (default browser).
   Future<void> openInExternalBrowser() async {
     try {
       final uri = value.authorizeUri!;
@@ -61,8 +61,8 @@ class PaymentAuthorizationController
     } catch (e, stack) {
       if (enableDebug == true) {
         log("Unable to open external browser",
-            error: jsonEncode(
-                {"error": e.toString(), "url": value.currentWebViewUrl}),
+            error:
+                jsonEncode({"error": e.toString(), "url": value.authorizeUri}),
             stackTrace: stack);
       }
     }

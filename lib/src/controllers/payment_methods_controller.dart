@@ -686,7 +686,7 @@ class PaymentMethodsState {
   /// The atome list of items.
   final List<Item>? atomeItems;
 
-  ///
+  /// Stores information about the cardholder required for passkey-based authentication flows.
   List<CardHolderData>? cardHolderData;
 
   /// Constructor for creating a [PaymentMethodsState].

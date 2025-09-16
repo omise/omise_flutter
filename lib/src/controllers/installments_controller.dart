@@ -178,7 +178,7 @@ class InstallmentsPageState {
   /// The capability to pass to the credit card page
   final Capability? capability;
 
-  ///
+  /// Stores information about the cardholder required for passkey-based authentication flows.
   final List<CardHolderData>? cardHolderData;
 
   /// Constructor for creating a [InstallmentsPageState].
