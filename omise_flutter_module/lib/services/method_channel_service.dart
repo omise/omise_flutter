@@ -54,6 +54,9 @@ class MethodChannelService {
                 .toList()
             : null,
         environment: EnvironmentExtension.fromString(parsedArgs['environment']),
+        cardHolderData: (parsedArgs['cardHolderData'] as List?)
+            ?.map((e) => CardHolderDataExtension.fromString(e))
+            .toList(),
       );
     });
   }

@@ -48,6 +48,9 @@ class CreditCardPage extends StatefulWidget {
   /// The function name that is communicated through channels methods for native integrations.
   final String? nativeResultMethodName;
 
+  /// Stores information about the cardholder required for passkey-based authentication flows.
+  final List<CardHolderData>? cardHolderData;
+
   const CreditCardPage({
     super.key,
     this.automaticallyImplyLeading = true,
@@ -60,6 +63,7 @@ class CreditCardPage extends StatefulWidget {
     this.amount,
     this.term,
     this.nativeResultMethodName,
+    this.cardHolderData,
   });
 
   @override
@@ -87,6 +91,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
         currency: widget.currency,
         paymentMethod: widget.paymentMethod,
         term: widget.term);
+    creditCardController.setCardHolderData(
+        cardHolderData: widget.cardHolderData);
 
     // Load capabilities and set up listeners for token loading status.
     creditCardController.loadCapabilities(capability: widget.capability);
@@ -327,7 +333,52 @@ class _CreditCardPageState extends State<CreditCardPage> {
                   ),
                 ),
               ),
-
+              if (state.cardHolderData?.contains(CardHolderData.email) == true)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: RoundedTextField(
+                    key: Key(ValidationType.email.name),
+                    enabled: isFormEnabled,
+                    isOptional: true,
+                    title: Translations.get('email', widget.locale, context),
+                    validationType: ValidationType.email,
+                    keyboardType: TextInputType.emailAddress,
+                    onChange: (email) {
+                      var newState = state.copyWith();
+                      newState.createTokenRequest.email =
+                          email.isEmpty ? null : email;
+                      creditCardController.updateState(newState);
+                    },
+                    updateValidationList: (fieldKey, isValid) {
+                      creditCardController.setTextFieldValidityStatuses(
+                          fieldKey, isValid,
+                          keyValue: state.createTokenRequest.email);
+                    },
+                  ),
+                ),
+              if (state.cardHolderData?.contains(CardHolderData.phoneNumber) ==
+                  true)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 20.0),
+                  child: RoundedTextField(
+                    key: Key(ValidationType.phoneNumber.name),
+                    enabled: isFormEnabled,
+                    title: Translations.get('phone', widget.locale, context),
+                    validationType: ValidationType.phoneNumber,
+                    keyboardType: TextInputType.phone,
+                    onChange: (phoneNumber) {
+                      var newState = state.copyWith();
+                      newState.createTokenRequest.phoneNumber =
+                          phoneNumber.isEmpty ? null : phoneNumber;
+                      creditCardController.updateState(newState);
+                    },
+                    updateValidationList: (fieldKey, isValid) {
+                      creditCardController.setTextFieldValidityStatuses(
+                          fieldKey, isValid,
+                          keyValue: state.createTokenRequest.phoneNumber);
+                    },
+                  ),
+                ),
               // Conditional Address Fields
               if (state.shouldShowAddressFields)
                 Column(

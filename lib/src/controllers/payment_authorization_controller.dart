@@ -52,6 +52,21 @@ class PaymentAuthorizationController
       }
     }
   }
+
+  /// Opens the [authorizeUri] in the external browser (default browser).
+  Future<void> openInExternalBrowser() async {
+    try {
+      final uri = value.authorizeUri!;
+      await launchUrlFunction(uri, mode: LaunchMode.externalApplication);
+    } catch (e, stack) {
+      if (enableDebug == true) {
+        log("Unable to open external browser",
+            error:
+                jsonEncode({"error": e.toString(), "url": value.authorizeUri}),
+            stackTrace: stack);
+      }
+    }
+  }
 }
 
 /// [PaymentAuthorizationState] represents the state of the payment authorization
@@ -71,6 +86,8 @@ class PaymentAuthorizationState {
 
   /// Indicates whether debugging logs are enabled.
   final bool enableDebug;
+
+  final Uri? authorizeUri;
 
   /// Checks if the [currentWebViewUrl] matches one of the [expectedReturnUrls].
   bool get isReturnUrl =>
@@ -93,6 +110,20 @@ class PaymentAuthorizationState {
     }
   }
 
+  /// Detects if the url is a passkey url in order to open the external browser
+  bool get isPassKeyUrl {
+    if (authorizeUri == null) return false;
+
+    try {
+      return authorizeUri!.queryParameters.containsKey('signature');
+    } catch (e, stack) {
+      if (enableDebug) {
+        log("Omise webview error", error: e, stackTrace: stack);
+      }
+      return false;
+    }
+  }
+
   /// Constructs a new instance of [PaymentAuthorizationState] with the specified
   /// values for [webViewLoadingStatus], [currentWebViewUrl], [webViewError],
   /// [expectedReturnUrls], and [enableDebug].
@@ -102,6 +133,7 @@ class PaymentAuthorizationState {
     this.webViewError,
     this.expectedReturnUrls,
     required this.enableDebug,
+    this.authorizeUri,
   });
 
   /// Creates a new instance of [PaymentAuthorizationState] with modified values
@@ -111,12 +143,14 @@ class PaymentAuthorizationState {
     String? currentWebViewUrl,
     String? webViewError,
     List<String>? expectedReturnUrls,
+    Uri? authorizeUri,
   }) {
     return PaymentAuthorizationState(
         webViewLoadingStatus: webViewLoadingStatus ?? this.webViewLoadingStatus,
         currentWebViewUrl: currentWebViewUrl ?? this.currentWebViewUrl,
         webViewError: webViewError ?? this.webViewError,
         expectedReturnUrls: expectedReturnUrls ?? this.expectedReturnUrls,
-        enableDebug: enableDebug);
+        enableDebug: enableDebug,
+        authorizeUri: authorizeUri ?? this.authorizeUri);
   }
 }

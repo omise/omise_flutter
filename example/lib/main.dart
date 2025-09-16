@@ -52,7 +52,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Omise payment instance, replace "pkey" with your actual Omise public key
   final omisePayment = OmisePayment(
-      publicKey: "pkey", enableDebug: true, locale: OmiseLocale.en);
+      publicKey: "pkey_5xjdtti64j5cwzxa9xo",
+      enableDebug: true,
+      locale: OmiseLocale.en,
+      environment: Environment.staging);
 
   // Opens a page to select payment methods and handle token and source creation
   Future<void> _openPaymentMethodsPage() async {
@@ -61,28 +64,28 @@ class _MyHomePageState extends State<MyHomePage> {
       context,
       MaterialPageRoute(
         builder: (context) => omisePayment.selectPaymentMethod(
-          selectedPaymentMethods: [PaymentMethodName.card],
-          selectedTokenizationMethods: [TokenizationMethod.googlepay],
-          amount: 2000,
-          currency: Currency.thb,
-          // Google pay parameters
-          googleMerchantId: 'googlePayMerchantId',
-          googlePayRequestBillingAddress: true,
-          googlePayRequestPhoneNumber: true,
-          googlePayCardBrands: ['VISA'],
-          googlePayEnvironment: 'TEST',
-          googlePayItemDescription: "test description",
-          // Apple pay parameters
-          appleMerchantId: 'merchant.anas.omise',
-          applePayRequiredBillingContactFields: ['name'],
-          applePayRequiredShippingContactFields: ['name'],
-          applePayCardBrands: ['visa'],
-          applePayItemDescription: "test description",
-          // Atome parameters
-          atomeItems: [
-            Item(amount: 1000, sku: 'sku', name: 'name', quantity: 1),
-          ],
-        ),
+            // selectedPaymentMethods: [PaymentMethodName.card],
+            // selectedTokenizationMethods: [TokenizationMethod.googlepay],
+            amount: 200000,
+            currency: Currency.thb,
+            // Google pay parameters
+            googleMerchantId: 'googlePayMerchantId',
+            googlePayRequestBillingAddress: true,
+            googlePayRequestPhoneNumber: true,
+            googlePayCardBrands: ['VISA'],
+            googlePayEnvironment: 'TEST',
+            googlePayItemDescription: "test description",
+            // Apple pay parameters
+            appleMerchantId: 'merchant.anas.omise',
+            applePayRequiredBillingContactFields: ['name'],
+            applePayRequiredShippingContactFields: ['name'],
+            applePayCardBrands: ['visa'],
+            applePayItemDescription: "test description",
+            // Atome parameters
+            atomeItems: [
+              Item(amount: 1000, sku: 'sku', name: 'name', quantity: 1),
+            ],
+            cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]),
       ),
     );
 

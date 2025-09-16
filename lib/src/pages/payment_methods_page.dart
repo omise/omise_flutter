@@ -81,6 +81,9 @@ class PaymentMethodsPage extends StatefulWidget {
   /// The function name that is communicated through channels methods for native integrations.
   final String? nativeResultMethodName;
 
+  /// Stores information about the cardholder required for passkey-based authentication flows.
+  final List<CardHolderData>? cardHolderData;
+
   /// Constructor for creating a [PaymentMethodsPage] widget.
   /// Takes [omiseApiService] as a required parameter and [selectedPaymentMethods] as optional.
   const PaymentMethodsPage({
@@ -106,6 +109,7 @@ class PaymentMethodsPage extends StatefulWidget {
     this.applePayItemDescription,
     this.atomeItems,
     this.nativeResultMethodName,
+    this.cardHolderData,
   });
 
   @override
@@ -165,6 +169,8 @@ class _PaymentMethodsPageState extends State<PaymentMethodsPage> {
       applePayItemDescription: widget.applePayItemDescription,
       atomeItems: widget.atomeItems,
     );
+    paymentMethodSelectorController.setCardHolderData(
+        cardHolderData: widget.cardHolderData);
     paymentMethodSelectorController.loadCapabilities();
   }
 

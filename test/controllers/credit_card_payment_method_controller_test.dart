@@ -159,14 +159,109 @@ void main() {
       expect(controller.value.textFieldValidityStatuses['cardNumber'], true);
     });
 
-    test('isFormValid - returns correct validation', () {
-      // Set multiple fields to valid
-      controller.setTextFieldValidityStatuses('field1', true);
-      controller.setTextFieldValidityStatuses('field2', true);
-      controller.setTextFieldValidityStatuses('field3', true);
-      controller.setTextFieldValidityStatuses('field4', true);
+    test(
+        'setTextFieldValidityStatuses - removes CardHolderData fields when empty',
+        () {
+      // First add a field
+      controller.setTextFieldValidityStatuses('email', true,
+          keyValue: 'test@example.com');
+      expect(controller.value.textFieldValidityStatuses.containsKey('email'),
+          true);
+
+      // Now remove it by passing null/empty value
+      controller.setTextFieldValidityStatuses('email', true, keyValue: null);
+      expect(controller.value.textFieldValidityStatuses.containsKey('email'),
+          false);
+
+      // Test with empty string
+      controller.setTextFieldValidityStatuses('phoneNumber', true,
+          keyValue: 'test');
+      expect(
+          controller.value.textFieldValidityStatuses.containsKey('phoneNumber'),
+          true);
+
+      controller.setTextFieldValidityStatuses('phoneNumber', true,
+          keyValue: '');
+      expect(
+          controller.value.textFieldValidityStatuses.containsKey('phoneNumber'),
+          false);
+    });
+
+    test('setCardHolderData - updates cardholder data', () {
+      final mockCardHolderData = [
+        CardHolderData.email,
+        CardHolderData.phoneNumber,
+      ];
+
+      // Set cardholder data
+      controller.setCardHolderData(cardHolderData: mockCardHolderData);
+
+      expect(controller.value.cardHolderData, mockCardHolderData);
+      expect(controller.value.cardHolderData!.length, 2);
+    });
+
+    test('numberOfFields - calculates correctly with email and phone', () {
+      // Test with no email or phone (base case)
+      expect(controller.value.numberOfFields, 4); // nonAvsFields for TH country
+
+      // Test with email added
+      controller.value.createTokenRequest.email = 'test@example.com';
+      expect(controller.value.numberOfFields, 5); // base + 1 for email
+
+      // Test with phone added
+      controller.value.createTokenRequest.phoneNumber = '1234567890';
+      expect(controller.value.numberOfFields,
+          6); // base + 1 for email + 1 for phone
+
+      // Test with AVS country (US)
+      controller.value.createTokenRequest.country = 'US';
+      expect(controller.value.numberOfFields,
+          10); // avsFields (8) + email (1) + phone (1)
+    });
+
+    test('numberOfFields - calculates correctly with loan card', () {
+      // Set loan card number
+      controller.value.createTokenRequest.number = '4784451119188786';
+      controller.value.createTokenRequest.email = 'test@example.com';
+      controller.value.createTokenRequest.phoneNumber = '1234567890';
+
+      expect(controller.value.isLoanCard, true);
+      expect(controller.value.numberOfFields,
+          4); // nonAvsFields (4) - 2 (loan card) + 1 (email) + 1 (phone) = 4
+    });
+
+    test('isFormValid - returns correct validation with email and phone fields',
+        () {
+      // Set email and phone in token request to include them in field count
+      controller.value.createTokenRequest.email = 'test@example.com';
+      controller.value.createTokenRequest.phoneNumber = '1234567890';
+
+      // Set all required fields (4 base + 1 email + 1 phone = 6 fields)
+      controller.setTextFieldValidityStatuses('cardNumber', true);
+      controller.setTextFieldValidityStatuses('expiryDate', true);
+      controller.setTextFieldValidityStatuses('cvv', true);
+      controller.setTextFieldValidityStatuses('name', true);
+      controller.setTextFieldValidityStatuses('email', true,
+          keyValue: "test@example.com");
+      controller.setTextFieldValidityStatuses('phoneNumber', true,
+          keyValue: "1234567890");
 
       expect(controller.value.isFormValid, true);
+    });
+
+    test('isFormValid - returns false when email/phone fields are missing', () {
+      // Set email and phone in token request to include them in field count
+      controller.value.createTokenRequest.email = 'test@example.com';
+      controller.value.createTokenRequest.phoneNumber = '1234567890';
+
+      // Set only base fields (missing email and phone validation)
+      controller.setTextFieldValidityStatuses('cardNumber', true);
+      controller.setTextFieldValidityStatuses('expiryDate', true);
+      controller.setTextFieldValidityStatuses('cvv', true);
+      controller.setTextFieldValidityStatuses('name', true);
+
+      expect(controller.value.isFormValid,
+          false); // Should be false as email/phone validations missing
     });
   });
 }

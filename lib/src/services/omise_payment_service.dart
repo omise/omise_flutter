@@ -108,6 +108,7 @@ class OmisePayment {
     String? applePayItemDescription,
     List<Item>? atomeItems,
     String? nativeResultMethodName,
+    List<CardHolderData>? cardHolderData,
   }) {
     return PaymentMethodsPage(
       omiseApiService: omiseApiService, // Pass the Omise API service
@@ -132,6 +133,7 @@ class OmisePayment {
       applePayItemDescription: applePayItemDescription,
       atomeItems: atomeItems,
       nativeResultMethodName: nativeResultMethodName,
+      cardHolderData: cardHolderData,
     );
   }
 
@@ -192,14 +194,14 @@ class OmisePayment {
   /// [currency] - The transaction currency.
 
   /// Returns a [Widget] for the Credit Card payment page.
-  Widget buildCardPage({
-    String? nativeResultMethodName,
-  }) {
+  Widget buildCardPage(
+      {String? nativeResultMethodName, List<CardHolderData>? cardHolderData}) {
     return CreditCardPage(
       omiseApiService: omiseApiService,
       locale: locale,
       nativeResultMethodName: nativeResultMethodName,
       automaticallyImplyLeading: false,
+      cardHolderData: cardHolderData,
     );
   }
 

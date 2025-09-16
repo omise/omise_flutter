@@ -59,6 +59,7 @@ void main() {
     'cvv': true,
     'name': true,
   };
+  final cardHolderData = [CardHolderData.email, CardHolderData.phoneNumber];
 
   group("Credit Card Page Tests", () {
     testWidgets(
@@ -231,6 +232,91 @@ void main() {
       expect(payButton, findsOneWidget);
       expect(tester.widget<ElevatedButton>(payButton).enabled,
           isTrue); // Button should be enabled
+    });
+    testWidgets('Pay button is enabled with valid cardHolderData input',
+        (WidgetTester tester) async {
+      final mockCreateTokenRequest = omise_dart.CreateTokenRequest(
+        number: '4242424242424242',
+        expirationMonth: "12",
+        expirationYear: "25",
+        securityCode: '123',
+        name: "name",
+        phoneNumber: "+660987654321",
+        email: "test@gmail.com",
+      );
+      when(() => mockController.value).thenReturn(
+        CreditCardPaymentMethodState(
+          capabilityLoadingStatus: Status.success,
+          tokenAndSourceLoadingStatus: Status.idle,
+          createTokenRequest: mockCreateTokenRequest,
+          textFieldValidityStatuses: {
+            'cardNumber': true,
+            'expiryDate': true,
+            'cvv': true,
+            'name': true,
+            'email': true,
+            'phoneNumber': true,
+          },
+          cardHolderData: cardHolderData,
+        ),
+      );
+
+      when(() => mockController.loadCapabilities())
+          .thenAnswer((_) async => Future.value());
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CreditCardPage(
+            omiseApiService: mockOmiseApiService,
+            creditCardPaymentMethodController: mockController,
+            cardHolderData: cardHolderData,
+          ),
+        ),
+      );
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
+      await tester.pump();
+
+      final payButton = find.byType(ElevatedButton);
+      expect(payButton, findsOneWidget);
+      expect(tester.widget<ElevatedButton>(payButton).enabled,
+          isTrue); // Button should be enabled
+    });
+    testWidgets('Pay button is disabled with invalid cardHolderData input',
+        (WidgetTester tester) async {
+      when(() => mockController.value).thenReturn(
+        CreditCardPaymentMethodState(
+          capabilityLoadingStatus: Status.success,
+          tokenAndSourceLoadingStatus: Status.idle,
+          createTokenRequest: mockCreateTokenRequest,
+          textFieldValidityStatuses: {
+            'cardNumber': true,
+            'expiryDate': true,
+            'cvv': true,
+            'name': true,
+            'email': false,
+            'phoneNumber': false,
+          },
+          cardHolderData: cardHolderData,
+        ),
+      );
+
+      when(() => mockController.loadCapabilities())
+          .thenAnswer((_) async => Future.value());
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: CreditCardPage(
+            omiseApiService: mockOmiseApiService,
+            creditCardPaymentMethodController: mockController,
+            cardHolderData: cardHolderData,
+          ),
+        ),
+      );
+      await tester.drag(find.byType(ListView), const Offset(0, -300));
+      await tester.pump();
+      final payButton = find.byType(ElevatedButton);
+      expect(payButton, findsOneWidget);
+      expect(tester.widget<ElevatedButton>(payButton).enabled, isFalse);
     });
     testWidgets('Pay button click disables fields and button',
         (WidgetTester tester) async {
@@ -408,7 +494,57 @@ void main() {
     expect(tester.widget<TextField>(expiryDateField).enabled,
         isFalse); // TextField should be disabled
   });
+  testWidgets(
+      'Allows typing into email and phone number when CardHolderData is set',
+      (WidgetTester tester) async {
+    final mockLoanCardCreateTokenRequest = omise_dart.CreateTokenRequest(
+      number: '4784451119188786',
+      expirationMonth: "12",
+      expirationYear: "25",
+      securityCode: '123',
+      name: "name",
+    );
+    when(() => mockController.value).thenReturn(
+      CreditCardPaymentMethodState(
+        capabilityLoadingStatus: Status.success,
+        tokenAndSourceLoadingStatus: Status.idle,
+        createTokenRequest: mockLoanCardCreateTokenRequest,
+        textFieldValidityStatuses: {
+          'cardNumber': true,
+        },
+        cardHolderData: cardHolderData,
+      ),
+    );
 
+    when(() => mockController.loadCapabilities())
+        .thenAnswer((_) async => Future.value());
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: CreditCardPage(
+          omiseApiService: mockOmiseApiService,
+          creditCardPaymentMethodController: mockController,
+          cardHolderData: cardHolderData,
+        ),
+      ),
+    );
+    await tester.drag(find.byType(ListView), const Offset(0, -300));
+    await tester.pump();
+    // Find the TextFields
+    final emailField = find.byKey(const Key('email'));
+    final phoneNumberField = find.byKey(const Key('phoneNumber'));
+
+    // Type into the text fields
+    await tester.enterText(emailField, 'test@gmail.com');
+    await tester.enterText(phoneNumberField, '+660987654321');
+
+    // Rebuild the widget after the state has changed
+    await tester.pump();
+
+    // Check that the fields contain the entered text
+    expect(find.text('test@gmail.com'), findsOneWidget);
+    expect(find.text('+660987654321'), findsOneWidget);
+  });
   testWidgets('should show address fields when shouldShowAddressFields is true',
       (WidgetTester tester) async {
     mockCreateTokenRequest.country = 'CA';

@@ -123,6 +123,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                           capability: value.capability,
                           locale: locale,
                           nativeResultMethodName: nativeResultMethodName,
+                          cardHolderData: value.cardHolderData,
                         )),
               );
             });
@@ -243,6 +244,7 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
                         locale: locale,
                         capability: value.capability!,
                         nativeResultMethodName: nativeResultMethodName,
+                        cardHolderData: value.cardHolderData,
                       ),
                     ),
                   );
@@ -384,6 +386,10 @@ class PaymentMethodsController extends ValueNotifier<PaymentMethodsState> {
         atomeItems: atomeItems,
       ),
     );
+  }
+
+  void setCardHolderData({List<CardHolderData>? cardHolderData}) {
+    _setValue(value.copyWith(cardHolderData: cardHolderData));
   }
 
   /// Loads the capabilities from Omise API and filters the payment methods
@@ -680,6 +686,9 @@ class PaymentMethodsState {
   /// The atome list of items.
   final List<Item>? atomeItems;
 
+  /// Stores information about the cardholder required for passkey-based authentication flows.
+  List<CardHolderData>? cardHolderData;
+
   /// Constructor for creating a [PaymentMethodsState].
   PaymentMethodsState({
     required this.capabilityLoadingStatus,
@@ -705,6 +714,7 @@ class PaymentMethodsState {
     this.applePayCardBrands,
     this.applePayItemDescription,
     this.atomeItems,
+    this.cardHolderData,
   });
 
   /// Creates a copy of the current state while allowing overriding of
@@ -733,6 +743,7 @@ class PaymentMethodsState {
     List<String>? applePayCardBrands,
     String? applePayItemDescription,
     List<Item>? atomeItems,
+    List<CardHolderData>? cardHolderData,
   }) {
     return PaymentMethodsState(
       capabilityLoadingStatus: capabilityLoadingStatus ??
@@ -771,6 +782,7 @@ class PaymentMethodsState {
       applePayItemDescription:
           applePayItemDescription ?? this.applePayItemDescription,
       atomeItems: atomeItems ?? this.atomeItems,
+      cardHolderData: cardHolderData ?? this.cardHolderData,
     );
   }
 }

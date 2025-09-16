@@ -35,6 +35,9 @@ class TermsPage extends StatefulWidget {
   /// The function name that is communicated through channels methods for native integrations.
   final String? nativeResultMethodName;
 
+  /// Stores information about the cardholder required for passkey-based authentication flows.
+  final List<CardHolderData>? cardHolderData;
+
   const TermsPage({
     super.key,
     required this.terms,
@@ -46,6 +49,7 @@ class TermsPage extends StatefulWidget {
     this.installmentsPaymentMethodSelectorController,
     this.locale,
     this.nativeResultMethodName,
+    this.cardHolderData,
   });
 
   @override
@@ -80,11 +84,13 @@ class _TermsPageState extends State<TermsPage> {
       }
     });
     installmentsController.setSourceCreationParams(
-        amount: widget.amount,
-        currency: widget.currency,
-        paymentMethod: widget.installmentPaymentMethod,
-        capability: widget.capability,
-        terms: widget.terms);
+      amount: widget.amount,
+      currency: widget.currency,
+      paymentMethod: widget.installmentPaymentMethod,
+      capability: widget.capability,
+      terms: widget.terms,
+      cardHolderData: widget.cardHolderData,
+    );
   }
 
   @override

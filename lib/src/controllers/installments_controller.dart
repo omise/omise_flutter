@@ -64,6 +64,7 @@ class InstallmentsController extends ValueNotifier<InstallmentsPageState> {
     required PaymentMethodName paymentMethod,
     required Capability capability,
     required List<int> terms,
+    required List<CardHolderData>? cardHolderData,
   }) {
     // filter the terms based on the final calculated amount
     final minimumAmount = minimumInstallmentAmountPerType[paymentMethod];
@@ -85,7 +86,8 @@ class InstallmentsController extends ValueNotifier<InstallmentsPageState> {
         currency: currency,
         paymentMethod: paymentMethod,
         capability: capability,
-        terms: terms));
+        terms: terms,
+        cardHolderData: cardHolderData));
   }
 
   /// Creates a source based on the collected data from the user.
@@ -108,6 +110,7 @@ class InstallmentsController extends ValueNotifier<InstallmentsPageState> {
                     locale: value.locale,
                     term: term,
                     nativeResultMethodName: nativeResultMethodName,
+                    cardHolderData: value.cardHolderData,
                   )),
         );
         return;
@@ -175,6 +178,9 @@ class InstallmentsPageState {
   /// The capability to pass to the credit card page
   final Capability? capability;
 
+  /// Stores information about the cardholder required for passkey-based authentication flows.
+  final List<CardHolderData>? cardHolderData;
+
   /// Constructor for creating a [InstallmentsPageState].
   InstallmentsPageState({
     required this.sourceLoadingStatus,
@@ -186,6 +192,7 @@ class InstallmentsPageState {
     this.locale,
     this.capability,
     this.sourceErrorMessage,
+    this.cardHolderData,
   });
 
   /// Creates a copy of the current state while allowing overriding of
@@ -200,6 +207,7 @@ class InstallmentsPageState {
     OmiseLocale? locale,
     Capability? capability,
     String? sourceErrorMessage,
+    List<CardHolderData>? cardHolderData,
   }) {
     return InstallmentsPageState(
       source: source ?? this.source,
@@ -211,6 +219,7 @@ class InstallmentsPageState {
       locale: locale ?? this.locale,
       capability: capability ?? this.capability,
       sourceErrorMessage: sourceErrorMessage ?? this.sourceErrorMessage,
+      cardHolderData: cardHolderData ?? this.cardHolderData,
     );
   }
 }
