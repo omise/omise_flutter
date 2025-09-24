@@ -57,6 +57,7 @@ class MethodChannelService {
         cardHolderData: (parsedArgs['cardHolderData'] as List?)
             ?.map((e) => CardHolderDataExtension.fromString(e))
             .toList(),
+        securePaymentFlag: parsedArgs['securePaymentFlag'],
       );
     });
   }
