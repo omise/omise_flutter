@@ -37,6 +37,7 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
         final OmisePayment omisePayment = OmisePayment(
           publicKey: methodChannelController.value.pkey!,
           environment: methodChannelController.value.environment,
+          securePaymentFlag: methodChannelController.value.securePaymentFlag,
         );
 
         return omisePayment.selectPaymentMethod(
@@ -74,6 +75,7 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
         final OmisePayment omisePayment = OmisePayment(
           publicKey: methodChannelController.value.pkey!,
           environment: methodChannelController.value.environment,
+          securePaymentFlag: methodChannelController.value.securePaymentFlag,
         );
         return omisePayment.buildGooglePayPage(
           amount: methodChannelController.value.amount!,
@@ -96,6 +98,7 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
         final OmisePayment omisePayment = OmisePayment(
           publicKey: methodChannelController.value.pkey!,
           environment: methodChannelController.value.environment,
+          securePaymentFlag: methodChannelController.value.securePaymentFlag,
         );
         return omisePayment.buildCardPage(
           nativeResultMethodName:
@@ -107,6 +110,7 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
         final OmisePayment omisePayment = OmisePayment(
           publicKey: methodChannelController.value.pkey!,
           environment: methodChannelController.value.environment,
+          securePaymentFlag: methodChannelController.value.securePaymentFlag,
         );
         return omisePayment.authorizePayment(
           authorizeUri: Uri.parse(methodChannelController.value.authUrl!),

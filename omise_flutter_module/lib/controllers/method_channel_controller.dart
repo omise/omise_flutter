@@ -30,6 +30,7 @@ class MethodChannelController extends ValueNotifier<MethodChannelState> {
     String? applePayItemDescription,
     List<Item>? atomeItems,
     List<CardHolderData>? cardHolderData,
+    bool? securePaymentFlag,
     final Environment? environment,
   }) {
     _setValue(value.copyWith(
@@ -56,6 +57,7 @@ class MethodChannelController extends ValueNotifier<MethodChannelState> {
       applePayItemDescription: applePayItemDescription,
       atomeItems: atomeItems,
       cardHolderData: cardHolderData,
+      securePaymentFlag: securePaymentFlag,
       environment: environment,
     ));
   }
@@ -132,6 +134,9 @@ class MethodChannelState {
   /// Stores information about the cardholder required for passkey-based authentication flows.
   final List<CardHolderData>? cardHolderData;
 
+  /// A flag to block screen recording access
+  final bool? securePaymentFlag;
+
   /// The environment of the api
   final Environment? environment;
 
@@ -158,6 +163,7 @@ class MethodChannelState {
     this.applePayItemDescription,
     this.atomeItems,
     this.cardHolderData,
+    this.securePaymentFlag = true,
     this.environment,
   });
 
@@ -185,6 +191,7 @@ class MethodChannelState {
     String? applePayItemDescription,
     List<Item>? atomeItems,
     List<CardHolderData>? cardHolderData,
+    bool? securePaymentFlag,
     final Environment? environment,
   }) {
     return MethodChannelState(
@@ -219,6 +226,7 @@ class MethodChannelState {
           applePayItemDescription ?? this.applePayItemDescription,
       atomeItems: atomeItems ?? this.atomeItems,
       cardHolderData: cardHolderData ?? this.cardHolderData,
+      securePaymentFlag: securePaymentFlag ?? this.securePaymentFlag,
       environment: environment ?? this.environment,
     );
   }

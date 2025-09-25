@@ -47,8 +47,10 @@ class OmisePayment {
     );
     if (securePaymentFlag == true) {
       ScreenProtector.preventScreenshotOn();
+      ScreenProtector.protectDataLeakageOn();
     } else {
       ScreenProtector.preventScreenshotOff();
+      ScreenProtector.protectDataLeakageOff();
     }
   }
 
