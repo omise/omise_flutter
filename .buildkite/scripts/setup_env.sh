@@ -18,6 +18,8 @@ required_vars=(
   GIT_PAT
   WRAPPER_REPO
   AWS_ROLE_ARN
+  BASE_STAGING_URL
+  BASE_STAGING_VAULT_URL
 )
 
 for var in "${required_vars[@]}"; do

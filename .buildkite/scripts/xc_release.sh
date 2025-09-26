@@ -7,6 +7,8 @@ set -euo pipefail
 : "${AWS_REGION:?AWS_REGION must be set}"
 : "${AWS_DOMAIN:?AWS_DOMAIN must be set}"
 : "${WRAPPER_REPO_DIR:?WRAPPER_REPO_DIR must be set}"
+: "${BASE_STAGING_URL:?BASE_STAGING_URL must be set}"
+: "${BASE_STAGING_VAULT_URL:?BASE_STAGING_VAULT_URL must be set}"
 
 # Set workspace
 FLUTTER_DIR="$GITHUB_WORKSPACE/omise_flutter_module"
@@ -16,7 +18,12 @@ cd "$FLUTTER_DIR"
 # Build frameworks
 echo "🏗️  Building XCFrameworks…"
 FRAMEWORK_DIR="$FLUTTER_DIR/build/ios-framework"
-flutter build ios-framework --output="$FRAMEWORK_DIR" --no-debug --no-profile
+flutter build ios-framework \
+  --output="$FRAMEWORK_DIR" \
+  --no-debug \
+  --no-profile \
+  --dart-define=BASE_STAGING_URL="${BASE_STAGING_URL}" \
+  --dart-define=BASE_STAGING_VAULT_URL="${BASE_STAGING_VAULT_URL}"
 
 if [[ -d "$FRAMEWORK_DIR/Release" ]]; then
   XC_DIR="$FRAMEWORK_DIR/Release"
