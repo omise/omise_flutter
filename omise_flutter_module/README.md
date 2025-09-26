@@ -31,3 +31,15 @@ Copy the folder with everything inside it `~/omise_flutter/omise_flutter_module/
 - There are three major builds: release, debug and profile.
 - The command will only generate the release version but you can edit to generate your desired output.
 - Paste that folder in the desired path, you can use any of the desired builds and delete the ones that you do not need.
+
+
+### For iOS use:
+```bash
+flutter build ios-framework \
+  --no-debug \
+  --no-profile \
+  --dart-define=BASE_STAGING_URL="$BASE_STAGING_URL" \
+  --dart-define=BASE_STAGING_VAULT_URL="$BASE_STAGING_VAULT_URL"
+```
+
+But for iOS we have our wrapper repo ready for you: [omise-flutter-wrapper-ios](https://github.com/omise/omise-flutter-wrapper-ios)
