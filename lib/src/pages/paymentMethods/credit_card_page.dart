@@ -339,20 +339,19 @@ class _CreditCardPageState extends State<CreditCardPage> {
                   child: RoundedTextField(
                     key: Key(ValidationType.email.name),
                     enabled: isFormEnabled,
-                    isOptional: true,
                     title: Translations.get('email', widget.locale, context),
                     validationType: ValidationType.email,
                     keyboardType: TextInputType.emailAddress,
                     onChange: (email) {
                       var newState = state.copyWith();
-                      newState.createTokenRequest.email =
-                          email.isEmpty ? null : email;
+                      newState.createTokenRequest.email = email;
                       creditCardController.updateState(newState);
                     },
                     updateValidationList: (fieldKey, isValid) {
                       creditCardController.setTextFieldValidityStatuses(
-                          fieldKey, isValid,
-                          keyValue: state.createTokenRequest.email);
+                        fieldKey,
+                        isValid,
+                      );
                     },
                   ),
                 ),
@@ -368,14 +367,14 @@ class _CreditCardPageState extends State<CreditCardPage> {
                     keyboardType: TextInputType.phone,
                     onChange: (phoneNumber) {
                       var newState = state.copyWith();
-                      newState.createTokenRequest.phoneNumber =
-                          phoneNumber.isEmpty ? null : phoneNumber;
+                      newState.createTokenRequest.phoneNumber = phoneNumber;
                       creditCardController.updateState(newState);
                     },
                     updateValidationList: (fieldKey, isValid) {
                       creditCardController.setTextFieldValidityStatuses(
-                          fieldKey, isValid,
-                          keyValue: state.createTokenRequest.phoneNumber);
+                        fieldKey,
+                        isValid,
+                      );
                     },
                   ),
                 ),

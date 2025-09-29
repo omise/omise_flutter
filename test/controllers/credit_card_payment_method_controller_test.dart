@@ -159,34 +159,6 @@ void main() {
       expect(controller.value.textFieldValidityStatuses['cardNumber'], true);
     });
 
-    test(
-        'setTextFieldValidityStatuses - removes CardHolderData fields when empty',
-        () {
-      // First add a field
-      controller.setTextFieldValidityStatuses('email', true,
-          keyValue: 'test@example.com');
-      expect(controller.value.textFieldValidityStatuses.containsKey('email'),
-          true);
-
-      // Now remove it by passing null/empty value
-      controller.setTextFieldValidityStatuses('email', true, keyValue: null);
-      expect(controller.value.textFieldValidityStatuses.containsKey('email'),
-          false);
-
-      // Test with empty string
-      controller.setTextFieldValidityStatuses('phoneNumber', true,
-          keyValue: 'test');
-      expect(
-          controller.value.textFieldValidityStatuses.containsKey('phoneNumber'),
-          true);
-
-      controller.setTextFieldValidityStatuses('phoneNumber', true,
-          keyValue: '');
-      expect(
-          controller.value.textFieldValidityStatuses.containsKey('phoneNumber'),
-          false);
-    });
-
     test('setCardHolderData - updates cardholder data', () {
       final mockCardHolderData = [
         CardHolderData.email,
@@ -205,11 +177,13 @@ void main() {
       expect(controller.value.numberOfFields, 4); // nonAvsFields for TH country
 
       // Test with email added
-      controller.value.createTokenRequest.email = 'test@example.com';
+      controller.value =
+          controller.value.copyWith(cardHolderData: [CardHolderData.email]);
       expect(controller.value.numberOfFields, 5); // base + 1 for email
 
-      // Test with phone added
-      controller.value.createTokenRequest.phoneNumber = '1234567890';
+      // Test with phone and email added
+      controller.value = controller.value.copyWith(
+          cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
       expect(controller.value.numberOfFields,
           6); // base + 1 for email + 1 for phone
 
@@ -222,8 +196,8 @@ void main() {
     test('numberOfFields - calculates correctly with loan card', () {
       // Set loan card number
       controller.value.createTokenRequest.number = '4784451119188786';
-      controller.value.createTokenRequest.email = 'test@example.com';
-      controller.value.createTokenRequest.phoneNumber = '1234567890';
+      controller.value = controller.value.copyWith(
+          cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
 
       expect(controller.value.isLoanCard, true);
       expect(controller.value.numberOfFields,
@@ -233,26 +207,30 @@ void main() {
     test('isFormValid - returns correct validation with email and phone fields',
         () {
       // Set email and phone in token request to include them in field count
-      controller.value.createTokenRequest.email = 'test@example.com';
-      controller.value.createTokenRequest.phoneNumber = '1234567890';
+      controller.value = controller.value.copyWith(
+          cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
 
       // Set all required fields (4 base + 1 email + 1 phone = 6 fields)
       controller.setTextFieldValidityStatuses('cardNumber', true);
       controller.setTextFieldValidityStatuses('expiryDate', true);
       controller.setTextFieldValidityStatuses('cvv', true);
       controller.setTextFieldValidityStatuses('name', true);
-      controller.setTextFieldValidityStatuses('email', true,
-          keyValue: "test@example.com");
-      controller.setTextFieldValidityStatuses('phoneNumber', true,
-          keyValue: "1234567890");
+      controller.setTextFieldValidityStatuses(
+        'email',
+        true,
+      );
+      controller.setTextFieldValidityStatuses(
+        'phoneNumber',
+        true,
+      );
 
       expect(controller.value.isFormValid, true);
     });
 
     test('isFormValid - returns false when email/phone fields are missing', () {
       // Set email and phone in token request to include them in field count
-      controller.value.createTokenRequest.email = 'test@example.com';
-      controller.value.createTokenRequest.phoneNumber = '1234567890';
+      controller.value = controller.value.copyWith(
+          cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
 
       // Set only base fields (missing email and phone validation)
       controller.setTextFieldValidityStatuses('cardNumber', true);
