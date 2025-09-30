@@ -142,16 +142,9 @@ class CreditCardController extends ValueNotifier<CreditCardPaymentMethodState> {
   ///
   /// Accepts a [key] representing the text field and a [validField]
   /// indicating whether the field is valid or not.
-  void setTextFieldValidityStatuses(String key, bool validField,
-      {String? keyValue}) {
+  void setTextFieldValidityStatuses(String key, bool validField) {
     var newMap = value.textFieldValidityStatuses;
     newMap[key] = validField;
-    final cardHolderValues = CardHolderData.values.toList();
-    cardHolderValues.remove(CardHolderData.unknown);
-    if (cardHolderValues.contains(CardHolderDataExtension.fromString(key)) &&
-        (keyValue == null || keyValue.isEmpty)) {
-      newMap.remove(key);
-    }
     var newState = value.copyWith(textFieldValidityStatuses: newMap);
     _setValue(newState);
   }
@@ -227,8 +220,10 @@ class CreditCardPaymentMethodState {
             : nonAvsFields;
 
     return (isLoanCard ? baseFields - 2 : baseFields) +
-        (createTokenRequest.email != null ? 1 : 0) +
-        (createTokenRequest.phoneNumber != null ? 1 : 0);
+        ((cardHolderData?.contains(CardHolderData.email) ?? false) ? 1 : 0) +
+        ((cardHolderData?.contains(CardHolderData.phoneNumber) ?? false)
+            ? 1
+            : 0);
   }
 
   /// Determines whether to show address fields based on the country.

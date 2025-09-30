@@ -52,10 +52,10 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // Omise payment instance, replace "pkey" with your actual Omise public key
   final omisePayment = OmisePayment(
-      publicKey: "pkey_5xjdtti64j5cwzxa9xo",
-      enableDebug: true,
-      locale: OmiseLocale.en,
-      environment: Environment.staging);
+    publicKey: "pkey",
+    enableDebug: true,
+    locale: OmiseLocale.en,
+  );
 
   // Opens a page to select payment methods and handle token and source creation
   Future<void> _openPaymentMethodsPage() async {
