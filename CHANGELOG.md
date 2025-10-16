@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.4.0] - Support TAS Passkey Authentication
+
+- Support Passkey authentication flow
+
 ## [0.3.0] - Added all APMs
 
 - Now omise-flutter supports all major APMs with UI screens added to handle the custom flows.
