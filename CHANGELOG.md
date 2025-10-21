@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.4.1] - Update readme for passkey support
+
 ## [0.4.0] - Support TAS Passkey Authentication
 
 - Support Passkey authentication flow
