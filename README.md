@@ -33,7 +33,7 @@ To use the package, add it to your project by including the following in your `p
 
 ```yaml
 dependencies:
-  omise_flutter: ^0.4.0
+  omise_flutter: ^0.4.1
 ```
 
 Run:
@@ -205,6 +205,99 @@ Future<void> _openGooglePayPage() async {
 To start using apple pay you must first obtain your apple merchant id. If you are just planning to use test mode
 you can skip this step until your integration is complete. The integration can be fully tested only on physical devices since the simulators will not return an apple pay token.
 You can access the apple pay screen from the main `selectPaymentMethod` widget by referencing the main example.
+
+# Passkey Integration
+
+The Omise Flutter SDK supports Passkey authentication for enhanced security and user experience. Passkey provides a passwordless authentication method that uses biometric authentication or device PINs, making payments more secure and convenient for users.
+
+## Prerequisites
+
+Before implementing Passkey authentication:
+
+- Ensure your Omise account supports Passkey authentication
+- Configure your backend to handle Passkey authentication flows
+
+## Implementation
+
+### Requesting Cardholder Data
+
+To use Passkey authentication, you must request cardholder data fields (email or phone number) during the payment process. This information is required for the backend Passkey authentication setup.
+
+#### Card Page with Passkey
+
+When using the credit card page, you can request cardholder data by adding the `cardHolderData` parameter:
+
+```dart
+final OmisePaymentResult? omisePaymentResult =
+        await Navigator.push<OmisePaymentResult>(
+      context,
+      MaterialPageRoute(
+          builder: (context) => omisePayment.buildCardPage(
+                cardHolderData: [
+                  CardHolderData.email,
+                  CardHolderData.phoneNumber
+                ],
+              )),
+    );
+```
+
+#### Payment method selector page with Passkey
+
+For the payment method selector page, include the cardholder data parameter alongside your other payment configuration:
+
+```dart
+final OmisePaymentResult? omisePaymentResult =
+        await Navigator.push<OmisePaymentResult>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => omisePayment.selectPaymentMethod(
+            // selectedPaymentMethods: [PaymentMethodName.card],
+            // selectedTokenizationMethods: [TokenizationMethod.googlepay],
+            amount: 200000,
+            currency: Currency.thb,
+            // Google pay parameters
+            googleMerchantId: 'googlePayMerchantId',
+            googlePayRequestBillingAddress: true,
+            googlePayRequestPhoneNumber: true,
+            googlePayCardBrands: ['VISA'],
+            googlePayEnvironment: 'TEST',
+            googlePayItemDescription: "test description",
+            // Apple pay parameters
+            appleMerchantId: 'merchant.anas.omise',
+            applePayRequiredBillingContactFields: ['name'],
+            applePayRequiredShippingContactFields: ['name'],
+            applePayCardBrands: ['visa'],
+            applePayItemDescription: "test description",
+            // Atome parameters
+            atomeItems: [
+              Item(amount: 1000, sku: 'sku', name: 'name', quantity: 1),
+            ],
+            cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]),
+      ),
+    );
+```
+
+### Cardholder Data Fields
+
+The SDK supports the following cardholder data fields:
+
+- `CardHolderData.email` - Requests the customer's email address
+- `CardHolderData.phoneNumber` - Requests the customer's phone number
+
+You can request either one or both fields depending on your authentication requirements:
+
+```dart
+// Request only email
+cardHolderData: [CardHolderData.email],
+
+// Request only phone number
+cardHolderData: [CardHolderData.phoneNumber],
+
+// Request both email and phone number
+cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber],
+```
+
+---
 
 ## Example
 
