@@ -67,6 +67,7 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
           applePayRequiredShippingContactFields: methodChannelController
               .value.applePayRequiredShippingContactFields,
           atomeItems: methodChannelController.value.atomeItems,
+          cardHolderData: methodChannelController.value.cardHolderData,
           nativeResultMethodName:
               '${methodChannelController.value.methodName!.name}Result',
         );
@@ -103,6 +104,7 @@ class _FlutterUIBridgeState extends State<FlutterUIBridge> {
         return omisePayment.buildCardPage(
           nativeResultMethodName:
               '${methodChannelController.value.methodName!.name}Result',
+          cardHolderData: methodChannelController.value.cardHolderData,
         );
 
       // Not used in our native SDKs as we support Netcetera in native but flutter does not support it(No Netcetera package yet).
