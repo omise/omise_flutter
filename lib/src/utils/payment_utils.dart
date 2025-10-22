@@ -10,13 +10,11 @@ class PaymentUtils {
   static Set<PaymentMethodName> sharedBblAssets = {
     PaymentMethodName.installmentBbl,
     PaymentMethodName.installmentWlbBbl,
-    PaymentMethodName.internetBankingBbl,
   };
 
   static Set<PaymentMethodName> sharedBayAssets = {
     PaymentMethodName.installmentBay,
     PaymentMethodName.installmentWlbBay,
-    PaymentMethodName.internetBankingBay,
   };
 
   static Set<PaymentMethodName> sharedShopeeAssets = {

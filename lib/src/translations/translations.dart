@@ -72,9 +72,6 @@ class Translations {
       "convenienceStore": "Convenience Store",
       "payeasy": "Pay-easy",
       "netBank": "Net Bank",
-      "internetBankingBay": "Bank of Ayudhya",
-      "internetBankingBbl": "Bangkok Bank",
-      "internetBanking": "Internet Banking",
       "fpxInfoText":
           "(Optional) Please input your email to receive transaction confirmation from FPX",
       "trueMoneyWalletInfoText":
@@ -178,9 +175,6 @@ class Translations {
       "convenienceStore": "ร้านสะดวกซื้อ",
       "payeasy": "เพย์อีซี",
       "netBank": "เน็ตแบงก์",
-      "internetBankingBay": "ธนาคารกรุงศรีอยุธยา",
-      "internetBankingBbl": "ธนาคารกรุงเทพ",
-      "internetBanking": "อินเทอร์เน็ตแบงก์กิ้ง",
       "duitnowObw": "DuitNow Online Banking/Wallets",
       "googlePay": "Google Pay",
       "applePay": "Apple Pay",
@@ -291,9 +285,6 @@ class Translations {
       "convenienceStore": "コンビニエンスストア",
       "payeasy": "ペイジー",
       "netBank": "ネットバンク",
-      "internetBankingBay": "アユタヤ銀行",
-      "internetBankingBbl": "バンコク銀行",
-      "internetBanking": "インターネットバンク",
       "fpxInfoText": "(任意) メールアドレスを入力し、FPXからの取引確認メールを受信します",
       "trueMoneyWalletInfoText": "TrueMoney ウォレットアカウントに登録されている携帯電話番号を入力してください",
       "atomeInfoText":
