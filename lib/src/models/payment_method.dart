@@ -15,8 +15,6 @@ class PaymentMethodTileData {
   });
   double get leadingIconHeight {
     switch (name) {
-      case PaymentMethodName.card:
-        return 30;
       case PaymentMethodName.promptpay:
         return 50;
       default:
