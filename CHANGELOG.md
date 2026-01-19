@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.5.0] - Update payment method icons
+
+- Update icons for payment methods
+
 ## [0.4.1] - Update readme for passkey support
 
 ## [0.4.0] - Support TAS Passkey Authentication
