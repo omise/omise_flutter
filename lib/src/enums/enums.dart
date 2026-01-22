@@ -22,7 +22,6 @@ enum ValidationType {
 enum CustomPaymentMethod {
   mobileBanking("mobile_banking"),
   installments("installment"),
-  internetBanking("internet_banking"),
   googlePay("googlepay"),
   applePay('applepay'),
   convenienceStore('convenience_store'), // konbini

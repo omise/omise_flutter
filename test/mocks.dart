@@ -10,7 +10,6 @@ import 'package:omise_flutter/src/controllers/bank_selector_controller.dart';
 import 'package:omise_flutter/src/controllers/econtext_controller.dart';
 import 'package:omise_flutter/src/controllers/google_pay_controller.dart';
 import 'package:omise_flutter/src/controllers/installments_controller.dart';
-import 'package:omise_flutter/src/controllers/internet_banking_controller.dart';
 import 'package:omise_flutter/src/controllers/mobile_banking_controller.dart';
 import 'package:omise_flutter/src/controllers/payment_authorization_controller.dart';
 import 'package:omise_flutter/src/controllers/payment_methods_controller.dart';
@@ -43,9 +42,6 @@ class MockCreditCardPaymentMethodController extends Mock
 
 class MockMobileBankingPaymentMethodSelectorController extends Mock
     implements MobileBankingController {}
-
-class MockInternetBankingController extends Mock
-    implements InternetBankingController {}
 
 class MockInstallmentsController extends Mock
     implements InstallmentsController {}
