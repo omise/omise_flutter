@@ -53,7 +53,10 @@ jobs:
         run: flutter pub get
         
       - name: Publish - dry run
+        # Use flutter pub publish for dry-run to ensure all Flutter-specific validations (assets, sdk constraints) pass.
         run: flutter pub publish --dry-run
 
       - name: Publish to pub.dev
-        run: flutter pub publish -f
+        # Use dart pub publish for the actual upload because it supports OIDC authentication with GitHub Actions,
+        # avoiding manually approved localhost links which fail in CI.
+        run: dart pub publish -f
