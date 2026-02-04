@@ -7,7 +7,6 @@ import 'package:omise_flutter/omise_flutter.dart';
 import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/pages/paymentMethods/credit_card_page.dart';
-import 'package:omise_flutter/src/widgets/rounded_text_field.dart';
 
 import '../mocks.dart';
 
@@ -165,7 +164,11 @@ void main() {
         ),
       );
 
-      final payButton = find.byType(ElevatedButton);
+      // Scroll down to make Pay button visible
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+
+      final payButton = find.widgetWithText(ElevatedButton, 'Pay');
       expect(payButton, findsOneWidget);
       expect(tester.widget<ElevatedButton>(payButton).enabled,
           isFalse); // Button should be disabled
@@ -198,6 +201,10 @@ void main() {
         ),
       );
 
+      // Scroll down to make Pay button visible
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+
       final payButton = find.byType(ElevatedButton);
       expect(payButton, findsOneWidget);
       expect(tester.widget<ElevatedButton>(payButton).enabled, isFalse);
@@ -227,6 +234,10 @@ void main() {
           ),
         ),
       );
+
+      // Scroll down to make Pay button visible
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
 
       final payButton = find.byType(ElevatedButton);
       expect(payButton, findsOneWidget);
@@ -346,6 +357,10 @@ void main() {
         ),
       );
 
+      // Scroll down to make Pay button visible
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
+
       final payButton = find.byType(ElevatedButton);
       await tester.tap(payButton); // Simulate button press
       await tester.pump(); // Rebuild UI after state change
@@ -394,6 +409,10 @@ void main() {
           .evaluate()
           .every((element) => (element.widget as TextField).enabled == true);
       expect(enabledFields, isTrue);
+
+      // Scroll down to make Pay button visible
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
+      await tester.pumpAndSettle();
 
       final payButton = find.byType(ElevatedButton);
       expect(tester.widget<ElevatedButton>(payButton).enabled,
@@ -610,10 +629,14 @@ void main() {
 
     // Assert
     expect(find.text('Card Number'), findsOneWidget);
+    // Scroll down to make Address fields visible
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+
     expect(find.text('Address'), findsOneWidget);
     expect(find.text('City'), findsOneWidget);
     expect(find.text('State'), findsOneWidget);
-    expect(find.text('Postal code'), findsOneWidget);
+    expect(find.text('Postal Code'), findsOneWidget);
   });
 
   testWidgets('should type into address fields and update controller',
@@ -677,10 +700,14 @@ void main() {
     );
 
     // Act
-    await tester.enterText(find.byType(RoundedTextField).at(4), '123 Main St');
-    await tester.enterText(find.byType(RoundedTextField).at(5), 'Metropolis');
-    await tester.enterText(find.byType(RoundedTextField).at(6), 'NY');
-    await tester.enterText(find.byType(RoundedTextField).at(7), '54321');
+    // Scroll down to make Address fields visible
+    await tester.drag(find.byType(ListView), const Offset(0, -500));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byKey(const Key('address')), '123 Main St');
+    await tester.enterText(find.byKey(const Key('city')), 'Metropolis');
+    await tester.enterText(find.byKey(const Key('state')), 'NY');
+    await tester.enterText(find.byKey(const Key('postalCode')), '54321');
 
     // Force a rebuild to process the changes
     await tester.pumpAndSettle();
@@ -799,6 +826,10 @@ void main() {
       await tester.enterText(cvvField, '123');
       await tester.enterText(nameField, 'John Doe');
       // Simulate pressing the "Pay" button
+      await tester.pumpAndSettle();
+
+      // Scroll down to make Pay button visible
+      await tester.drag(find.byType(ListView), const Offset(0, -500));
       await tester.pumpAndSettle();
       final payButton = find.byType(ElevatedButton);
       expect(tester.widget<ElevatedButton>(payButton).enabled, isTrue);

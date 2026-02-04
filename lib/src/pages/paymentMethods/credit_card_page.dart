@@ -444,7 +444,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: RoundedTextField(
-                        title: "Postal code",
+                        title: Translations.get(ValidationType.postalCode.name,
+                            widget.locale, context),
                         validationType: ValidationType.postalCode,
                         enabled: isFormEnabled,
                         useValidationTypeAsKey: true,
