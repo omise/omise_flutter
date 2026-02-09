@@ -333,28 +333,30 @@ class _CreditCardPageState extends State<CreditCardPage> {
                   ),
                 ),
               ),
-              if (state.cardHolderData?.contains(CardHolderData.email) == true)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 20.0),
-                  child: RoundedTextField(
-                    key: Key(ValidationType.email.name),
-                    enabled: isFormEnabled,
-                    title: Translations.get('email', widget.locale, context),
-                    validationType: ValidationType.email,
-                    keyboardType: TextInputType.emailAddress,
-                    onChange: (email) {
-                      var newState = state.copyWith();
-                      newState.createTokenRequest.email = email;
-                      creditCardController.updateState(newState);
-                    },
-                    updateValidationList: (fieldKey, isValid) {
-                      creditCardController.setTextFieldValidityStatuses(
-                        fieldKey,
-                        isValid,
-                      );
-                    },
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 20.0),
+                child: RoundedTextField(
+                  enabled: isFormEnabled,
+                  title: Translations.get('email', widget.locale, context),
+                  validationType: ValidationType.email,
+                  useValidationTypeAsKey: true,
+                  keyboardType: TextInputType.emailAddress,
+                  isOptional:
+                      state.cardHolderData?.contains(CardHolderData.email) !=
+                          true,
+                  onChange: (email) {
+                    var newState = state.copyWith();
+                    newState.createTokenRequest.email = email;
+                    creditCardController.updateState(newState);
+                  },
+                  updateValidationList: (fieldKey, isValid) {
+                    creditCardController.setTextFieldValidityStatuses(
+                      fieldKey,
+                      isValid,
+                    );
+                  },
                 ),
+              ),
               if (state.cardHolderData?.contains(CardHolderData.phoneNumber) ==
                   true)
                 Padding(
@@ -442,7 +444,8 @@ class _CreditCardPageState extends State<CreditCardPage> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 20.0),
                       child: RoundedTextField(
-                        title: "Postal code",
+                        title: Translations.get(ValidationType.postalCode.name,
+                            widget.locale, context),
                         validationType: ValidationType.postalCode,
                         enabled: isFormEnabled,
                         useValidationTypeAsKey: true,

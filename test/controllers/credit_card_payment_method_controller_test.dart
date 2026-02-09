@@ -172,38 +172,6 @@ void main() {
       expect(controller.value.cardHolderData!.length, 2);
     });
 
-    test('numberOfFields - calculates correctly with email and phone', () {
-      // Test with no email or phone (base case)
-      expect(controller.value.numberOfFields, 4); // nonAvsFields for TH country
-
-      // Test with email added
-      controller.value =
-          controller.value.copyWith(cardHolderData: [CardHolderData.email]);
-      expect(controller.value.numberOfFields, 5); // base + 1 for email
-
-      // Test with phone and email added
-      controller.value = controller.value.copyWith(
-          cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
-      expect(controller.value.numberOfFields,
-          6); // base + 1 for email + 1 for phone
-
-      // Test with AVS country (US)
-      controller.value.createTokenRequest.country = 'US';
-      expect(controller.value.numberOfFields,
-          10); // avsFields (8) + email (1) + phone (1)
-    });
-
-    test('numberOfFields - calculates correctly with loan card', () {
-      // Set loan card number
-      controller.value.createTokenRequest.number = '4784451119188786';
-      controller.value = controller.value.copyWith(
-          cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
-
-      expect(controller.value.isLoanCard, true);
-      expect(controller.value.numberOfFields,
-          4); // nonAvsFields (4) - 2 (loan card) + 1 (email) + 1 (phone) = 4
-    });
-
     test('isFormValid - returns correct validation with email and phone fields',
         () {
       // Set email and phone in token request to include them in field count
@@ -211,16 +179,18 @@ void main() {
           cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
 
       // Set all required fields (4 base + 1 email + 1 phone = 6 fields)
-      controller.setTextFieldValidityStatuses('cardNumber', true);
-      controller.setTextFieldValidityStatuses('expiryDate', true);
-      controller.setTextFieldValidityStatuses('cvv', true);
-      controller.setTextFieldValidityStatuses('name', true);
       controller.setTextFieldValidityStatuses(
-        'email',
+          ValidationType.cardNumber.name, true);
+      controller.setTextFieldValidityStatuses(
+          ValidationType.expiryDate.name, true);
+      controller.setTextFieldValidityStatuses(ValidationType.cvv.name, true);
+      controller.setTextFieldValidityStatuses(ValidationType.name.name, true);
+      controller.setTextFieldValidityStatuses(
+        ValidationType.email.name,
         true,
       );
       controller.setTextFieldValidityStatuses(
-        'phoneNumber',
+        ValidationType.phoneNumber.name,
         true,
       );
 
@@ -233,13 +203,39 @@ void main() {
           cardHolderData: [CardHolderData.email, CardHolderData.phoneNumber]);
 
       // Set only base fields (missing email and phone validation)
-      controller.setTextFieldValidityStatuses('cardNumber', true);
-      controller.setTextFieldValidityStatuses('expiryDate', true);
-      controller.setTextFieldValidityStatuses('cvv', true);
-      controller.setTextFieldValidityStatuses('name', true);
+      controller.setTextFieldValidityStatuses(
+          ValidationType.cardNumber.name, true);
+      controller.setTextFieldValidityStatuses(
+          ValidationType.expiryDate.name, true);
+      controller.setTextFieldValidityStatuses(ValidationType.cvv.name, true);
+      controller.setTextFieldValidityStatuses(ValidationType.name.name, true);
 
       expect(controller.value.isFormValid,
           false); // Should be false as email/phone validations missing
+    });
+
+    test('isFormValid - optional email field', () {
+      // Merchant does NOT set email, so it's optional
+      controller.value = controller.value.copyWith(cardHolderData: []);
+
+      // Set base fields
+      controller.setTextFieldValidityStatuses(
+          ValidationType.cardNumber.name, true);
+      controller.setTextFieldValidityStatuses(
+          ValidationType.expiryDate.name, true);
+      controller.setTextFieldValidityStatuses(ValidationType.cvv.name, true);
+      controller.setTextFieldValidityStatuses(ValidationType.name.name, true);
+
+      // Email is not in map, should be valid (optional)
+      expect(controller.value.isFormValid, true);
+
+      // User types invalid email
+      controller.setTextFieldValidityStatuses(ValidationType.email.name, false);
+      expect(controller.value.isFormValid, false);
+
+      // User clears/fixes email
+      controller.setTextFieldValidityStatuses(ValidationType.email.name, true);
+      expect(controller.value.isFormValid, true);
     });
   });
 }

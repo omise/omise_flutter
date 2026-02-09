@@ -212,20 +212,6 @@ class CreditCardPaymentMethodState {
   final int avsFields = 8;
   final int nonAvsFields = 4;
 
-  /// Gets the number of fields required based on the country.
-  int get numberOfFields {
-    final baseFields =
-        avsCountries.contains(CountryCode.fromCode(createTokenRequest.country))
-            ? avsFields
-            : nonAvsFields;
-
-    return (isLoanCard ? baseFields - 2 : baseFields) +
-        ((cardHolderData?.contains(CardHolderData.email) ?? false) ? 1 : 0) +
-        ((cardHolderData?.contains(CardHolderData.phoneNumber) ?? false)
-            ? 1
-            : 0);
-  }
-
   /// Determines whether to show address fields based on the country.
   bool get shouldShowAddressFields =>
       avsCountries.contains(CountryCode.fromCode(createTokenRequest.country));
@@ -239,10 +225,48 @@ class CreditCardPaymentMethodState {
   }
 
   /// Checks if the form is valid based on text field validity statuses.
-  bool get isFormValid =>
-      textFieldValidityStatuses.values.length == numberOfFields &&
-      textFieldValidityStatuses.values.isNotEmpty &&
-      !textFieldValidityStatuses.values.contains(false);
+  bool get isFormValid {
+    List<String> requiredFields = [
+      ValidationType.cardNumber.name,
+      ValidationType.name.name,
+    ];
+
+    if (!isLoanCard) {
+      requiredFields.add(ValidationType.expiryDate.name);
+      requiredFields.add(ValidationType.cvv.name);
+    }
+
+    if (shouldShowAddressFields) {
+      requiredFields.addAll([
+        ValidationType.address.name,
+        ValidationType.city.name,
+        ValidationType.state.name,
+        ValidationType.postalCode.name,
+      ]);
+    }
+
+    if (cardHolderData?.contains(CardHolderData.email) ?? false) {
+      requiredFields.add(ValidationType.email.name);
+    }
+
+    if (cardHolderData?.contains(CardHolderData.phoneNumber) ?? false) {
+      requiredFields.add(ValidationType.phoneNumber.name);
+    }
+
+    // Check if all required fields are present and valid
+    for (var field in requiredFields) {
+      if (textFieldValidityStatuses[field] != true) {
+        return false;
+      }
+    }
+
+    // Check if any present field is invalid
+    if (textFieldValidityStatuses.values.contains(false)) {
+      return false;
+    }
+
+    return true;
+  }
 
   /// Constructor for creating a [CreditCardPaymentMethodState].
   CreditCardPaymentMethodState({
