@@ -461,7 +461,7 @@ void main() {
     await tester.pump();
 
     // Check that the fields contain the entered text
-    expect(find.text('4242424242424242'), findsOneWidget);
+    expect(find.text('4242 4242 4242 4242'), findsOneWidget);
     expect(find.text('12/25'), findsOneWidget);
     expect(find.text('123'), findsOneWidget);
     expect(find.text('John Doe'), findsOneWidget);
@@ -508,7 +508,7 @@ void main() {
     await tester.pump();
 
     // Check that the fields contain the entered text
-    expect(find.text('4784451119188786'), findsOneWidget);
+    expect(find.text('4784 4511 1918 8786'), findsOneWidget);
 
     expect(tester.widget<TextField>(expiryDateField).enabled,
         isFalse); // TextField should be disabled
