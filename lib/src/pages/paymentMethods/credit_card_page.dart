@@ -1,15 +1,18 @@
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:omise_dart/omise_dart.dart';
+import 'package:omise_dart/omise_dart.dart' hide CardBrand;
 import 'package:omise_flutter/src/controllers/credit_card_controller.dart';
 import 'package:omise_flutter/src/enums/enums.dart';
 import 'package:omise_flutter/src/models/omise_payment_result.dart';
 import 'package:omise_flutter/src/services/method_channel_service.dart';
 import 'package:omise_flutter/src/services/omise_api_service.dart';
 import 'package:omise_flutter/src/translations/translations.dart';
+import 'package:omise_flutter/src/utils/card_number_formatter.dart';
 import 'package:omise_flutter/src/utils/expiry_date_formatter.dart';
 import 'package:omise_flutter/src/utils/message_display_utils.dart';
+import 'package:omise_flutter/src/utils/package_info.dart';
 import 'package:omise_flutter/src/widgets/rounded_text_field.dart';
+import 'package:omise_flutter/src/models/card_brand.dart';
 
 /// A page that allows users to enter their credit card payment information.
 ///
@@ -176,32 +179,52 @@ class _CreditCardPageState extends State<CreditCardPage> {
               // Card Number Input
               Padding(
                 padding: const EdgeInsets.only(bottom: 20.0, top: 20),
-                child: RoundedTextField(
-                  title: Translations.get('cardNumber', widget.locale, context),
-                  validationType: ValidationType.cardNumber,
-                  enabled: isFormEnabled,
-                  keyboardType: TextInputType.number,
-                  useValidationTypeAsKey: true,
-                  onChange: (cardNumber) {
-                    var newState = state.copyWith();
-                    newState.createTokenRequest.number = cardNumber;
-                    if (state.isLoanCard) {
-                      expiryDateTextController.text = '';
-                      securityCodeTextController.text = '';
-                      newState = state.copyWith();
-                      newState.createTokenRequest.expirationMonth = null;
-                      newState.createTokenRequest.expirationYear = null;
-                      newState.createTokenRequest.securityCode = null;
-                      newState.textFieldValidityStatuses
-                          .remove(ValidationType.cvv.name);
-                      newState.textFieldValidityStatuses
-                          .remove(ValidationType.expiryDate.name);
-                    }
-                    creditCardController.updateState(newState);
-                  },
-                  updateValidationList: (fieldKey, isValid) {
-                    creditCardController.setTextFieldValidityStatuses(
-                        fieldKey, isValid);
+                child: Builder(
+                  builder: (context) {
+                    final activeBrand = CardBrand.getActiveBrand(
+                        state.createTokenRequest.number);
+                    return RoundedTextField(
+                      title: Translations.get(
+                          'cardNumber', widget.locale, context),
+                      validationType: ValidationType.cardNumber,
+                      enabled: isFormEnabled,
+                      keyboardType: TextInputType.number,
+                      useValidationTypeAsKey: true,
+                      inputFormatters: [CardNumberFormatter()],
+                      suffixIcon: activeBrand != null
+                          ? Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Image.asset(
+                                activeBrand.logoAssetPath,
+                                package: PackageInfo.packageName,
+                                width: 32,
+                                height: 20,
+                              ),
+                            )
+                          : null,
+                      onChange: (cardNumber) {
+                        var newState = state.copyWith();
+                        newState.createTokenRequest.number =
+                            cardNumber.replaceAll(RegExp(r'\s+'), '');
+                        if (state.isLoanCard) {
+                          expiryDateTextController.text = '';
+                          securityCodeTextController.text = '';
+                          newState = state.copyWith();
+                          newState.createTokenRequest.expirationMonth = null;
+                          newState.createTokenRequest.expirationYear = null;
+                          newState.createTokenRequest.securityCode = null;
+                          newState.textFieldValidityStatuses
+                              .remove(ValidationType.cvv.name);
+                          newState.textFieldValidityStatuses
+                              .remove(ValidationType.expiryDate.name);
+                        }
+                        creditCardController.updateState(newState);
+                      },
+                      updateValidationList: (fieldKey, isValid) {
+                        creditCardController.setTextFieldValidityStatuses(
+                            fieldKey, isValid);
+                      },
+                    );
                   },
                 ),
               ),

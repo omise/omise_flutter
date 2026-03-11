@@ -28,6 +28,7 @@ class RoundedTextField extends StatefulWidget {
     this.updateValidationList,
     this.useValidationTypeAsKey = false,
     this.isOptional = false,
+    this.suffixIcon,
   });
 
   /// An optional controller for controlling the text being edited.
@@ -66,6 +67,9 @@ class RoundedTextField extends StatefulWidget {
   /// Is the field optional
   final bool? isOptional;
 
+  /// An optional suffix icon widget
+  final Widget? suffixIcon;
+
   @override
   State<RoundedTextField> createState() => _RoundedTextFieldState();
 }
@@ -101,6 +105,7 @@ class _RoundedTextFieldState extends State<RoundedTextField> {
           inputFormatters: widget.inputFormatters,
           decoration: InputDecoration(
             hintText: widget.hintText,
+            suffixIcon: widget.suffixIcon,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8.0),
               borderSide: const BorderSide(
