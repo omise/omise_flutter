@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.6.0]
+
+ - Sunset internet banking
+ - Enable optional email field request by default 
+ - Support card brand detection
+
 ## [0.5.0] - Update payment method icons
 
 - Update icons for payment methods
